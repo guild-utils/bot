@@ -1,0 +1,32 @@
+{
+  "name": "klasa",
+  "version": "1.0.0",
+  "main": "./dist/main.js",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "discordjs/discord.js",
+    "gss": "^1.0.0",
+    "klasa": "git+https://github.com/dirigeants/klasa#v1.0.0-alpha",
+    "moment": "^2.24.0",
+    "pdomain": "^1.0.0",
+    "reflect-metadata": "^0.1.13",
+    "schedule": "^1.0.0",
+    "tsyringe": "^4.1.0",
+    "usecase": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.0",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "eslint": "^6.8.0",
+    "eslint-config-klasa": "dirigeants/klasa-lint",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "build": "tsc -p .",
+    "watch": "tsc -p . -w",
+    "start": "node ./dist/main.js"
+  }
+}

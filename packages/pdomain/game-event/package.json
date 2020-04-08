@@ -1,0 +1,5 @@
+{
+    "name": "domain_game-event",
+    "main": "../lib/game-event.js",
+    "types": "../lib/game-event.d.ts"
+}

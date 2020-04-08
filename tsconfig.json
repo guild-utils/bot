@@ -3,9 +3,9 @@
 	"compilerOptions": {
 		"allowSyntheticDefaultImports": true,
 		"alwaysStrict": true,
-		"declaration": false,
-		"emitDecoratorMetadata": true,
+		"declaration": true,
 		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 		"incremental": true,
 		"lib": [
 			"esnext",
@@ -17,17 +17,14 @@
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"noUnusedLocals": true,
-		"outDir": "./dist",
+		//"outDir": "./dist",
 		"pretty": true,
 		"removeComments": true,
 		"resolveJsonModule": true,
 		"sourceMap": true,
-		"strictFunctionTypes": true,
-		"strictBindCallApply": true,
+		"strict": true,
+		"noImplicitAny": false,
 		"target": "esnext",
-		"types": ["node", "discord.js", "klasa"]
-	},
-	"include": [
-		"./src/**/*"
-	]
+		"types": ["node"]
+	}
 }

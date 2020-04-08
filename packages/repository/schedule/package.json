@@ -1,0 +1,34 @@
+{
+    "name": "schedule",
+    "main": "./lib/index.js",
+    "version": "1.0.0",
+    "license": "MIT",
+    "dependencies": {
+        "moment": "^2.24.0",
+        "pdomain": "^1.0.0"
+    },
+    "devDependencies": {
+        "discord.js": "discordjs/discord.js",
+        "klasa": "git+https://github.com/dirigeants/klasa#v1.0.0-alpha",
+        "@types/node": "^13.11.0",
+        "@typescript-eslint/eslint-plugin": "^2.26.0",
+        "@typescript-eslint/parser": "^2.26.0",
+        "eslint": "^6.8.0",
+        "typescript": "^3.8.3"
+    },
+    "peerDependencies": {
+        "discord.js": "discordjs/discord.js",
+        "klasa": "git+https://github.com/dirigeants/klasa#v1.0.0-alpha"
+    },
+    "scripts": {
+        "lint": "eslint --ext ts src --fix",
+        "test:lint": "eslint --ext ts src",
+        "build": "tsc -p ."
+    },
+    "files": [
+        "lib"
+    ],
+    "directories": {
+        "lib": "lib"
+    }
+}

@@ -2,9 +2,11 @@
 node_modules/
 .vs/
 
-# Ignore bwd folders
+# Ignore bwd folders/files
 dist/
 bwd/
+lib
+*.tsbuildinfo
 
 # Ignore the config file (contains sensitive information such as tokens)
 config.ts
@@ -12,6 +14,5 @@ config.ts
 # Ignore heapsnapshot and log files
 *.heapsnapshot
 *.log
-
 # Ignore package locks
 package-lock.json

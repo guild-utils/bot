@@ -1,0 +1,32 @@
+{
+  "name": "gss",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "fixed-dsl": "^1.0.0",
+    "google-spreadsheet": "git+https://github.com/the-vampiire/node-google-spreadsheet.git#v4-typings",
+    "googleapis": "48",
+    "pdomain": "^1.0.0",
+    "periodical-dsl": "^1.0.0",
+    "tsyringe": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.0",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "eslint": "^6.8.0",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "build": "tsc -p ."
+  },
+  "files": [
+    "lib",
+    "credential.json"
+  ],
+  "directories": {
+    "lib": "lib"
+  }
+}
