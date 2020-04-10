@@ -6,12 +6,13 @@ import { GssGameEventRepository ,GssCollectionGroupIdT ,HKTGssCollectionName} fr
 import { GameEventUseCaseImpl } from "usecase/game-event";
 import { GameEventNotifyRepositoryKlasa } from "schedule";
 import { taskName } from "./tasks/event-notice";
-const gameEventNotifyRepository=new GameEventNotifyRepositoryKlasa(taskName)
+import { nextTaskId } from "./settings";
+const gameEventNotifyRepository=new GameEventNotifyRepositoryKlasa(taskName,nextTaskId);
 class Client extends KlasaClient {
 
 	constructor(options: KlasaClientOptions) {
 		super(options);
-		gameEventNotifyRepository.init(this.schedule)
+		gameEventNotifyRepository.init(this);
 		// Add any properties to your Klasa Client
 	}
 
@@ -19,8 +20,13 @@ class Client extends KlasaClient {
 
 }
 const usecase=new GameEventUseCaseImpl<GssGameEventRepository,GssCollectionGroupIdT,HKTGssCollectionName>(new GssGameEventRepository());
-container.register("GameEventUseCase",{useValue:usecase})
-container.register("GameEventNotifyRepository",{useValue:gameEventNotifyRepository})
+KlasaClient.defaultGuildSchema.add('event',f=>{
+	f.add("gsid","string")
+	f.add("noticeChannel","TextChannel")
+	f.add("nextTaskId","string")
+});
+container.register("GameEventUseCase",{useValue:usecase});
+container.register("GameEventNotifyRepository",{useValue:gameEventNotifyRepository});
 const client =new Client(config);
 
 client.login(token);

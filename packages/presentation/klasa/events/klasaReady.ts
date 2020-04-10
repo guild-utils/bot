@@ -19,15 +19,15 @@ export default class extends Event {
         
     }
     async run(){
-        console.log("init")
+        console.log("init");
         await Promise.all(this.client.guilds.cache.map(async e=>{
             const gsid:unknown=this.client.gateways.guilds.get(e.id).get(googleSpreadSheetId)
             if(typeof gsid!=="string"){
-                return
+                return;
             }
             this.gameEventNotifyRepository.register(
                 e.id,
-                await this.gameEvent.allEvents(gsid)
+                (await this.gameEvent.allEvents(gsid)).map(e2=>e2[1])
             )
         }))
     }

@@ -17,7 +17,7 @@ export default class extends Command{
         });
     }
     public async run(msg: KlasaMessage): Promise<KlasaMessage | KlasaMessage[] | null>{
-        await this.notifyRepo.register(msg.guild!.id,await this.gameEventUseCase.allEvents(await msg.guildSettings.get(googleSpreadSheetId)));
+        await this.notifyRepo.register(msg.guild!.id,(await this.gameEventUseCase.allEvents(await msg.guildSettings.get(googleSpreadSheetId))).map(e=>e[1]));
         return msg.sendMessage("updated!");
     }
 
