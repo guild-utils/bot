@@ -1,11 +1,13 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-import  { SQLProvider, Type, QueryBuilder, util } from 'klasa';
+import  { SQLProvider, Type, QueryBuilder, util, ProviderStore, ProviderOptions } from 'klasa';
 import { Pool } from 'pg';
 const  { mergeDefault, isNumber }=util;
 export default class extends SQLProvider {
-
-	constructor(...args) {
-		super(...args);
+	qb:QueryBuilder;
+	db: any;
+	dbconnection:any;
+	constructor(store: ProviderStore, file: string[], directory: string, options?: ProviderOptions) {
+		super(store,file,directory,options);
 		this.qb = new QueryBuilder({
 			boolean: 'BOOL',
 			integer: ({ max }) => max !== null && max >= 2 ** 32 ? 'BIGINT' : 'INTEGER',
@@ -16,7 +18,7 @@ export default class extends SQLProvider {
 			array: type => `${type}[]`,
 			arrayResolver: (values, piece, resolver) => values.length ? `array[${values.map(value => resolver(value, piece)).join(', ')}]` : "'{}'",
 			formatDatatype: (name, datatype, def = null) => `"${name}" ${datatype}${def !== null ? ` NOT NULL DEFAULT ${def}` : ''}`
-		});
+		} as any);
 		this.db = null;
 	}
 
@@ -94,7 +96,7 @@ export default class extends SQLProvider {
 			.then(rows => rows.map(row => row.id));
 	}
 
-	get(table, key, value) {
+	get(table, key, value=undefined) {
 		// If a key is given (id), swap it and search by id - value
 		if (typeof value === 'undefined') {
 			value = key;
@@ -139,7 +141,7 @@ export default class extends SQLProvider {
 	}
 
 	replace(...args) {
-		return this.update(...args);
+		return this.update(args[0],args[1],args[2]);
 	}
 
 	incrementValue(table, id, key, amount = 1) {
