@@ -1,7 +1,7 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-const { SQLProvider, Type, QueryBuilder, util: { mergeDefault, isNumber } } = require('klasa');
+const { SQLProvider, Type, QueryBuilder, util } = require('klasa');
 const { Pool } = require('pg');
-
+const  { mergeDefault, isNumber }=util;
 module.exports = class extends SQLProvider {
 
 	constructor(...args) {
