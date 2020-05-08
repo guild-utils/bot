@@ -3,7 +3,7 @@ import { KlasaClientOptions } from 'klasa';
 export const config: KlasaClientOptions = {
     gateways:{
         guilds:{
-            provider:"json",
+            provider:process.env["PWRD_EVENT_PROVIDER"],
         }
     },
     consoleEvents: {
@@ -14,7 +14,21 @@ export const config: KlasaClientOptions = {
 		warn: true,
 		wtf: true
     },
-    providers:{default:"json"},
+    providers:{
+		default:process.env["PWRD_EVENT_PROVIDER"],
+		postgresql:{
+			host: process.env["POSTGRESS_HOST"],
+			port: process.env["POSTGRESS_PORT"],
+			database: process.env["POSTGRESS_DATABASE"],
+			user: process.env["POSTGRESS_USER"],
+			password:  process.env["POSTGRESS_PASSWORD"],
+			options: {
+				max: 20,
+				idleTimeoutMillis: 30000,
+				connectionTimeoutMillis: 2000
+			}
+		}
+	},
 	/**
 	 * Console Options
 	 */
@@ -33,7 +47,7 @@ export const config: KlasaClientOptions = {
 	},
 	language:"ja_JP",
 	prefix:"$",
-	production:process.env.NODE_ENV === 'production'
+	production:process.env.NODE_ENV === 'production',
 }
 
 
