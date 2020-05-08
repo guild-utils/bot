@@ -17,7 +17,8 @@ export default class extends SQLProvider {
 			any: { type: 'JSON', resolver: (input) => `'${JSON.stringify(input)}'::json` },
 			array: type => `${type}[]`,
 			arrayResolver: (values, piece, resolver) => values.length ? `array[${values.map(value => resolver(value, piece)).join(', ')}]` : "'{}'",
-			formatDatatype: (name, datatype, def = null) => `"${name}" ${datatype}${def !== null ? ` NOT NULL DEFAULT ${def}` : ''}`
+			formatDatatype: (name, datatype, def = null) => `"${name}" ${datatype}${def !== null ? ` NOT NULL DEFAULT ${def}` : ''}`,
+			googlespreadsheet:"text"
 		} as any);
 		this.db = null;
 	}
