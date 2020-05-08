@@ -1,5 +1,7 @@
 import "reflect-metadata";
 import { config as dotenv} from "dotenv";
+const result = dotenv();
+
 import { KlasaClient, KlasaClientOptions } from 'klasa';
 import { container } from "tsyringe";
 import { GssGameEventRepository ,GssCollectionGroupIdT ,HKTGssCollectionName} from "gss/game-event";
@@ -8,7 +10,6 @@ import { GameEventNotificationRepositoryKlasa } from "schedule";
 import { taskName } from "./tasks/event-notice";
 import { config,token} from './config';
 import { nextTaskId } from "./setting_keys";
-const result = dotenv();
 if(result){
 	console.log(result.parsed);
 

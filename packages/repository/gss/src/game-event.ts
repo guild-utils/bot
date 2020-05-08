@@ -5,7 +5,7 @@ import { PeriodicalDSLParser } from "periodical-dsl";
 import { TimingToNotifyDSLParser} from "timing-to-notify-dsl";
 import * as moment from "moment-timezone";
 
-const credential=require("../credential.json");
+const credential=process.env["GOOGLE_API_CREDENTIAL"]!;
 export type GssCollectionGroupIdT=GoogleSpreadsheet;
 class GssCollectionName<kindT extends GameEventKind> implements CollectionNameBase<kindT>{
     readonly name:string
@@ -43,7 +43,7 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
 
     async collcetionGroupId(idString:string):Promise<GssCollectionGroupIdT>{
         const sheet=new GoogleSpreadsheet(idString);
-        await sheet.useServiceAccountAuth(credential);
+        await sheet.useServiceAccountAuth(credential as any);
         return sheet;
     }
     async listCollectionName(collectionGroupId:GssCollectionGroupIdT):Promise<HKTCollectionNameU<HKTGssCollectionName>[]>{
