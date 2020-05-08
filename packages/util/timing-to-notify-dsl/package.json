@@ -1,7 +1,11 @@
 {
-  "name": "usecase",
-  "version": "1.0.0",
-  "license": "MIT",
+  "name": "timing-to-notify-dsl",
+  "main": "./lib/index.js",
+  "dependencies": {
+    "moment": "^2.24.0",
+    "parjs": "^0.12.7",
+    "pdomain": "^1.0.0"
+  },
   "devDependencies": {
     "@types/moment-timezone": "^0.5.13",
     "@types/node": "^13.11.0",
@@ -10,21 +14,10 @@
     "eslint": "^6.8.0",
     "typescript": "^3.8.3"
   },
-  "dependencies": {
-    "pdomain": "^1.0.0",
-    "reflect-metadata": "^0.1.13",
-    "tsyringe": "^4.1.0"
-  },
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",
     "build": "tsc -p ."
   },
-  "files": [
-    "lib",
-    "game-event"
-  ],
-  "directories": {
-    "lib": "lib"
-  }
+  "version": "1.0.0"
 }

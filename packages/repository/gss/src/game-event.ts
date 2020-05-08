@@ -2,7 +2,9 @@ import { GameEventRepository,CollectionNameBase ,GameEventDesc,GameEventCollecti
 import { GoogleSpreadsheet ,GoogleSpreadsheetWorksheet} from "google-spreadsheet";
 import { FixedDSLParser } from "fixed-dsl";
 import { PeriodicalDSLParser } from "periodical-dsl";
-import * as moment from "moment";
+import { TimingToNotifyDSLParser} from "timing-to-notify-dsl";
+import * as moment from "moment-timezone";
+
 const credential=require("../credential.json");
 export type GssCollectionGroupIdT=GoogleSpreadsheet;
 class GssCollectionName<kindT extends GameEventKind> implements CollectionNameBase<kindT>{
@@ -35,8 +37,10 @@ export interface HKTGssCollectionName extends HKTCollectionName{
 }
 export type GssCollectionNameT<kindT extends GameEventKind>=GssCollectionName<kindT>
 export class GssGameEventRepository implements GameEventRepository<GssCollectionGroupIdT,HKTGssCollectionName>{
-    private fixedParser:FixedDSLParser=new FixedDSLParser()
-    private periodicalParser:PeriodicalDSLParser=new PeriodicalDSLParser()
+    private fixedParser:FixedDSLParser=new FixedDSLParser();
+    private periodicalParser:PeriodicalDSLParser=new PeriodicalDSLParser();
+    private timingToNotifyParser:TimingToNotifyDSLParser=new TimingToNotifyDSLParser();
+
     async collcetionGroupId(idString:string):Promise<GssCollectionGroupIdT>{
         const sheet=new GoogleSpreadsheet(idString);
         await sheet.useServiceAccountAuth(credential);
@@ -55,13 +59,28 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
         }
         return r;
     }
-    SerialDateToMoment(serialDate,offsetUTC ) {
-        //var days = Math.floor(serialDate);
-        var hours = Math.floor((serialDate % 1) * 24);
-        var minutes = Math.floor((((serialDate % 1) * 24) - hours) * 60);
-        return moment.utc(Date.UTC(0, 0, serialDate, hours-(24+offsetUTC), minutes));
+    SerialDateToMoment(serial:number,tz:string ) {
+        var utc_days  = Math.floor(serial - 25569);
+        var utc_value = utc_days * 86400;                                        
+        var date_info = new Date(utc_value * 1000);
+     
+        var fractional_day = serial - Math.floor(serial) + 0.0000001;
+     
+        var total_seconds = Math.floor(86400 * fractional_day);
+     
+        var seconds = total_seconds % 60;
+     
+        total_seconds -= seconds;
+     
+        var hours = Math.floor(total_seconds / (60 * 60));
+        var minutes = Math.floor(total_seconds / 60) % 60;
+     
+        return moment({
+            year:date_info.getFullYear(),month:date_info.getMonth(), date:date_info.getDate(), hours, minutes, seconds
+        }).tz(tz);
+
       }
-    private async collectionPeriodical(collectionId:GssCollectionNameT<"periodical">):Promise<GameEventCollectionPeriodical<GssCollectionNameT<"periodical">>>{
+    private async collectionPeriodical(collectionId:GssCollectionNameT<"periodical">,tz:string):Promise<GameEventCollectionPeriodical<GssCollectionNameT<"periodical">>>{
         const sheet:GoogleSpreadsheetWorksheet=collectionId.sheet;
         const rc:number=sheet.rowCount;
         const cc:number=sheet.columnCount;
@@ -77,8 +96,8 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
         }
         for(let i=1;i<rc;++i){
             let timing:string|null=null;
+            let timingToNotify="";
             let last:moment.Moment|null=null;
-            let notify:boolean=true;
             let lastNotice:moment.Moment|null=null;
             const desc:Partial<GameEventDesc&{last:string}>={};
             for(let j=0;j<Math.min(cc,header.length);++j){
@@ -89,18 +108,18 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
                         break;
                     case "last":
                         if(typeof v.value==="number"){
-                            last=this.SerialDateToMoment(v.value,9);
+                            last=this.SerialDateToMoment(v.value,tz);
                         }
                         break;
                     case "lastNotice":
                         if(v.value===null){
-                            lastNotice=this.SerialDateToMoment(0,9);
+                            lastNotice=this.SerialDateToMoment(0,tz);
                         }else if(typeof v.value==="number"){
-                            lastNotice=this.SerialDateToMoment(v.value,9);
+                            lastNotice=this.SerialDateToMoment(v.value,tz);
                         }
                         break;
-                    case "notify":
-                        notify=Boolean(v.formattedValue);
+                    case "noticeTiming":
+                        timingToNotify=v.formattedValue;
                         break;
                     default:
                 }
@@ -110,11 +129,11 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
                 continue;
             }
 
-            events.push(new GameEventPeriodical(notify,header,lastNotice,await this.periodicalParser.parse(timing,last),desc as GameEventDesc&{last:string}));
+            events.push(new GameEventPeriodical(await this.timingToNotifyParser.parse(timingToNotify),header,lastNotice,await this.periodicalParser.parse(timing,last),desc as GameEventDesc&{last:string}));
         }
         return new GameEventCollectionPeriodical(collectionId,header,events);
     }
-    private async collectionFixed(collectionId:GssCollectionNameT<"fixed">):Promise<GameEventCollectionFixed<GssCollectionNameT<"fixed">>>{
+    private async collectionFixed(collectionId:GssCollectionNameT<"fixed">,tz:string):Promise<GameEventCollectionFixed<GssCollectionNameT<"fixed">>>{
         const sheet:GoogleSpreadsheetWorksheet=collectionId.sheet;
         const rc:number=sheet.rowCount;
         const cc:number=sheet.columnCount;
@@ -130,24 +149,24 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
         const events:GameEventCollectionFixed<GssCollectionNameT<"fixed">>["events"]=[];
         for(let i=1;i<rc;++i){
             let timing:string|null=null;
-            let notify:boolean=true;
             const desc:Partial<GameEventDesc>={};
             let lastNotice:moment.Moment|null=null;
+            let timingToNotify="";
             for(let j=0;j<Math.min(cc,header.length);++j){
                 const v=sheet.getCell(i,j);
                 switch(header[j]){
                     case "timing":
                         timing=v.formattedValue;
                         break;
-                    case "notify":
-                        notify=Boolean(v.formattedValue);
-                        break;
                     case "lastNotice":
                         if(v.value===null){
-                            lastNotice=this.SerialDateToMoment(0,9);
+                            lastNotice=this.SerialDateToMoment(0,tz);
                         }else if(typeof v.value==="number"){
-                            lastNotice=this.SerialDateToMoment(v.value,9);
+                            lastNotice=this.SerialDateToMoment(v.value,tz);
                         }
+                        break;
+                    case "timingToNotify":
+                        timingToNotify=v.formattedValue;
                         break;
                     default:
                 }
@@ -156,18 +175,19 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
             if(timing===null||lastNotice===null||desc.name===undefined){
                 continue;
             }
-            events.push(new GameEventFixed(notify,header,lastNotice,await this.fixedParser.parse(timing),desc as GameEventDesc))
+            events.push(new GameEventFixed(await this.timingToNotifyParser.parse(timingToNotify),header,lastNotice,await this.fixedParser.parse(timing,tz),desc as GameEventDesc))
         }
         return new GameEventCollectionFixed(collectionId,header,events);
     }
     async collection(collectionGroupId:GssCollectionGroupIdT,collectionId:HKTGssCollectionName["fixed"]):Promise<GameEventCollectionSwitch<HKTGssCollectionName>["fixed"]>;
     async collection(collectionGroupId:GssCollectionGroupIdT,collectionId:HKTGssCollectionName["periodical"]):Promise<GameEventCollectionSwitch<HKTGssCollectionName>["periodical"]>;
     async collection(collectionGroupId:GssCollectionGroupIdT,collectionId:HKTGssCollectionName["fixed"]|HKTGssCollectionName["periodical"]):Promise<GameEventCollectionSwitch<HKTGssCollectionName>["fixed"]|GameEventCollectionSwitch<HKTGssCollectionName>["periodical"]>    {
+        await collectionGroupId.loadInfo();
         switch(collectionId.kind){
             case "periodical":
-                return this.collectionPeriodical(collectionId); 
+                return this.collectionPeriodical(collectionId,collectionGroupId.timeZone); 
             case "fixed":
-                return this.collectionFixed(collectionId);
+                return this.collectionFixed(collectionId,collectionGroupId.timeZone);
         }
     }
     

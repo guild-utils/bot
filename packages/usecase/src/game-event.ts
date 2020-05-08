@@ -1,6 +1,8 @@
 
+import * as moment from "moment-timezone";
+
 import { GameEventRepository, GameEventCollection, GameEvent, HKTCollectionName, HKTCollectionNameU, nextTiming  } from "pdomain/game-event";
-import * as moment from "moment";
+
 export abstract class GameEventUseCase{
     async abstract listCollectionName(collectionGroupId:string):Promise<HKTCollectionNameU<HKTCollectionName>[]>;
     async abstract collection(collectionGroupId:string,collectionName:string):Promise<GameEventCollection<HKTCollectionName>>;
@@ -26,13 +28,13 @@ export class GameEventUseCaseImpl<repoT extends GameEventRepository<collectionGr
         return (await Promise.all(names.map(e=>this.repo.collection(gid,e)))).flatMap(e=>(e.events as GameEvent[]).map((e2:GameEvent):[GameEventCollection<HKTCollectionNameT>,GameEvent]=>[e,e2]))
     }
     async nextEvents(collectionGroupId:string,now:moment.Moment):Promise<[GameEventCollection<HKTCollectionNameT>,GameEvent,moment.Moment][]>{
-        const arr=(await this.allEvents(collectionGroupId)).map(([c,e3]:[GameEventCollection<HKTCollectionNameT>,GameEvent]):[GameEventCollection<HKTCollectionNameT>,GameEvent,moment.Moment]=>[c,e3,nextTiming(e3,now)]).sort(([ac,ae,at],[bc,be,bt])=>at.diff(bt));
-        return arr;
+        const arr=(await this.allEvents(collectionGroupId)).map(([c,e3]:[GameEventCollection<HKTCollectionNameT>,GameEvent]):[GameEventCollection<HKTCollectionNameT>,GameEvent,moment.Moment|undefined]=>[c,e3,nextTiming(e3,now)]).filter(e=>e[2]!==undefined).sort(([ac,ae,at],[bc,be,bt])=>at!.diff(bt!));
+        return arr as [GameEventCollection<HKTCollectionNameT>,GameEvent,moment.Moment][];
     }
     async nextEventsWithName(collectionGroupId:string,collectionName:string,now:moment.Moment):Promise<[GameEventCollection<HKTCollectionNameT>,[GameEvent,moment.Moment][]]>{
         const c=await this.collection(collectionGroupId,collectionName)
-        const r=(c.events as GameEvent[]).map((e3:GameEvent):[GameEvent,moment.Moment]=>[e3,nextTiming(e3,now)]).sort(([ae,at],[be,bt])=>at.diff(bt))
-        return [c,r]
+        const r=(c.events as GameEvent[]).map((e3:GameEvent):[GameEvent,moment.Moment|undefined]=>[e3,nextTiming(e3,now)]).filter(e=>e[1]!==undefined).sort(([ae,at],[be,bt])=>at!.diff(bt!))
+        return [c,r as [GameEvent,moment.Moment][]]
     }
     async collection(collectionGroupId:string,collectionName:string):Promise<GameEventCollection<HKTCollectionNameT>>{
         const gid=await this.repo.collcetionGroupId(collectionGroupId);
@@ -40,7 +42,6 @@ export class GameEventUseCaseImpl<repoT extends GameEventRepository<collectionGr
     }
     async put(collectionGroupId:string,collectionName:string,src:(string|null)[]){
         const gid=await this.repo.collcetionGroupId(collectionGroupId);
-
         return this.repo.put(gid,await this.repo.collectionName(gid,collectionName),src)
     }
     momentToSerial(date:moment.Moment) {
@@ -51,7 +52,7 @@ export class GameEventUseCaseImpl<repoT extends GameEventRepository<collectionGr
         const gid=await this.repo.collcetionGroupId(collectionGroupId);
         return this.repo.update(gid,await this.repo.collectionName(gid,collectionName),event.header.map(e=>{
             if(e==="lastNotice"){
-                return this.momentToSerial(time.clone().utcOffset(9))
+                return this.momentToSerial(time);
             }
             if(e==="name"){
                 return event.name;

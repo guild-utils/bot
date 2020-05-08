@@ -1,5 +1,8 @@
 {
-    "name":"usecase_game-event",
+    "name": "usecase_game-event",
     "main": "../lib/game-event.js",
-    "types": "../lib/game-event.d.ts"
+    "types": "../lib/game-event.d.ts",
+    "devDependencies": {
+        "@types/moment-timezone": "^0.5.13"
+    }
 }

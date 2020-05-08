@@ -7,6 +7,7 @@
     "pdomain": "^1.0.0"
   },
   "devDependencies": {
+    "@types/moment-timezone": "^0.5.13",
     "@types/node": "^13.11.0",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",

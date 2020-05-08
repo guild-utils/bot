@@ -1,11 +1,12 @@
-import {  Metadata } from "schedule";
 import { TaskStore, Settings, Task } from "klasa";
-import { noticeChannel, googleSpreadSheetId, nextTaskId } from "../settings";
-import * as moment from 'moment'
-import { GameEvent, GameEventNotifyRepository, GameEventCollection, HKTCollectionName } from "pdomain/game-event";
 import { TextChannel } from "discord.js";
-import { GameEventUseCase } from "usecase/game-event";
 import { inject, autoInjectable } from "tsyringe";
+import * as moment from "moment-timezone";
+import { GameEvent, GameEventNotificationRepository, GameEventCollection, HKTCollectionName, nextNoticeTime } from "pdomain/game-event";
+import { GameEventUseCase } from "usecase/game-event";
+import {  Metadata } from "schedule";
+import { noticeChannel, googleSpreadSheetId, nextTaskId, momentTZ } from "../setting_keys";
+import * as LANG_KEYS from "../lang_keys";
 export const taskName="event-notice";
 @autoInjectable()
 export default class extends Task {
@@ -15,7 +16,7 @@ export default class extends Task {
         file: string[], 
         directory: string,
         @inject("GameEventUseCase") private gameEvent:GameEventUseCase,
-        @inject("GameEventNotifyRepository") private notifyRepo:GameEventNotifyRepository
+        @inject("GameEventNotificationRepository") private notificationRepo:GameEventNotificationRepository
     ){
         super(store,file,directory,{name:taskName, enabled: true});
 
@@ -41,23 +42,27 @@ export default class extends Task {
             return;
         }
         const gid=guildSettings.get(googleSpreadSheetId)
-        const arr=await this.gameEvent.nextEvents(gid,meta.time);
-        const now=moment();
+        const taskTime=moment(meta.time);
+        const arr=await this.gameEvent.nextEvents(gid,taskTime);
+        //console.log("notice:",arr)
+        const now=moment.utc();
         const target:[GameEventCollection<HKTCollectionName>,GameEvent,moment.Moment ][]=[];
         const promise:Promise<unknown>[]=[];
-        for(let i=0;i<arr.length&&arr[i][2].isSameOrBefore(now)&&arr[i][1].lastNotice.isBefore(meta.time);++i){
+        const tznow=now.clone().tz(guildSettings.get(momentTZ))
+        for(let i=0;i<arr.length;++i){
+            const nnt=nextNoticeTime(arr[i][1],taskTime);
+            if(!(nnt!==undefined&&nnt.isSameOrBefore(now)&&arr[i][1].lastNotice.isBefore(taskTime))){
+                continue;
+            }
             target.push(arr[i]);
-            promise.push(this.gameEvent.updateLastNoticeTime(gid,arr[i][0].name.name,arr[i][1],now));
+            promise.push(this.gameEvent.updateLastNoticeTime(gid,arr[i][0].name.name,arr[i][1],tznow));
         }
         await Promise.all([...promise,...(target.map(e=>this.send(channel,e[1],e[2],now)))]);
-        await this.notifyRepo.register(meta.guildId,(await this.gameEvent.allEvents(gid)).map(e=>e[1]));
+        await this.notificationRepo.register(meta.guildId,(await this.gameEvent.allEvents(gid)).map(e=>e[1]));
     }
     async send(channel:TextChannel,event:GameEvent, t:moment.Moment,now:moment.Moment){
-        channel.sendMessage(
-            [
-                `**${event.name}** starts in **${t.diff(now,"minutes")}** minutes`,
-                ...[...event.header].filter(e=>e!=="name").map(e=>`${e}:${event.desc[e]}`)
-            ].join("\n")
+        channel.sendLocale(
+            LANG_KEYS.NOTIFY_TO_NOTIFICATION_CHANNEL,[event,t,now]
         );
     }
 }

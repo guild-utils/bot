@@ -1,7 +1,8 @@
-import * as moment from "moment";
+import * as moment from "moment-timezone";
+
 export type GameEventKind="periodical"|"fixed";
 export type DayOfWeek="Sunday"|"Monday"|"Tuesday"|"Wednesday"|"Thursday"|"Friday"|"Saturday";
-export const dayOfWeekArray:[string,string,string,string,string,string,string]=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+export const dayOfWeekArray:readonly [string,string,string,string,string,string,string]=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 export type HKTCollectionName={
     [P in GameEventKind]:CollectionNameBase<P>
 }
@@ -16,7 +17,8 @@ export class GameEventTimingFixedEntry{
     constructor(
         public readonly dayOfWeek:DayOfWeek,
         public readonly hours:number,
-        public readonly minutes:number
+        public readonly minutes:number,
+        public readonly tz:string
     ){}
 
 }
@@ -49,25 +51,25 @@ export type GameEventCollection<CollectionNameT extends HKTCollectionName>=GameE
 export type GameEventDesc={ readonly name:string, readonly timing:string,readonly [s: string]: string }
 
 export abstract class GameEventBase<kindT extends GameEventKind>{
-    constructor(public readonly alwaysNotify:boolean,public readonly header:readonly string[],public readonly lastNotice:moment.Moment){
-        this.alwaysNotify=alwaysNotify;
+    constructor(public readonly timingToNotify:readonly moment.Duration[],public readonly header:readonly string[],public readonly lastNotice:moment.Moment){
         this.header=header;
     }
     get name():string{ return this.desc.name}
     readonly abstract kind:kindT;
     readonly abstract desc: GameEventDesc;
+    
 }
 export class GameEventPeriodical extends GameEventBase<"periodical">{
-    constructor(alwaysNotify:boolean,header:readonly string[],lastNotice:moment.Moment,timing:GameEventTimingPeriodical,public readonly desc:GameEventDesc){
-        super(alwaysNotify,header,lastNotice)
+    constructor(timingToNotify:readonly moment.Duration[],header:readonly string[],lastNotice:moment.Moment,timing:GameEventTimingPeriodical,public readonly desc:GameEventDesc){
+        super(timingToNotify,header,lastNotice)
         this.timing=timing
     }
     readonly timing:GameEventTimingPeriodical
     readonly kind:"periodical"="periodical"
 }
 export class GameEventFixed extends GameEventBase<"fixed">{
-    constructor(alwaysNotify:boolean,header:readonly string[],lastNotice:moment.Moment,timing:GameEventTimingFixed,public readonly desc:GameEventDesc){
-        super(alwaysNotify,header,lastNotice);
+    constructor(timingToNotify:readonly moment.Duration[],header:readonly string[],lastNotice:moment.Moment,timing:GameEventTimingFixed,public readonly desc:GameEventDesc){
+        super(timingToNotify,header,lastNotice);
         this.timing=timing;
     }
     readonly timing:GameEventTimingFixed;
@@ -75,7 +77,6 @@ export class GameEventFixed extends GameEventBase<"fixed">{
 }
 export type GameEvent=GameEventPeriodical|GameEventFixed
 export type GameEventCollectionSwitch<CollectionNameT extends HKTCollectionName>={
-    
     periodical:GameEventCollectionPeriodical<CollectionNameT["periodical"]>;
     fixed:GameEventCollectionFixed<CollectionNameT["fixed"]>;
 }
@@ -96,7 +97,7 @@ export interface GameEventRepository<CollectionGroupIdT,HKTCollectionNameT exten
     put(collectionGroupId:CollectionGroupIdT,collectionId:HKTCollectionNameU<HKTCollectionNameT>,value:(string|number|null)[]):Promise<void>;
     update(collectionGroupId:CollectionGroupIdT,collectionId:HKTCollectionNameU<HKTCollectionNameT>,value:(string|number|null)[]):Promise<void>;
 }
-export interface GameEventNotifyRepository{
+export interface GameEventNotificationRepository{
     register(guildId:string,event:GameEvent[]):Promise<void>;
 }
 function nextTimingDay(t:moment.Moment,now:moment.Moment,day:number){
@@ -112,7 +113,7 @@ function nextTimingDay(t:moment.Moment,now:moment.Moment,day:number){
     return day;
 }
 function nextTimingFixed(t:GameEventTimingFixedEntry,now:moment.Moment){
-    const tm=now.clone();
+    const tm=now.clone().tz(t.tz);
     tm.hour(t.hours);
     tm.minute(t.minutes);
     tm.second(0);
@@ -120,12 +121,25 @@ function nextTimingFixed(t:GameEventTimingFixedEntry,now:moment.Moment){
     tm.day(nextTimingDay(tm,now,dayOfWeekArray.findIndex(e=>e===t.dayOfWeek)));
     return tm;
 }
-export function nextTiming(event:GameEvent,givedNow?:moment.Moment|undefined){
-    const now=givedNow?givedNow:moment()
+export function nextTiming(event:GameEvent,givedNow?:moment.Moment|undefined):moment.Moment|undefined{
+    const now=givedNow?givedNow:moment.utc();
     switch(event.kind){
         case "fixed":
             return event.timing.entrys.map(e=>nextTimingFixed(e,now)).sort((a,b)=>a.diff(b))[0];
         case "periodical":
             return event.timing.lastFireTime.clone().add(event.timing.intervalInMilliseconds,"milliseconds");
     }
+}
+export function nextNoticeTime(event:GameEvent,givedNow?:moment.Moment|undefined):moment.Moment|undefined{
+    const now=givedNow?givedNow:moment.utc();
+    const eventTime=nextTiming(event,now);
+    if(eventTime===undefined){
+        return undefined;
+    }
+    const r=event.timingToNotify.map(e=>eventTime.clone().subtract(e)).filter(e=>{
+        const diffTime=e.diff(now,"milliseconds");
+        console.log(diffTime);
+        return diffTime>=0;
+    }).sort((a,b)=>a.diff(b))[0];
+    return r;
 }
