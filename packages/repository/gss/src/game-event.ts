@@ -77,7 +77,7 @@ export class GssGameEventRepository implements GameEventRepository<GssCollection
      
         return moment({
             year:date_info.getFullYear(),month:date_info.getMonth(), date:date_info.getDate(), hours, minutes, seconds
-        }).tz(tz);
+        }).tz(tz,true);
 
       }
     private async collectionPeriodical(collectionId:GssCollectionNameT<"periodical">,tz:string):Promise<GameEventCollectionPeriodical<GssCollectionNameT<"periodical">>>{
