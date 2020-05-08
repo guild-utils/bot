@@ -1,0 +1,15 @@
+FROM node:14
+
+#作業ディレクトリを移動
+WORKDIR /usr/app
+  
+  #lernaをインストール
+RUN yarn global add lerna
+COPY packages/ ./packages/
+
+COPY package.json .
+COPY lerna.json .
+COPY tsconfig.json .
+
+RUN lerna bootstrap
+CMD [ "yarn", "--cwd", "packages/presentation/klasa", "start" ]
