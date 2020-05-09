@@ -23,7 +23,7 @@ export const config: KlasaClientOptions = {
 			user: process.env["POSTGRESS_USER"],
 			password:  process.env["POSTGRESS_PASSWORD"],
 			options: {
-				max: 20,
+				max: process.env["POSTGRESS_MAX"],
 				idleTimeoutMillis: 30000,
 				connectionTimeoutMillis: 2000
 			}
