@@ -5,7 +5,7 @@ import { PeriodicalDSLParser } from "periodical-dsl";
 import { TimingToNotifyDSLParser} from "timing-to-notify-dsl";
 import * as moment from "moment-timezone";
 
-const credential=process.env["GOOGLE_API_CREDENTIAL"]!;
+const credential=JSON.parse(process.env["GOOGLE_API_CREDENTIAL"]!);
 export type GssCollectionGroupIdT=GoogleSpreadsheet;
 class GssCollectionName<kindT extends GameEventKind> implements CollectionNameBase<kindT>{
     readonly name:string
