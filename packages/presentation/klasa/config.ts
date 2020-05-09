@@ -16,7 +16,7 @@ export const config: KlasaClientOptions = {
     },
     providers:{
 		default:process.env["PWRD_EVENT_PROVIDER"],
-		postgresql:{
+		postgresql:process.env["PWRD_EVENT_PROVIDER"]==="postgresql"?{
 			host: process.env["POSTGRESS_HOST"],
 			port: process.env["POSTGRESS_PORT"],
 			database: process.env["POSTGRESS_DATABASE"],
@@ -27,7 +27,7 @@ export const config: KlasaClientOptions = {
 				idleTimeoutMillis: 30000,
 				connectionTimeoutMillis: 2000
 			}
-		}
+		}:undefined
 	},
 	/**
 	 * Console Options

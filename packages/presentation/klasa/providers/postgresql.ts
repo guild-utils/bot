@@ -24,6 +24,9 @@ export default class extends SQLProvider {
 	}
 
 	async init() {
+		if(!this.client.options.providers.postgresql){
+			return;
+		}
 		const connection = mergeDefault({
 			host: 'localhost',
 			port: 5432,
