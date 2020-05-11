@@ -20,7 +20,6 @@ class Client extends KlasaClient {
 	constructor(options: KlasaClientOptions) {
 		super(options);
 		gameEventNotificationRepository.init(this);
-		initChannelsGateway(this.gateways);
 		// Add any properties to your Klasa Client
 	}
 
@@ -48,4 +47,6 @@ KlasaClient.defaultGuildSchema.add('counter',f=>{
 container.register("GameEventUseCase",{useValue:usecase});
 container.register("GameEventNotificationRepository",{useValue:gameEventNotificationRepository});
 const client =new Client(config);
+initChannelsGateway(client.gateways);
+
 client.login(token);
