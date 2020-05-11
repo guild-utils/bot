@@ -36,6 +36,7 @@ export default class extends SQLProvider {
 				connectionTimeoutMillis: 2000
 			}
 		}, this.client.options.providers.postgresql);
+		console.log(connection);
 		this.db = new Pool(connection);
 		this.db.on('error', err => this.client.emit('error', err));
 		this.dbconnection = await this.db.connect();
