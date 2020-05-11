@@ -206,7 +206,8 @@ module.exports = class extends Language {
         COMMAND_UNSET_DESCRIPTION:"Stop counting on text or voice channels.",
         COMMAND_UNSET_SUCCESS:"Success.",
         COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:"Your highest roll is lower than the one you are trying to give.",
-        COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:"You do not have permission to manage roles."
+        COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:"You do not have permission to manage roles.",
+        COMMAND_SET_INVALID_TARGET:"target must be a role (ID, mention) or bot, member, human.",
     };
 
     async init() {

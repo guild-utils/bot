@@ -36,15 +36,19 @@ export default class extends SQLProvider {
 				connectionTimeoutMillis: 2000
 			}
 		}, this.client.options.providers.postgresql);
-		console.log(connection.options.max);
 		this.db = new Pool(connection);
 		this.db.on('error', err => this.client.emit('error', err));
 		this.dbconnection = await this.db.connect();
 	}
 
 	shutdown() {
-		this.dbconnection.release();
-		return this.db.end();
+		if(this.dbconnection){
+			this.dbconnection.release();
+		}
+		if(this.db){
+			return this.db.end();
+		}
+		return Promise.resolve();
 	}
 
 	/* Table methods */

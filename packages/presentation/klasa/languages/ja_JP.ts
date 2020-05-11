@@ -191,7 +191,7 @@ export default class extends Language {
 		COMMAND_UPDATE_DESCRIPTION:"スプレッドシートの更新を適用します。",
 		COMMAND_SHOW_DESCRIPTION:"カウンターについての情報を表示します。",
 		COMMAND_SHOW_RESULT:(display,role,format)=>`${display} ${role} ${format}`,
-		COMMAND_SET_DESCRIPTION:"テキストチャンネルまたはボイスチャンネルをカウンターにします。",
+		COMMAND_SET_DESCRIPTION:"テキストチャンネルまたはボイスチャンネルをカウンターにします。targetはロール(ID,メンション)またはbot,member,humanです。",
 		COMMAND_SET_SUCCESS:"成功",
 		COMMAND_UNSET_DESCRIPTION:"テキストチャンネルまたはボイスチャンネルでのカウントをやめます。",
 		COMMAND_UNSET_SUCCESS:"成功",
@@ -200,6 +200,7 @@ export default class extends Language {
 		COMMAND_RECOUNT_SUCCESS:"終了",
 		COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:"与えようとしているロールはあなたの最高のロールより高いものです。",
 		COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:"あなたはロールを管理する権限を持っていません。",
+		COMMAND_SET_INVALID_TARGET:"targetはロール(ID,メンション)またはbot,member,humanである必要があります。",
 	}
 	constructor(store: LanguageStore, file: string[], directory: string, options?: LanguageOptions) {
 		super(store,file,directory,options);

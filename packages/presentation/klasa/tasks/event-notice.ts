@@ -22,7 +22,6 @@ export default class extends Task {
 
     }
     async run(meta:Metadata):Promise<void>{
-        console.log("task run");
         const guild=this.client.guilds.resolve(meta.guildId);
         if(!guild){
             return;
@@ -44,7 +43,6 @@ export default class extends Task {
         const gid=guildSettings.get(googleSpreadSheetId)
         const taskTime=moment(meta.time);
         const arr=await this.gameEvent.nextEvents(gid,taskTime);
-        //console.log("notice:",arr)
         const now=moment.utc();
         const target:[GameEventCollection<HKTCollectionName>,GameEvent,moment.Moment ][]=[];
         const promise:Promise<unknown>[]=[];

@@ -12,7 +12,9 @@ COPY packages/ ./packages/
 
 
 #lernaをインストール
-RUN yarn global add lerna
+RUN yarn global add pm2 lerna
 RUN lerna bootstrap
 RUN lerna run build
-CMD [ "yarn", "--cwd", "./packages/presentation/klasa", "start" ]
+
+COPY kick.js .
+CMD [ "pm2","--no-daemon","start","kick.js","--name","pwrd-event"]

@@ -138,7 +138,6 @@ export function nextNoticeTime(event:GameEvent,givedNow?:moment.Moment|undefined
     }
     const r=event.timingToNotify.map(e=>eventTime.clone().subtract(e)).filter(e=>{
         const diffTime=e.diff(now,"milliseconds");
-        console.log(diffTime);
         return diffTime>=0;
     }).sort((a,b)=>a.diff(b))[0];
     return r;

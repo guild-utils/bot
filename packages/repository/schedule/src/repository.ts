@@ -23,7 +23,6 @@ export class GameEventNotificationRepositoryKlasa implements GameEventNotificati
         if(newt===undefined){
             return;
         }
-        console.log(event,newt,bt);
         if(!bt){
             const nt=await sc.create(this.taskName,newt[1]!.toDate(),{
                 data:{

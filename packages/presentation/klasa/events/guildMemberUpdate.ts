@@ -1,11 +1,9 @@
 import { Event ,EventStore} from "klasa";
-import { autoInjectable } from "tsyringe";
 import { GuildMember } from "discord.js";
 import * as SETTING_KEYS from "../guild_settings_keys";
 import {  updateCounter } from "../counter/counter";
-import { COUNTER_ROLE, COUNTER_FORMAT } from "../channel_settings_keys";
+import { COUNTER_TARGET_ROLE, COUNTER_FORMAT, COUNTER_TYPE } from "../channel_settings_keys";
 
-@autoInjectable()
 export default class extends Event {
     constructor(
         store: EventStore, 
@@ -26,7 +24,6 @@ export default class extends Event {
         const oldRoleIds=oldRoles.map(e=>e.id);
         const newRoleIds=newRoles.map(e=>e.id);
         if(eqSet(new Set(oldRoleIds),new Set(newRoleIds))){
-            console.log("role eq")
             return;
         }        
         const changedRoleIds=new Set([...oldRoleIds,...newRoleIds]);
@@ -38,15 +35,23 @@ export default class extends Event {
             }
             const settings=counterDisplayChannel.settings;
             await settings.sync();
-            const roleId:string=settings.get(COUNTER_ROLE);
-            if(changedRoleIds.has(roleId)){
-                const format=settings.get(COUNTER_FORMAT);
-                const role=oldMember.guild.roles.resolve(roleId);
-                if(!role){
-                    return;
-                }
-                await updateCounter(counterDisplayChannel,role,format);
+            const counterType:unknown=settings.get(COUNTER_TYPE);
+            if(typeof counterType!=="string"){
+                return;
             }
+            switch(counterType){
+                case "role":
+                    const roleId:string=settings.get(COUNTER_TARGET_ROLE);
+                    if(changedRoleIds.has(roleId)){
+                        const format=settings.get(COUNTER_FORMAT);
+                        const role=oldMember.guild.roles.resolve(roleId);
+                        if(!role){
+                            return;
+                        }
+                        await updateCounter(counterDisplayChannel,role,format);
+                    }
+            }
+
 
         })
         return Promise.all(promises);
