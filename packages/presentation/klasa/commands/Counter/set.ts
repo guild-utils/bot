@@ -9,7 +9,7 @@ export default class extends Command{
     constructor(store: CommandStore, file: string[], directory: string) {
         super(store,file,directory,{
             usage:"<displayTextChannel:textChannel|displayVoiceChannel:voiceChannel> <targetRole:role|target:string> <format:string>",
-            usageDelim:" ",
+            usageDelim:",",
             runIn:["text"],
             description:lang=>lang.get(LANG_KEYS.COMMAND_SET_DESCRIPTION)
         });
