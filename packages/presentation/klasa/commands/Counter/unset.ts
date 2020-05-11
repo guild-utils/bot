@@ -9,7 +9,6 @@ export default class extends Command{
         super(store,file,directory,{
             usage:"<displayTextChannel:textChannel|displayVoiceChannel:voiceChannel>",
             runIn:["text"],
-            requiredPermissions:["MANAGE_CHANNELS"],
             description:lang=>lang.get(LANG_KEYS.COMMAND_UNSET_DESCRIPTION)
         });
     }

@@ -66,7 +66,9 @@ export function recount(guild:Guild){
         const settings=displayChannel.settings;
         await settings.sync();
         const counterType=settings.get(COUNTER_TYPE);
+        
         const format=settings.get(COUNTER_FORMAT);
+        console.log(format);
         if(counterType!==counterTypeMap.role){
             await updateCounter(displayChannel,counterType,format);
             return;

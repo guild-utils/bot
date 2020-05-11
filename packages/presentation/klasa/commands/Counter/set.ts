@@ -15,6 +15,7 @@ export default class extends Command{
         });
     }
     async run(message: KlasaMessage, [displayChannel,target,format]:[VoiceChannel|TextChannel,Role|string,string]): Promise<KlasaMessage | KlasaMessage[] | null>{
+
         const permissionsOnDisplayChannelForBot=displayChannel.permissionsFor(this.client.user!);
         if(!(permissionsOnDisplayChannelForBot&&permissionsOnDisplayChannelForBot.has("MANAGE_CHANNELS"))){
             return message.sendLocale(LANG_KEYS.COMMAND_SET_BOT_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL,[displayChannel]);
