@@ -2,9 +2,6 @@ import { KlasaClientOptions } from 'klasa';
 
 export const config: KlasaClientOptions = {
     gateways:{
-        guilds:{
-            provider:process.env["PWRD_EVENT_PROVIDER"],
-        }
     },
     consoleEvents: {
 		debug: false,

@@ -195,7 +195,18 @@ module.exports = class extends Language {
         COMMAND_LIST_DESCRIPTION:"Display a list of events in the collection with the given name, or a list of collections.",
         COMMAND_NEXT_DESCRIPTION:"Displays events in order.",
         COMMAND_PUT_DESCRIPTION:"Add a new event.",
-        COMMAND_UPDATE_DESCRIPTION:"Update the bot with the spreadsheet."
+        COMMAND_UPDATE_DESCRIPTION:"Update the bot with the spreadsheet.",
+        COMMAND_SHOW_DESCRIPTION:"Show counters information.",
+        COMMAND_SHOW_RESULT:(display,role,format)=>`${display} ${role} ${format}`,
+        COMMAND_SET_SUCCESS:"Updated.",
+        COMMAND_SET_DESCRIPTION:"Turn text or voice channels into counters.",
+        COMMAND_RECOUNT_DESCRIPTION:"Recount all counters.",
+        COMMAND_RECOUNT_START:"Counting is starting.",
+        COMMAND_RECOUNT_SUCCESS:"Updated.",
+        COMMAND_UNSET_DESCRIPTION:"Stop counting on text or voice channels.",
+        COMMAND_UNSET_SUCCESS:"Success.",
+        COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:"Your highest roll is lower than the one you are trying to give.",
+        COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:"You do not have permission to manage roles."
     };
 
     async init() {

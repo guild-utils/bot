@@ -6,6 +6,7 @@
   "dependencies": {
     "discord.js": "discordjs/discord.js",
     "dotenv": "^8.2.0",
+    "es6-dynamic-template": "^2.0.0",
     "gss": "^1.0.0",
     "klasa": "git+https://github.com/dirigeants/klasa#v1.0.0-alpha",
     "moment": "^2.24.0",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/moment-timezone": "^0.5.13",
     "@types/node": "^13.11.0",
+    "@types/pg": "^7.14.3",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
     "eslint": "^6.8.0",

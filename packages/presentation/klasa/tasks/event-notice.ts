@@ -5,7 +5,7 @@ import * as moment from "moment-timezone";
 import { GameEvent, GameEventNotificationRepository, GameEventCollection, HKTCollectionName, nextNoticeTime } from "pdomain/game-event";
 import { GameEventUseCase } from "usecase/game-event";
 import {  Metadata } from "schedule";
-import { noticeChannel, googleSpreadSheetId, nextTaskId, momentTZ } from "../setting_keys";
+import { noticeChannel, googleSpreadSheetId, nextTaskId, momentTZ } from "../guild_settings_keys";
 import * as LANG_KEYS from "../lang_keys";
 export const taskName="event-notice";
 @autoInjectable()

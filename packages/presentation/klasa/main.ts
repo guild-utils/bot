@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import { config as dotenv} from "dotenv";
 const result = dotenv();
-
 import { KlasaClient, KlasaClientOptions } from 'klasa';
 import { container } from "tsyringe";
 import { GssGameEventRepository ,GssCollectionGroupIdT ,HKTGssCollectionName} from "gss/game-event";
@@ -9,7 +8,8 @@ import { GameEventUseCaseImpl } from "usecase/game-event";
 import { GameEventNotificationRepositoryKlasa } from "schedule";
 import { taskName } from "./tasks/event-notice";
 import { config,token} from './config';
-import { nextTaskId } from "./setting_keys";
+import { nextTaskId } from "./guild_settings_keys";
+import { initChannelsGateway } from "./extendables/channelSettings";
 if(result){
 	console.log(result.parsed);
 
@@ -38,8 +38,14 @@ KlasaClient.defaultGuildSchema.add('event',f=>{
 	f.add("notificationChannel","TextChannel")
 	f.add("nextTaskId","string",{configurable:false})
 });
+KlasaClient.defaultGuildSchema.add('counter',f=>{
+	f.add("displayChannels","channel",{
+		configurable:false,
+		array:true,
+	});
+})
 container.register("GameEventUseCase",{useValue:usecase});
 container.register("GameEventNotificationRepository",{useValue:gameEventNotificationRepository});
 const client =new Client(config);
-
+initChannelsGateway(client.gateways)
 client.login(token);

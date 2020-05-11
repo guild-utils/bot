@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 const  { mergeDefault, isNumber }=util;
 export default class extends SQLProvider {
 	qb:QueryBuilder;
-	db: any;
+	db!: Pool;
 	dbconnection:any;
 	constructor(store: ProviderStore, file: string[], directory: string, options?: ProviderOptions) {
 		super(store,file,directory,options);
@@ -20,7 +20,6 @@ export default class extends SQLProvider {
 			formatDatatype: (name, datatype, def = null) => `"${name}" ${datatype}${def !== null ? ` NOT NULL DEFAULT ${def}` : ''}`,
 			googlespreadsheet:"text"
 		} as any);
-		this.db = null;
 	}
 
 	async init() {
@@ -37,9 +36,8 @@ export default class extends SQLProvider {
 				connectionTimeoutMillis: 2000
 			}
 		}, this.client.options.providers.postgresql);
-		console.log(connection.options.max)
+		console.log(connection.options.max);
 		this.db = new Pool(connection);
-
 		this.db.on('error', err => this.client.emit('error', err));
 		this.dbconnection = await this.db.connect();
 	}
@@ -183,9 +181,8 @@ export default class extends SQLProvider {
 		`, [schema, table]).then(result => result.map(row => row.column_name));
 	}
 
-	run(...sql) {
-		return this.db.query(...sql)
-			.then(result => result);
+	run(...sql):any{
+		return (this.db.query as any)(...sql);
 	}
 
 	runAll(...sql) {

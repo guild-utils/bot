@@ -3,7 +3,7 @@ import { autoInjectable,inject} from "tsyringe";
 import * as moment from  "moment-timezone";
 import { GameEventUseCase } from "usecase/game-event";
 import {  GameEvent } from 'pdomain/game-event';
-import { googleSpreadSheetId, momentLocale, momentTZ } from "../../setting_keys";
+import { googleSpreadSheetId, momentLocale, momentTZ } from "../../guild_settings_keys";
 import * as LANG_KEYS from "../../lang_keys";
 @autoInjectable()
 export default class Next extends Command{
@@ -11,6 +11,8 @@ export default class Next extends Command{
     constructor( store: CommandStore, file: string[], directory: string,@inject("GameEventUseCase") gameEvent?:GameEventUseCase) {
         super(store,file,directory,{
             usage:"[collectionName:string]",
+            runIn:["text"],
+            requiredPermissions:["SEND_MESSAGES"],
             description:lang=>lang.get(LANG_KEYS.COMMAND_NEXT_DESCRIPTION)
         });
         this.gameEvent=gameEvent!;

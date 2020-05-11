@@ -2,7 +2,7 @@ import {Command,CommandStore,KlasaMessage} from 'klasa';
 import {  inject, autoInjectable } from 'tsyringe';
 import { GameEventUseCase } from 'usecase/game-event';
 import {  GameEventNotificationRepository}from "pdomain/game-event";
-import { googleSpreadSheetId } from '../../setting_keys';
+import { googleSpreadSheetId } from '../../guild_settings_keys';
 import * as LANG_KEYS from "../../lang_keys";
 @autoInjectable()
 export default class extends Command{
@@ -15,6 +15,7 @@ export default class extends Command{
     ) {
         super(store,file,directory,{
             usage:"",
+            runIn:["text"],
             description:lang=>lang.get(LANG_KEYS.COMMAND_UPDATE_DESCRIPTION)
         });
     }

@@ -188,7 +188,18 @@ export default class extends Language {
 		COMMAND_LIST_DESCRIPTION:"イベントのリスト、またはシートのリストを表示します。",
         COMMAND_NEXT_DESCRIPTION:"イベントを近い順に並べます。",
         COMMAND_PUT_DESCRIPTION:"イベントを追加します。",
-        COMMAND_UPDATE_DESCRIPTION:"スプレッドシートの更新を適用します。"
+		COMMAND_UPDATE_DESCRIPTION:"スプレッドシートの更新を適用します。",
+		COMMAND_SHOW_DESCRIPTION:"カウンターについての情報を表示します。",
+		COMMAND_SHOW_RESULT:(display,role,format)=>`${display} ${role} ${format}`,
+		COMMAND_SET_DESCRIPTION:"テキストチャンネルまたはボイスチャンネルをカウンターにします。",
+		COMMAND_SET_SUCCESS:"成功",
+		COMMAND_UNSET_DESCRIPTION:"テキストチャンネルまたはボイスチャンネルでのカウントをやめます。",
+		COMMAND_UNSET_SUCCESS:"成功",
+		COMMAND_RECOUNT_DESCRIPTION:"すべてのカウンターについてカウントし直します。",
+		COMMAND_RECOUNT_START:"カウントを開始しています。",
+		COMMAND_RECOUNT_SUCCESS:"終了",
+		COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:"与えようとしているロールはあなたの最高のロールより高いものです。",
+		COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:"あなたはロールを管理する権限を持っていません。",
 	}
 	constructor(store: LanguageStore, file: string[], directory: string, options?: LanguageOptions) {
 		super(store,file,directory,options);
