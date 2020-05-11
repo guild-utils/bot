@@ -9,7 +9,7 @@ import { GameEventNotificationRepositoryKlasa } from "schedule";
 import { taskName } from "./tasks/event-notice";
 import { config,token} from './config';
 import { nextTaskId } from "./guild_settings_keys";
-import { initChannelsGateway } from "./extendables/channelSettings";
+import { initChannelsGateway } from "./channelSettings";
 if(result){
 	console.log(result.parsed);
 
