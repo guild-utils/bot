@@ -201,6 +201,9 @@ export default class extends Language {
 		COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:"与えようとしているロールはあなたの最高のロールより高いものです。",
 		COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:"あなたはロールを管理する権限を持っていません。",
 		COMMAND_SET_INVALID_TARGET:"targetはロール(ID,メンション)またはbot,member,humanである必要があります。",
+		COMMAND_SET_BOT_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channels)=>`botはターゲットのチャンネル(${channels})におけるチャンネルの管理権限を持っていません。`,
+		COMMAND_SET_YOU_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channels)=>`あなたはターゲットのチャンネル(${channels})におけるチャンネルの管理権限を持っていません。`
+
 	}
 	constructor(store: LanguageStore, file: string[], directory: string, options?: LanguageOptions) {
 		super(store,file,directory,options);

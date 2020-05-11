@@ -9,7 +9,7 @@ export default class extends Event {
         directory: string
     ) {
 		super(store,file,directory,{
-			event: 'guildMemberAdd'
+			event: 'guildMemberRemove'
         });
     }
     run(member:GuildMember){

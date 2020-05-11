@@ -7,7 +7,7 @@ import { COUNTER_FORMAT, COUNTER_TARGET_ROLE, COUNTER_TYPE } from "../../channel
 export default class extends Command{
     constructor(store: CommandStore, file: string[], directory: string) {
         super(store,file,directory,{
-            usage:"<displayChannel:textChannel|voiceChannel>",
+            usage:"<displayTextChannel:textChannel|displayVoiceChannel:voiceChannel>",
             runIn:["text"],
             requiredPermissions:["MANAGE_CHANNELS"],
             description:lang=>lang.get(LANG_KEYS.COMMAND_UNSET_DESCRIPTION)

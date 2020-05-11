@@ -207,7 +207,9 @@ module.exports = class extends Language {
         COMMAND_UNSET_SUCCESS:"Success.",
         COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:"Your highest roll is lower than the one you are trying to give.",
         COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:"You do not have permission to manage roles.",
-        COMMAND_SET_INVALID_TARGET:"target must be a role (ID, mention) or bot, member, human.",
+        COMMAND_SET_INVALID_TARGET:"Target must be a role (ID, mention) or bot, member, human.",
+        COMMAND_SET_BOT_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channel)=>`Bot doesn't have MANGE_CHANNEL permission on target channel,${channel}.`,
+        COMMAND_SET_YOU_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channel)=>`You don't have MANGE_CHANNEL permission on target channel,${channel}.`,
     };
 
     async init() {

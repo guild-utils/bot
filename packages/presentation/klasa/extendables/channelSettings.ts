@@ -32,6 +32,7 @@ export function initChannelsGateway(gateways:GatewayDriver){
             .add("counter",f=>{
                 f.add("role","role")
                 f.add("format","string")
+                f.add("type","string")
             })
     });
 }

@@ -1,4 +1,4 @@
-import { Role, GuildChannel, Guild } from "discord.js";
+import { Role, GuildChannel, Guild, GuildMember } from "discord.js";
 const fillTemplate = require('es6-dynamic-template');
 import * as SETTING_KEYS from "../guild_settings_keys";
 import {  COUNTER_FORMAT, COUNTER_TARGET_ROLE, COUNTER_TYPE } from "../channel_settings_keys";
@@ -68,7 +68,8 @@ export function recount(guild:Guild){
         const counterType=settings.get(COUNTER_TYPE);
         const format=settings.get(COUNTER_FORMAT);
         if(counterType!==counterTypeMap.role){
-            updateCounter(displayChannel,counterType,format);
+            await updateCounter(displayChannel,counterType,format);
+            return;
         }
         const roleId:string=settings.get(COUNTER_TARGET_ROLE);
         const role=guild.roles.resolve(roleId);
@@ -86,3 +87,26 @@ export const counterTypeMap={
     role:"role"
 };
 export const counterTypes=Object.keys(counterTypeMap);
+export async function guildMemberIO(member:GuildMember){
+    const counterDisplayChannelIds:string[]=member.guild.settings.get(SETTING_KEYS.counterDisplayChannels);
+    if(counterDisplayChannelIds.length===0){
+        return;
+    }
+    const promises=counterDisplayChannelIds.map(async displayChannelId=>{
+        const displayChannel=member.guild.channels.resolve(displayChannelId);  
+        if(!displayChannel){
+            return;
+        }
+        const settings=displayChannel.settings;
+        await settings.sync();
+        const type=settings.get(COUNTER_TYPE);
+        switch(type){
+            case "member":
+            case "bot":
+            case "human":
+                const format=settings.get(COUNTER_FORMAT);
+                return await updateCounter(displayChannel,type,format)
+        }
+    });
+    return await Promise.all(promises);
+}
