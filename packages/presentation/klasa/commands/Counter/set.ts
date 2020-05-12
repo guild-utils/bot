@@ -4,6 +4,7 @@ import * as SETTING_KEYS from "../../guild_settings_keys";
 import { TextChannel, Role, VoiceChannel } from "discord.js";
 import { recount, counterTypes } from "../../counter/counter";
 import { COUNTER_FORMAT, COUNTER_TARGET_ROLE, COUNTER_TYPE } from "../../channel_settings_keys";
+import { SettingsUpdateResultEntry } from "klasa";
 
 export default class extends Command{
     constructor(store: CommandStore, file: string[], directory: string) {
@@ -26,7 +27,14 @@ export default class extends Command{
             return message.sendLocale(LANG_KEYS.COMMAND_SET_YOU_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL,[displayChannel]);
         }
         await displayChannel.settings.reset([COUNTER_FORMAT.join("."),COUNTER_TYPE.join("."),COUNTER_TARGET_ROLE.join(".")]);
-        const r=await message.guildSettings.update(SETTING_KEYS.counterDisplayChannels.join("."),displayChannel,{action:"overwrite"});
+        const beforeCounterDisplayChannelIds:string[]=message.guildSettings.get(SETTING_KEYS.counterDisplayChannels);
+        let r:{
+            errors: Error[];
+            updated: SettingsUpdateResultEntry[];
+        }|undefined=undefined;
+        if(!beforeCounterDisplayChannelIds.includes(displayChannel.id)){
+            r=await message.guildSettings.update(SETTING_KEYS.counterDisplayChannels.join("."),displayChannel,{action:"add"});
+        }
         const counterType=typeof target==="string"?target:"role";
         if(target==="role"){
             return message.sendLocale(LANG_KEYS.COMMAND_SET_INVALID_TARGET);
@@ -39,12 +47,12 @@ export default class extends Command{
             conf.push([COUNTER_TARGET_ROLE.join("."),target])
         }
         const r2=await displayChannel.settings.update(conf,displayChannel);
-        if(r.errors.length===0&&r2.errors.length===0){
+        if(r&&r.errors.length===0&&r2.errors.length===0){
             await recount(message.guild!);
             return message.sendLocale(LANG_KEYS.COMMAND_SET_SUCCESS);
         }
         const promises:Promise<KlasaMessage>[]=[];
-        if(r.errors.length!==0){
+        if(r&&r.errors.length!==0){
             promises.push(
                 message.sendMessage(r.errors)
             );
