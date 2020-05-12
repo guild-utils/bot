@@ -48,6 +48,7 @@ export default class extends Event {
                         if(!role){
                             return;
                         }
+                        await oldMember.guild.members.fetch();
                         await updateCounter(counterDisplayChannel,role,format);
                     }
             }

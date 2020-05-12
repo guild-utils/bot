@@ -3,10 +3,11 @@ const fillTemplate = require('es6-dynamic-template');
 import * as SETTING_KEYS from "../guild_settings_keys";
 import {  COUNTER_FORMAT, COUNTER_TARGET_ROLE, COUNTER_TYPE } from "../channel_settings_keys";
 
-export function countRoleMembers(role:Role){
+export async function countRoleMembers(role:Role){
     return role.members.reduce((a,e)=>a+1,0);
 }
-export function countHumans(displayChannel:GuildChannel){
+export async function countHumans(displayChannel:GuildChannel){
+;
     return displayChannel.guild.members.cache.reduce((r,e)=>{
         if(e.user.bot){
             return r;
@@ -14,7 +15,7 @@ export function countHumans(displayChannel:GuildChannel){
         return r+1;
     },0);
 }
-export function countBots(displayChannel:GuildChannel){
+export async function countBots(displayChannel:GuildChannel){
     return displayChannel.guild.members.cache.reduce((r,e)=>{
         if(e.user.bot){
             return r+1;
@@ -27,7 +28,7 @@ function updateRoleCounter(displayChannel:GuildChannel,target:Role,format:string
     return displayChannel.setName(fillTemplate(format,{count}));
 }
 function updateHumanCounter(displayChannel:GuildChannel,format:string){
-    const count=countHumans(displayChannel)
+    const count=countHumans(displayChannel);
     return displayChannel.setName(fillTemplate(format,{count}));
 }
 function updateBotsCounter(displayChannel:GuildChannel,format:string){
@@ -56,8 +57,9 @@ export async function updateCounter(displayChannel:GuildChannel,target:Role|stri
             return;
     }
 }
-export function recount(guild:Guild){
-    const channels:string[]=guild.settings.get(SETTING_KEYS.counterDisplayChannels)
+export async function recount(guild:Guild){
+    const channels:string[]=guild.settings.get(SETTING_KEYS.counterDisplayChannels);
+    await guild.members.fetch()
     const promises=channels.map(async (e:string)=>{
         const displayChannel=guild.channels.resolve(e);
         if(!displayChannel){
@@ -80,7 +82,7 @@ export function recount(guild:Guild){
         }
         await updateCounter(displayChannel,role,format);
     });
-    return promises;
+    return Promise.all(promises);
 }
 export const counterTypeMap={
     human:"human",
@@ -94,6 +96,7 @@ export async function guildMemberIO(member:GuildMember){
     if(counterDisplayChannelIds.length===0){
         return;
     }
+    await member.guild.members.fetch()
     const promises=counterDisplayChannelIds.map(async displayChannelId=>{
         const displayChannel=member.guild.channels.resolve(displayChannelId);  
         if(!displayChannel){

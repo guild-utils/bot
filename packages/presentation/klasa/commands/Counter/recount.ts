@@ -13,7 +13,7 @@ export default class extends Command{
     }
     async run(message: KlasaMessage): Promise<KlasaMessage | KlasaMessage[] | null>{
         await message.sendLocale(LANG_KEYS.COMMAND_RECOUNT_START);
-        await Promise.all(recount(message.guild!));
+        await recount(message.guild!);
         return message.sendLocale(LANG_KEYS.COMMAND_RECOUNT_SUCCESS);
     }
 }

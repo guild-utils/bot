@@ -40,7 +40,7 @@ export default class extends Command{
         }
         const r2=await displayChannel.settings.update(conf,displayChannel);
         if(r.errors.length===0&&r2.errors.length===0){
-            await Promise.all(recount(message.guild!));
+            await recount(message.guild!);
             return message.sendLocale(LANG_KEYS.COMMAND_SET_SUCCESS);
         }
         const promises:Promise<KlasaMessage>[]=[];
