@@ -3,10 +3,10 @@ const fillTemplate = require('es6-dynamic-template');
 import * as SETTING_KEYS from "../guild_settings_keys";
 import {  COUNTER_FORMAT, COUNTER_TARGET_ROLE, COUNTER_TYPE } from "../channel_settings_keys";
 
-export async function countRoleMembers(role:Role){
+export function countRoleMembers(role:Role){
     return role.members.reduce((a,e)=>a+1,0);
 }
-export async function countHumans(displayChannel:GuildChannel){
+export function countHumans(displayChannel:GuildChannel){
 ;
     return displayChannel.guild.members.cache.reduce((r,e)=>{
         if(e.user.bot){
@@ -15,7 +15,7 @@ export async function countHumans(displayChannel:GuildChannel){
         return r+1;
     },0);
 }
-export async function countBots(displayChannel:GuildChannel){
+export function countBots(displayChannel:GuildChannel){
     return displayChannel.guild.members.cache.reduce((r,e)=>{
         if(e.user.bot){
             return r+1;
