@@ -44,11 +44,11 @@ export default class extends Event {
                     const roleId:string=settings.get(COUNTER_TARGET_ROLE);
                     if(changedRoleIds.has(roleId)){
                         const format=settings.get(COUNTER_FORMAT);
-                        const role=oldMember.guild.roles.resolve(roleId);
+                        const role=newMember.guild.roles.resolve(roleId);
                         if(!role){
                             return;
                         }
-                        await oldMember.guild.members.fetch();
+                        await newMember.guild.members.fetch();
                         await updateCounter(counterDisplayChannel,role,format);
                     }
             }
