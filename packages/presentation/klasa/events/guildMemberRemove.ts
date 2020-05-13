@@ -1,6 +1,6 @@
 import { Event ,EventStore} from "klasa";
 import { GuildMember } from "discord.js";
-import { guildMemberIO } from "../counter/counter";
+import {  recount } from "../counter/counter";
 
 export default class extends Event {
     constructor(
@@ -13,6 +13,6 @@ export default class extends Event {
         });
     }
     run(member:GuildMember){
-        return guildMemberIO(member);
+        return recount(member.guild!);
     }
 }
