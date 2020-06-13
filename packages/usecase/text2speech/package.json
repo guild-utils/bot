@@ -1,0 +1,5 @@
+{
+    "name": "usecase_text2speech",
+    "main": "../lib/text2speech.js",
+    "types": "../lib/text2speech.d.ts"
+}

@@ -11,6 +11,8 @@
     "klasa": "git+https://github.com/dirigeants/klasa#v1.0.0-alpha",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
+    "node-opus": "^0.3.3",
+    "opusscript": "^0.0.7",
     "pdomain": "^1.0.0",
     "pg": "^8.1.0",
     "reflect-metadata": "^0.1.13",

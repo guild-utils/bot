@@ -210,6 +210,11 @@ module.exports = class extends Language {
         COMMAND_SET_INVALID_TARGET:"Target must be a role (ID, mention) or bot, member, human.",
         COMMAND_SET_BOT_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channel)=>`Bot doesn't have MANGE_CHANNEL permission on target channel,${channel}.`,
         COMMAND_SET_YOU_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channel)=>`You don't have MANGE_CHANNEL permission on target channel,${channel}.`,
+        COMMAND_END_DESCRIPTION:"Reading is finished.",
+        COMMAND_START_DESCRIPTION:"Start reading aloud.",
+        COMMAND_START_FAILED_WITH_BOT_NOT_JOINABLE:"Bot cannot connect to voice channel.",
+        COMMAND_START_FAILED_WITH_USER_NOT_IN_VC:"The user is not in Voice Channel.",
+        COMMAND_START_SUCCESS:"We have started reading aloud."
     };
 
     async init() {

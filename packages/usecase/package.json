@@ -11,9 +11,11 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@types/iconv-lite": "^0.0.1",
+    "iconv-lite": "^0.6.0",
     "pdomain": "^1.0.0",
     "reflect-metadata": "^0.1.13",
-    "tsyringe": "^4.1.0"
+    "unique-filename": "^1.1.1"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",

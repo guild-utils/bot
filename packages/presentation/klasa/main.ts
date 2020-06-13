@@ -10,6 +10,7 @@ import { taskName } from "./tasks/event-notice";
 import { config,token} from './config';
 import { nextTaskId } from "./guild_settings_keys";
 import { initChannelsGateway } from "./channelSettings";
+import engine from "./text2speech/engine";
 if(result){
 	console.log(result.parsed);
 
@@ -43,9 +44,16 @@ KlasaClient.defaultGuildSchema.add('counter',f=>{
 		configurable:false,
 		array:true,
 	});
-})
+});
+KlasaClient.defaultGuildSchema.add('speech',f=>{
+	f.add("targets","TextChannel",{
+		configurable:false,
+		array:true,
+	});
+});
 container.register("GameEventUseCase",{useValue:usecase});
 container.register("GameEventNotificationRepository",{useValue:gameEventNotificationRepository});
+container.register("engine",{useValue:new engine("D:\\develop\\open_jtalk\\build\\open_jtalk\\bin\\open_jtalk.exe","D:\\develop\\open_jtalk\\build\\open_jtalk\\dic",{normal:"D:\\develop\\open_jtalk\\hts_voice_nitech_jp_atr503_m001-1.05\\nitech_jp_atr503_m001.htsvoice"})})
 const client =new Client(config);
 initChannelsGateway(client.gateways);
 
