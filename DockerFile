@@ -12,12 +12,12 @@ COPY packages/util/open-jtalk/soft ./packages/util/open-jtalk/soft
 RUN cd packages/util/open-jtalk/soft/hts_engine_API-1.10 \
     && sh ./configure \
     && make \
-    && make install
+    && sudo make install
 
 RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
     && sh ./configure \
     && make \
-    && make install
+    && sudo make install 
 
 RUN apk del .ojt
 
