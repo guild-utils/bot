@@ -10,12 +10,12 @@ RUN apk add ffmpeg
 COPY packages/util/open-jtalk/soft ./packages/util/open-jtalk/soft
 
 RUN cd packages/util/open-jtalk/soft/hts_engine_API-1.10 \
-    && sh ./configure --prefix=/usr/app
+    && ./configure --prefix=/usr/app
     && make \
     && make install 
 
 RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
-    && sh ./configure --prefix=/usr/app \
+    && ./configure --prefix=/usr/app \
     && make \
     && make install 
 
