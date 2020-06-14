@@ -11,13 +11,13 @@ COPY packages/util/open-jtalk/soft ./packages/util/open-jtalk/soft
 
 RUN cd packages/util/open-jtalk/soft/hts_engine_API-1.10 \
     && find ./ -type f -print | xargs chmod 777 \
-    && ./configure --prefix=/usr/app \
+    && ./configure  \
     && make \
     && make install 
 
 RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
     && find ./ -type f -print | xargs chmod 777 \
-    && ./configure --prefix=/usr/app \
+    && ./configure  \
     && make \
     && make install 
 
@@ -52,8 +52,8 @@ RUN lerna bootstrap \
 
 RUN apk del .npm
 
-ENV OPEN_JTALK_BIN /usr/app/bin/open_jtalk
-ENV OPEN_JTALK_DIC /usr/app/dic
+ENV OPEN_JTALK_BIN /usr/local/bin/open_jtalk
+ENV OPEN_JTALK_DIC /usr/local/dic
 ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
 ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
 ENV HTS_VOICE_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-happy.htsvoice
