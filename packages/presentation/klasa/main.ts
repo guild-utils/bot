@@ -51,9 +51,31 @@ KlasaClient.defaultGuildSchema.add('speech',f=>{
 		array:true,
 	});
 });
+KlasaClient.defaultUserSchema.add('speech',f=>{
+	f.add("kind","string",{default:"neutral"});
+	f.add("speed","float",{default:1.0});
+	f.add("tone","float",{default:0.0});
+	f.add("volume","float",{default:0.0});
+});
+
 container.register("GameEventUseCase",{useValue:usecase});
 container.register("GameEventNotificationRepository",{useValue:gameEventNotificationRepository});
-container.register("engine",{useValue:new engine("D:\\develop\\open_jtalk\\build\\open_jtalk\\bin\\open_jtalk.exe","D:\\develop\\open_jtalk\\build\\open_jtalk\\dic",{normal:"D:\\develop\\open_jtalk\\hts_voice_nitech_jp_atr503_m001-1.05\\nitech_jp_atr503_m001.htsvoice"})})
+container.register(
+	"engine",
+	{
+		useValue:new engine(
+			process.env["OPEN_JTALK_BIN"]!,
+			process.env["OPEN_JTALK_DIC"]!,
+			{
+				normal:process.env["HTS_VOICE_NORMAL"]!,
+				angry:process.env["HTS_VOICE_ANGRY"]!,
+				happy:process.env["HTS_VOICE_HAPPY"]!,
+				neutral:process.env["HTS_VOICE_NEUTRAL"]!,
+				sad:process.env["HTS_VOICE_SAD"]!
+			}
+		)
+	}
+)
 const client =new Client(config);
 initChannelsGateway(client.gateways);
 

@@ -1,18 +1,19 @@
 import { VoiceConnection } from "discord.js";
 import { OpenJTalkOptions, OpenJTalkHandle, Text2SpeechServiceOpenJtalk } from "usecase/text2speech";
 import {  autoInjectable } from "tsyringe";
-export type Opt=OpenJTalkOptions<"normal">;
+type VoiceKind="normal"|"angry"|"happy"|"neutral"|"sad"
+export type Opt=OpenJTalkOptions<VoiceKind>;
 export type Hnd=OpenJTalkHandle;
 @autoInjectable()
 export default class{
     private readonly waitQueue=new Map<string,Hnd[]>();
-    private readonly text2SpeechService:Text2SpeechServiceOpenJtalk<"normal">;
+    private readonly text2SpeechService:Text2SpeechServiceOpenJtalk<VoiceKind>;
     constructor(
         pathToOpneJTalk:string,
         pathToDict:string,
-        mapOfKind2HtsVoice:{normal:string}
+        mapOfKind2HtsVoice:{[k in VoiceKind]:string}
     ){
-        this.text2SpeechService=new Text2SpeechServiceOpenJtalk(pathToOpneJTalk,pathToDict,mapOfKind2HtsVoice)
+        this.text2SpeechService=new Text2SpeechServiceOpenJtalk(pathToOpneJTalk,pathToDict,mapOfKind2HtsVoice,process.env["OPEN_JTALK_INPUT_CHARSET"]??"utf8")
     }
     async register(conn:VoiceConnection){
         this.waitQueue.set(conn.channel.id,[]);

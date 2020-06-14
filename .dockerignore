@@ -4,3 +4,8 @@
 **/dist
 **/lib
 **/tsconfig.tsbuildinfo
+!packages\util\open-jtalk\**\lib
+*.lib
+*.so
+*.obj
+*.so

@@ -10,6 +10,7 @@ export type OpenJTalkOptions<VoiceKind extends string>={
     kind:VoiceKind
     speed:number
     tone:number
+    volume:number
 }
 /**
  *     -x  dir        : dictionary directory                                    [  N/A]
@@ -49,7 +50,7 @@ export type OpenJTalkHandle={
     pathToCreatedFile:fs.PathLike
 }
 export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Text2SpeechService<OpenJTalkOptions<VoiceKind>,OpenJTalkHandle>{
-    constructor(private readonly pathtoOpenJTalk:string,private readonly pathToDict:string,private readonly mapOfKind2HtsVoice:{[k in VoiceKind]:string}){
+    constructor(private readonly pathtoOpenJTalk:string,private readonly pathToDict:string,private readonly mapOfKind2HtsVoice:{[k in VoiceKind]:string},private readonly charset:string){
 
     }
     async spawn(opt:OpenJTalkSpownOptions,text:string):Promise<OpenJTalkHandle>{
@@ -57,16 +58,24 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Te
            opt=Object.assign({},opt,{ow:uniqueFilename(os.tmpdir(),"openjtalk-dst")})
         }
         const ow=opt.ow;
-        const cp= execFile(this.pathtoOpenJTalk,[...Object.keys(opt).flatMap(k=>[`-${k}`,`${opt[k]}`])],(error)=>{
+        const cp= execFile(this.pathtoOpenJTalk,[...Object.keys(opt).flatMap(k=>[`-${k}`,`${opt[k]}`])],(error,stdout,stderr)=>{
+            console.log(stdout);
+            console.log(stderr);
             if(error){
                 throw error;
             }
         });
-        const conv=encodeStream("Shift_JIS")
+        const conv=encodeStream(this.charset);
+        conv.on("error",(...args)=>{
+            console.log(args)
+        });
         conv.pipe(cp.stdin!);
-        conv.write(text)
+        conv.write(text);
         conv.end();
         cp.stdin?.end();
+        cp.stdin?.on("error",(err)=>{
+            console.log(err)
+        })
         await new Promise((resolve,reject)=>cp.on("exit",(code,signal)=>{
             if(code===0){
                 resolve(code);
@@ -74,11 +83,10 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Te
             }
             reject(new Error(`OpenJTalk exited with ${code}`));
         }));
-        console.log(ow)
         return {pathToCreatedFile:ow!};
     }
     async prepareVoice(text: string, options: OpenJTalkOptions<VoiceKind>): Promise<OpenJTalkHandle>{
-        return this.spawn({x:this.pathToDict,m:this.mapOfKind2HtsVoice[options.kind],r:String(options.speed)},text);
+        return this.spawn({x:this.pathToDict,m:this.mapOfKind2HtsVoice[options.kind],r:String(options.speed),g:String(options.volume),fm:String(options.tone)},text);
     }
     async loadVoice(handle: OpenJTalkHandle): Promise<Readable>{
         return fs.createReadStream(handle.pathToCreatedFile);

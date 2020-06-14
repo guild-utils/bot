@@ -1,20 +1,58 @@
-FROM node:14
+FROM node:14-alpine
 
-#作業ディレクトリを移動
 WORKDIR /usr/app
-  
-COPY package.json .
-COPY lerna.json .
-COPY tsconfig.json .
-COPY yarn.lock .
-COPY packages/ ./packages/
 
-
-
-#lernaをインストール
+RUN apk add --no-cache --virtual .ojt build-base
+RUN apk add --no-cache --virtual .npm git
 RUN yarn global add pm2 lerna
-RUN lerna bootstrap
-RUN lerna run build
+RUN apk add ffmpeg
 
-COPY kick.js .
+COPY packages/util/open-jtalk/soft ./packages/util/open-jtalk/soft
+
+RUN cd packages/util/open-jtalk/soft/hts_engine_API-1.10 \
+    && ./configure \
+    && make \
+    && make install
+
+RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
+    && ./configure \
+    && make \
+    && make install
+
+RUN apk del .ojt
+
+
+WORKDIR /usr/app
+COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
+COPY kick.js ./
+COPY lerna.json ./
+COPY tsconfig.json ./
+COPY package.json ./
+COPY yarn.lock ./
+
+COPY packages/pdomain ./packages/pdomain
+COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
+COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
+COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
+COPY packages/usecase ./packages/usecase
+COPY packages/repository/gss ./packages/repository/gss
+COPY packages/repository/schedule ./packages/repository/schedule
+COPY packages/presentation/klasa ./packages/presentation/klasa
+
+
+RUN lerna bootstrap \
+    && lerna run build \
+    &&yarn global remove lerna 
+
+RUN apk del .npm
+
+ENV OPEN_JTALK_BIN /usr/local/bin/open_jtalk
+ENV OPEN_JTALK_DIC /usr/local/dic
+ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
+ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
+ENV HTS_VOICE_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-happy.htsvoice
+ENV HTS_VOICE_NEUTRAL /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-neutral.htsvoice
+ENV HTS_VOICE_SAD /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-sad.htsvoice
+
+
 CMD [ "pm2","--no-daemon","start","kick.js","--name","pwrd-event"]

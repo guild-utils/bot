@@ -4,6 +4,7 @@ import {  text2speechTargetTextChannels } from '../guild_settings_keys';
 import { MonitorStore } from "klasa";
 import Engine from '../text2speech/engine';
 import { inject, autoInjectable } from "tsyringe";
+import * as USER_SETTINGS from "../user_settings_keys";
 @autoInjectable()
 export default class extends Monitor {
     constructor(store: MonitorStore, file: string[], directory: string,@inject("engine") private readonly engine:Engine) {
@@ -21,8 +22,6 @@ export default class extends Monitor {
     }
 
     async run(message:KlasaMessage) {
-        console.log(message.content)
-
         if(!message.guild){
             return;
         }
@@ -34,7 +33,11 @@ export default class extends Monitor {
             message.guildSettings.reset(text2speechTargetTextChannels);
             return;
         }
-        this.engine.queue(message.guild.voice.connection,message.content,{kind:"normal",speed:1.0,tone:1.0})
+        const kind=message.member?.user.settings.get(USER_SETTINGS.text2speechKind);
+        const speed=message.member?.user.settings.get(USER_SETTINGS.text2speechSpeed);
+        const tone=message.member?.user.settings.get(USER_SETTINGS.text2speechTone);
+        const volume=message.member?.user.settings.get(USER_SETTINGS.text2speechVolume);
+        this.engine.queue(message.guild.voice.connection,message.content,{kind,speed,tone,volume});
     }
 
 };
