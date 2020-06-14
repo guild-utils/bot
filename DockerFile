@@ -10,12 +10,12 @@ RUN apk add ffmpeg
 COPY packages/util/open-jtalk/soft ./packages/util/open-jtalk/soft
 
 RUN cd packages/util/open-jtalk/soft/hts_engine_API-1.10 \
-    && bash ./configure \
+    && sh ./configure \
     && make \
     && make install
 
 RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
-    && bash ./configure \
+    && sh ./configure \
     && make \
     && make install
 
@@ -23,6 +23,10 @@ RUN apk del .ojt
 
 
 WORKDIR /usr/app
+
+RUN rm -rf packages/util/open-jtalk/soft
+
+
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
 COPY kick.js ./
 COPY lerna.json ./
