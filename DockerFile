@@ -17,7 +17,7 @@ RUN cd packages/util/open-jtalk/soft/hts_engine_API-1.10 \
 
 RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
     && find ./ -type f -print | xargs chmod 777 \
-    && ./configure  \
+    && ./configure --with-charset=UTF-8 \
     && make \
     && make install 
 
