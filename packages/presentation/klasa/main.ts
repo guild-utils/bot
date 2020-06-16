@@ -10,10 +10,11 @@ import { taskName } from "./tasks/event-notice";
 import { config,token} from './config';
 import { nextTaskId } from "./guild_settings_keys";
 import { initChannelsGateway } from "./channelSettings";
-import engine from "./text2speech/engine";
+import engine, { VoiceKindArray } from "./text2speech/engine";
+import * as kuromoji from "kuromoji";
+
 if(result){
 	console.log(result.parsed);
-
 }
 const gameEventNotificationRepository=new GameEventNotificationRepositoryKlasa(taskName,nextTaskId);
 class Client extends KlasaClient {
@@ -27,6 +28,7 @@ class Client extends KlasaClient {
 	// Add any methods to your Klasa Client
 
 }
+
 const usecase=new GameEventUseCaseImpl<GssGameEventRepository,GssCollectionGroupIdT,HKTGssCollectionName>(new GssGameEventRepository());
 KlasaClient.defaultGuildSchema.add(
 	"momentLocale","string",{default:"ja"}
@@ -50,33 +52,52 @@ KlasaClient.defaultGuildSchema.add('speech',f=>{
 		configurable:false,
 		array:true,
 	});
+	f.add("readName","boolean",{default:true});
+	f.add("dictionary","any",{configurable:false,array:true,default:[]})
+
 });
 KlasaClient.defaultUserSchema.add('speech',f=>{
-	f.add("kind","string",{default:"neutral"});
-	f.add("speed","float",{default:1.0});
+	f.add("kind","string",{default:"neutral",filter:(client,value,schema,lang)=>{
+		return VoiceKindArray.includes(value);
+	}});
+	f.add("speed","float",{default:1.0,min:0.3});
 	f.add("tone","float",{default:0.0});
-	f.add("volume","float",{default:0.0});
+	f.add("volume","float",{default:0.0,max:10});
+	f.add("readName","string");
 });
 
 container.register("GameEventUseCase",{useValue:usecase});
 container.register("GameEventNotificationRepository",{useValue:gameEventNotificationRepository});
-container.register(
-	"engine",
-	{
-		useValue:new engine(
-			process.env["OPEN_JTALK_BIN"]!,
-			process.env["OPEN_JTALK_DIC"]!,
-			{
-				normal:process.env["HTS_VOICE_NORMAL"]!,
-				angry:process.env["HTS_VOICE_ANGRY"]!,
-				happy:process.env["HTS_VOICE_HAPPY"]!,
-				neutral:process.env["HTS_VOICE_NEUTRAL"]!,
-				sad:process.env["HTS_VOICE_SAD"]!
-			}
-		)
-	}
-)
-const client =new Client(config);
-initChannelsGateway(client.gateways);
 
-client.login(token);
+async function main(){
+	await new Promise((resolve,reject)=>{
+		kuromoji.builder({dicPath:process.env["KUROMOJI_DIC_PATH"]}).build((err,tokenizer)=>{
+			console.log(err);
+			container.register("kuromoji",{useValue:tokenizer});
+			container.register(
+				"engine",
+				{
+					useValue:new engine(
+						process.env["OPEN_JTALK_BIN"]!,
+						process.env["OPEN_JTALK_DIC"]!,
+						{
+							normal:process.env["HTS_VOICE_NORMAL"]!,
+							angry:process.env["HTS_VOICE_ANGRY"]!,
+							happy:process.env["HTS_VOICE_HAPPY"]!,
+							neutral:process.env["HTS_VOICE_NEUTRAL"]!,
+							sad:process.env["HTS_VOICE_SAD"]!
+						},
+						tokenizer
+					)
+				}
+			);
+			resolve();
+		});
+	});
+	const client =new Client(config);
+	initChannelsGateway(client.gateways);
+	client.login(token);
+}
+main();
+
+

@@ -1,11 +1,11 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
 import  { SQLProvider, Type, QueryBuilder, util, ProviderStore, ProviderOptions } from 'klasa';
-import { Pool } from 'pg';
+import * as pg from 'pg';
 const  { mergeDefault, isNumber }=util;
 export default class extends SQLProvider {
 	qb:QueryBuilder;
-	db!: Pool;
-	dbconnection:any;
+	db!: pg.Pool;
+	dbconnection!:pg.PoolClient;
 	constructor(store: ProviderStore, file: string[], directory: string, options?: ProviderOptions) {
 		super(store,file,directory,options);
 		this.qb = new QueryBuilder({
@@ -18,7 +18,8 @@ export default class extends SQLProvider {
 			array: type => `${type}[]`,
 			arrayResolver: (values, piece, resolver) => values.length ? `array[${values.map(value => resolver(value, piece)).join(', ')}]` : "'{}'",
 			formatDatatype: (name, datatype, def = null) => `"${name}" ${datatype}${def !== null ? ` NOT NULL DEFAULT ${def}` : ''}`,
-			googlespreadsheet:"text"
+			googlespreadsheet:"text",
+			dictionaryentry:{type:'JSON',resolver: (input) => `'${JSON.stringify(input)}'::json`}
 		} as any);
 	}
 
@@ -37,9 +38,12 @@ export default class extends SQLProvider {
 			}
 		}, this.client.options.providers.postgresql);
 		console.log(connection);
-		this.db = new Pool(connection);
+		this.db = new pg.Pool(connection);
 		this.db.on('error', err => {console.log(err);this.client.emit('error', err)});
 		this.dbconnection = await this.db.connect();
+		this.dbconnection.on("error",(err)=>{
+			console.log(err);this.client.emit('error', err)
+		});
 	}
 
 	shutdown() {
@@ -47,7 +51,7 @@ export default class extends SQLProvider {
 			this.dbconnection.release();
 		}
 		if(this.db){
-			return this.db.end();
+			this.db.end();
 		}
 		return Promise.resolve();
 	}

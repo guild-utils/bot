@@ -5,3 +5,6 @@ export const momentLocale=["momentLocale"];
 export const momentTZ=["momentTZ"];
 export const counterDisplayChannels=["counter","displayChannels"];
 export const text2speechTargetTextChannels=["speech","targets"];
+export const text2speechReadName=["speech","readName"];
+export const text2speechVolumeMax=["speech","volumeMax"];
+export const text2speechDictionary=["speech","dictionary"];

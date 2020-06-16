@@ -203,11 +203,16 @@ export default class extends Language {
 		COMMAND_SET_INVALID_TARGET:"targetはロール(ID,メンション)またはbot,member,humanである必要があります。",
 		COMMAND_SET_BOT_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channels)=>`botはターゲットのチャンネル(${channels})におけるチャンネルの管理権限を持っていません。`,
 		COMMAND_SET_YOU_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL:(channels)=>`あなたはターゲットのチャンネル(${channels})におけるチャンネルの管理権限を持っていません。`,
+		COMMAND_END_SUCCESS:"読み上げを終了しました。",
 		COMMAND_END_DESCRIPTION:"読み上げを終了します。",
 		COMMAND_START_DESCRIPTION:"読み上げを開始します。",
 		COMMAND_START_FAILED_WITH_BOT_NOT_JOINABLE:"botはボイスチャンネルに接続できません。",
 		COMMAND_START_FAILED_WITH_USER_NOT_IN_VC:"ユーザーがボイスチャンネルに接続していません。",
-		COMMAND_START_SUCCESS:"読み上げを開始しました。"
+		COMMAND_START_SUCCESS:"読み上げを開始しました。",
+		COMMAND_ADD_WORD_DESCRIPTION:"単語を辞書に追加します。",
+		COMMAND_ADD_WORD_SUCCESS:"単語を辞書に追加しました。",
+		COMMAND_DELETE_WORD_DESCRIPTION:"単語を辞書から削除します。",
+		COMMAND_DELETE_WORD_SUCCESS:"単語を辞書から削除しました。"
 	}
 	constructor(store: LanguageStore, file: string[], directory: string, options?: LanguageOptions) {
 		super(store,file,directory,options);

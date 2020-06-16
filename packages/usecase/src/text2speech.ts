@@ -1,4 +1,4 @@
-import { Text2SpeechService } from "pdomain/text2speech";
+import { Text2SpeechService, Handle } from "pdomain/text2speech";
 import { execFile } from "child_process";
 import * as fs from "fs";
 import * as os from "os";
@@ -47,23 +47,21 @@ type OpenJTalkSpownOptions={
     z?:string
 }
 export type OpenJTalkHandle={
-    pathToCreatedFile:fs.PathLike
+    pathToCreatedFile?:fs.PathLike
 }
 export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Text2SpeechService<OpenJTalkOptions<VoiceKind>,OpenJTalkHandle>{
     constructor(private readonly pathtoOpenJTalk:string,private readonly pathToDict:string,private readonly mapOfKind2HtsVoice:{[k in VoiceKind]:string},private readonly charset:string){
 
     }
-    async spawn(opt:OpenJTalkSpownOptions,text:string):Promise<OpenJTalkHandle>{
+    async spawn(hnd:OpenJTalkHandle,opt:OpenJTalkSpownOptions,text:string):Promise<void>{
         if(!opt.ow){
            opt=Object.assign({},opt,{ow:uniqueFilename(os.tmpdir(),"openjtalk-dst")})
         }
         const ow=opt.ow;
         const cp= execFile(this.pathtoOpenJTalk,[...Object.keys(opt).flatMap(k=>[`-${k}`,`${opt[k]}`])],(error,stdout,stderr)=>{
+            console.log(error);
             console.log(stdout);
             console.log(stderr);
-            if(error){
-                throw error;
-            }
         });
         const conv=encodeStream(this.charset);
         conv.on("error",(...args)=>{
@@ -81,18 +79,31 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Te
                 resolve(code);
                 return;
             }
-            reject(new Error(`OpenJTalk exited with ${code}`));
+           console.log(`OpenJTalk exited with ${code}`);
+           resolve(undefined);
         }));
-        return {pathToCreatedFile:ow!};
+        hnd.pathToCreatedFile=ow;
     }
-    async prepareVoice(text: string, options: OpenJTalkOptions<VoiceKind>): Promise<OpenJTalkHandle>{
-        return this.spawn({x:this.pathToDict,m:this.mapOfKind2HtsVoice[options.kind],r:String(options.speed),g:String(options.volume),fm:String(options.tone)},text);
+    makeHandle():Handle{
+        return {};
     }
-    async loadVoice(handle: OpenJTalkHandle): Promise<Readable>{
+    async prepareVoice(hnd:OpenJTalkHandle,text: string, options: OpenJTalkOptions<VoiceKind>): Promise<void>{
+        await this.spawn(hnd,{x:this.pathToDict,m:this.mapOfKind2HtsVoice[options.kind],r:String(options.speed),g:String(options.volume),fm:String(options.tone)},text);
+    }
+    async loadVoice(handle: OpenJTalkHandle): Promise<Readable|undefined>{
+        if(!handle.pathToCreatedFile){
+            throw new Error("invalid handle state");
+        }
+        if(!await fs.promises.stat(handle.pathToCreatedFile).catch(e=>false)){
+            return undefined;
+        }
         return fs.createReadStream(handle.pathToCreatedFile);
 
     }
     async closeVoice(handle:OpenJTalkHandle){
+        if(!handle.pathToCreatedFile){
+            return;
+        }
         return fs.promises.unlink(handle.pathToCreatedFile);
     }
 }
