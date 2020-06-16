@@ -1,11 +1,8 @@
-FROM node:14-alpine
+FROM node:14-alpine AS build-bin
 
 WORKDIR /usr/app
 
 RUN apk add --no-cache --virtual .ojt build-base
-RUN apk add --no-cache --virtual .npm git
-RUN yarn global add pm2 lerna
-RUN apk add ffmpeg
 
 COPY packages/util/open-jtalk/soft ./packages/util/open-jtalk/soft
 
@@ -23,11 +20,34 @@ RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
 
 RUN apk del .ojt
 
+FROM node:14-alpine AS runtime
 
 WORKDIR /usr/app
 
-RUN rm -rf packages/util/open-jtalk/soft
+RUN apk add ffmpeg
+RUN yarn global add pm2
 
+ENV OPEN_JTALK_BIN /usr/local/bin/open_jtalk
+ENV OPEN_JTALK_DIC /usr/local/dic
+ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
+ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
+ENV HTS_VOICE_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-happy.htsvoice
+ENV HTS_VOICE_NEUTRAL /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-neutral.htsvoice
+ENV HTS_VOICE_SAD /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-sad.htsvoice
+ENV HTS_VOICE_MEI_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/mei/mei_angry.htsvoice
+ENV HTS_VOICE_MEI_BASHFUL /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/mei/mei_bashful.htsvoice
+ENV HTS_VOICE_MEI_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/mei/mei_happy.htsvoice
+ENV HTS_VOICE_MEI_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/mei/mei_normal.htsvoice
+ENV HTS_VOICE_MEI_SAD /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/mei/mei_sad.htsvoice
+ENV HTS_VOICE_TAKUMI_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/takumi/takumi_angry.htsvoice
+ENV HTS_VOICE_TAKUMI_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/takumi/takumi_happy.htsvoice
+ENV HTS_VOICE_TAKUMI_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/takumi/takumi_normal.htsvoice
+ENV HTS_VOICE_TAKUMI_SAD /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/takumi/takumi_sad.htsvoice
+
+ENV KUROMOJI_DIC_PATH /usr/app/node_modules/kuromoji/dict
+
+COPY --from=build-bin /usr/local/bin/open_jtalk /usr/local/bin/open_jtalk
+COPY --from=build-bin /usr/local/dic /usr/local/dic
 
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
 COPY kick.js ./
@@ -45,20 +65,12 @@ COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
 COPY packages/presentation/klasa ./packages/presentation/klasa
 
-
-RUN lerna bootstrap \
+RUN apk add --no-cache --virtual .ojt git \
+    && yarn global add lerna \
+    && lerna bootstrap \
     && lerna run build \
-    &&yarn global remove lerna 
-
-RUN apk del .npm
-
-ENV OPEN_JTALK_BIN /usr/local/bin/open_jtalk
-ENV OPEN_JTALK_DIC /usr/local/dic
-ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
-ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
-ENV HTS_VOICE_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-happy.htsvoice
-ENV HTS_VOICE_NEUTRAL /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-neutral.htsvoice
-ENV HTS_VOICE_SAD /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-sad.htsvoice
-ENV KUROMOJI_DIC_PATH /usr/app/node_modules/kuromoji/dict
+    && yarn global remove lerna \
+    && yarn cache clean \
+    && apk del .ojt
 
 CMD [ "pm2","--no-daemon","start","kick.js","--name","pwrd-event"]

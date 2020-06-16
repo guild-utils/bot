@@ -58,7 +58,7 @@ KlasaClient.defaultGuildSchema.add('speech',f=>{
 });
 KlasaClient.defaultUserSchema.add('speech',f=>{
 	f.add("kind","string",{default:"neutral",filter:(client,value,schema,lang)=>{
-		return VoiceKindArray.includes(value);
+		return !VoiceKindArray.includes(value);
 	}});
 	f.add("speed","float",{default:1.0,min:0.3});
 	f.add("tone","float",{default:0.0});
@@ -85,7 +85,16 @@ async function main(){
 							angry:process.env["HTS_VOICE_ANGRY"]!,
 							happy:process.env["HTS_VOICE_HAPPY"]!,
 							neutral:process.env["HTS_VOICE_NEUTRAL"]!,
-							sad:process.env["HTS_VOICE_SAD"]!
+							sad:process.env["HTS_VOICE_SAD"]!,
+							mei_angry:process.env["HTS_VOICE_MEI_ANGRY"]!,
+							mei_bashful:process.env["HTS_VOICE_MEI_BASHFUL"]!,
+							mei_happy:process.env["HTS_VOICE_MEI_HAPPY"]!,
+							mei_normal:process.env["HTS_VOICE_MEI_NORMAL"]!,
+							mei_sad:process.env["HTS_VOICE_MEI_SAD"]!,
+							takumi_angry:process.env["HTS_VOICE_TAKUMI_ANGRY"]!,
+							takumi_happy:process.env["HTS_VOICE_TAKUMI_HAPPY"]!,
+							takumi_normal:process.env["HTS_VOICE_TAKUMI_NORMAL"]!,
+							takumi_sad:process.env["HTS_VOICE_TAKUMI_SAD"]!,
 						},
 						tokenizer
 					)
