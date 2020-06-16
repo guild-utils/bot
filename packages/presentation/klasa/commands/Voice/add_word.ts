@@ -22,7 +22,8 @@ export default class extends Command{
             await msg.guildSettings.update(GUILD_SETINGS.text2speechDictionary.join("."),{k:word,v:to,p,p1,p2,p3},{action:"add"});
             return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
         }
-        await msg.guildSettings.update(GUILD_SETINGS.text2speechDictionary.join("."),{k:word,v:to,p,p1,p2,p3},{action:"overwrite",arrayPosition:index});
+        arr[index]={k:word,v:to,p,p1,p2,p3};
+        await msg.guildSettings.update(GUILD_SETINGS.text2speechDictionary.join("."),arr,{action:"overwrite"});
         return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
     }
 

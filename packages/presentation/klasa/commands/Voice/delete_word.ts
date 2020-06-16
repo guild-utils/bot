@@ -11,7 +11,7 @@ export default class extends Command{
             usage:"<word:string>",
             runIn:["text"],
             aliases:["dw"],
-            description:lang=>lang.get(LANG_KEYS.COMMAND_END_DESCRIPTION),
+            description:lang=>lang.get(LANG_KEYS.COMMAND_DELETE_WORD_DESCRIPTION),
             usageDelim:" "
         });
     }

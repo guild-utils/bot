@@ -212,7 +212,10 @@ export default class extends Language {
 		COMMAND_ADD_WORD_DESCRIPTION:"単語を辞書に追加します。",
 		COMMAND_ADD_WORD_SUCCESS:"単語を辞書に追加しました。",
 		COMMAND_DELETE_WORD_DESCRIPTION:"単語を辞書から削除します。",
-		COMMAND_DELETE_WORD_SUCCESS:"単語を辞書から削除しました。"
+		COMMAND_DELETE_WORD_SUCCESS:"単語を辞書から削除しました。",
+		COMMAND_START_EXTENDED_HELP:arr=>{
+			return `声の種類はuserconf set speech.kind で変更できます。現在kindに設定できる値は以下のとおりです。\n${arr.join(",")}`
+		}
 	}
 	constructor(store: LanguageStore, file: string[], directory: string, options?: LanguageOptions) {
 		super(store,file,directory,options);

@@ -220,6 +220,12 @@ module.exports = class extends Language {
         COMMAND_ADD_WORD_SUCCESS:"Added a word to the dictionary.",
         COMMAND_DELETE_WORD_DESCRIPTION:"Delete a word from the dictionary.",
         COMMAND_DELETE_WORD_SUCCESS:"Deleted a word from the dictionary.",
+        COMMAND_START_EXTENDED_HELP:arr=>{
+            return `The type of voice can be changed with userconf set speech.kind.\n
+					Currently, the values that can be set to kind are as follows.\n
+					${arr.join(",")}
+                `;
+        }
     };
 
     async init() {
