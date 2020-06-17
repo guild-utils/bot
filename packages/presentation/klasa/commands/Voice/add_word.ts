@@ -22,7 +22,7 @@ export default class extends Command{
     }
     public async run(msg: KlasaMessage,[word,to,p,p1,p2,p3]:[string,string?,string?,string?,string?,string?]): Promise<KlasaMessage | KlasaMessage[] | null>{
         const arr:{k:string,v?:string,p?:string,p1?:string,p2?:string,p3?:string}[]=msg.guildSettings.get(GUILD_SETINGS.text2speechDictionary);
-        const index=arr.findIndex(({k,v}:{k:string,v?:string})=>word===k);
+        const index=arr.findIndex(({k,v}:{k:string,v?:string})=>toFullWidth(word)===k);
         if(index<0){
             await msg.guildSettings.update(GUILD_SETINGS.text2speechDictionary.join("."),{k:toFullWidth(word),v:to,p,p1,p2,p3},{action:"add"});
             return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
