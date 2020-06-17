@@ -60,9 +60,13 @@ KlasaClient.defaultUserSchema.add('speech',f=>{
 	f.add("kind","string",{default:"neutral",filter:(client,value,schema,lang)=>{
 		return !VoiceKindArray.includes(value);
 	}});
-	f.add("speed","float",{default:1.0,min:0.3});
+	f.add("speed","float",{default:1.0,min:0.3,filter:(client,value,schema,lang)=>{
+		return value<0.3;
+	}});
 	f.add("tone","float",{default:0.0});
-	f.add("volume","float",{default:0.0,max:10});
+	f.add("volume","float",{default:0.0,max:10,filter:(client,value,schema,lang)=>{
+		return value>10;
+	}});
 	f.add("readName","string");
 });
 
@@ -81,20 +85,24 @@ async function main(){
 						process.env["OPEN_JTALK_BIN"]!,
 						process.env["OPEN_JTALK_DIC"]!,
 						{
-							normal:process.env["HTS_VOICE_NORMAL"]!,
-							angry:process.env["HTS_VOICE_ANGRY"]!,
-							happy:process.env["HTS_VOICE_HAPPY"]!,
-							neutral:process.env["HTS_VOICE_NEUTRAL"]!,
-							sad:process.env["HTS_VOICE_SAD"]!,
-							mei_angry:process.env["HTS_VOICE_MEI_ANGRY"]!,
-							mei_bashful:process.env["HTS_VOICE_MEI_BASHFUL"]!,
-							mei_happy:process.env["HTS_VOICE_MEI_HAPPY"]!,
-							mei_normal:process.env["HTS_VOICE_MEI_NORMAL"]!,
-							mei_sad:process.env["HTS_VOICE_MEI_SAD"]!,
-							takumi_angry:process.env["HTS_VOICE_TAKUMI_ANGRY"]!,
-							takumi_happy:process.env["HTS_VOICE_TAKUMI_HAPPY"]!,
-							takumi_normal:process.env["HTS_VOICE_TAKUMI_NORMAL"]!,
-							takumi_sad:process.env["HTS_VOICE_TAKUMI_SAD"]!,
+							normal:{path:process.env["HTS_VOICE_NORMAL"]!},
+							angry:{path:process.env["HTS_VOICE_ANGRY"]!},
+							happy:{path:process.env["HTS_VOICE_HAPPY"]!},
+							neutral:{path:process.env["HTS_VOICE_NEUTRAL"]!},
+							sad:{path:process.env["HTS_VOICE_SAD"]!},
+							mei_angry:{path:process.env["HTS_VOICE_MEI_ANGRY"]!,volume_fix:1},
+							mei_bashful:{path:process.env["HTS_VOICE_MEI_BASHFUL"]!,volume_fix:1},
+							mei_happy:{path:process.env["HTS_VOICE_MEI_HAPPY"]!,volume_fix:1},
+							mei_normal:{path:process.env["HTS_VOICE_MEI_NORMAL"]!,volume_fix:1},
+							mei_sad:{path:process.env["HTS_VOICE_MEI_SAD"]!,volume_fix:1},
+							takumi_angry:{path:process.env["HTS_VOICE_TAKUMI_ANGRY"]!,volume_fix:1},
+							takumi_happy:{path:process.env["HTS_VOICE_TAKUMI_HAPPY"]!,volume_fix:1},
+							takumi_normal:{path:process.env["HTS_VOICE_TAKUMI_NORMAL"]!,volume_fix:1},
+							takumi_sad:{path:process.env["HTS_VOICE_TAKUMI_SAD"]!,volume_fix:1},
+							alpha:{path:process.env["HTS_VOICE_ALPHA"]!},
+							beta:{path:process.env["HTS_VOICE_BETA"]!},
+							delta:{path:process.env["HTS_VOICE_DELTA"]!},
+							gamma:{path:process.env["HTS_VOICE_GAMMA"]!}
 						},
 						tokenizer
 					)

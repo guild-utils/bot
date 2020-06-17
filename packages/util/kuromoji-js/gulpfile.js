@@ -28,7 +28,7 @@ gulp.task("clean", (done) => {
     ], done);
 });
 
-gulp.task("build", [ "clean" ], () => {
+gulp.task("build", gulp.series( "clean" , () => {
     return browserify({
         entries: [ "src/kuromoji.js" ],
         standalone: "kuromoji" // window.kuromoji
@@ -36,7 +36,7 @@ gulp.task("build", [ "clean" ], () => {
         .bundle()
         .pipe(source("kuromoji.js"))
         .pipe(gulp.dest("build/"));
-});
+}));
 
 gulp.task("watch", () => {
     gulp.watch([ "src/**/*.js", "test/**/*.js" ], [ "lint", "build", "jsdoc" ]);
@@ -74,7 +74,15 @@ gulp.task("create-dat-files", (done) => {
     }).then(() => {
         console.log('Finishied to read token info dics');
     });
-
+    const customTokeInfoPromise=new Promise((resolve)=>{
+        const entrys=[
+            "ｗ,5,5,100,記号,一般,*,*,*,*,わら,わら,わら"
+        ]
+        entrys.forEach(line=>{
+            builder.addTokenInfoDictionary(line);
+        });
+        resolve();
+    });
     // Build connection costs matrix
     const matrixDefPromise = dic.readMatrixDef((line) => {
         builder.putCostMatrixLine(line);
@@ -97,7 +105,7 @@ gulp.task("create-dat-files", (done) => {
     });
 
     // Build kuromoji.js binary dictionary
-    Promise.all([ tokenInfoPromise, matrixDefPromise, unkDefPromise, charDefPromise ]).then(() => {
+    Promise.all([ tokenInfoPromise, customTokeInfoPromise,matrixDefPromise, unkDefPromise, charDefPromise ]).then(() => {
         console.log('Finishied to read all seed dictionary files');
         console.log('Building binary dictionary ...');
         return builder.build();
@@ -142,16 +150,14 @@ gulp.task("clean-dat-files", (done) => {
     return del([ "dict/*.dat" ], done);
 });
 
-gulp.task("build-dict", [ "build", "clean-dict" ], () => {
-    sequence("create-dat-files", "compress-dict", "clean-dat-files");
-});
+gulp.task("build-dict", gulp.series( "build", "clean-dict" ,"create-dat-files", "compress-dict", "clean-dat-files"));
 
-gulp.task("test", [ "build" ], () => {
+gulp.task("test", gulp.series("build" , () => {
     return gulp.src("test/**/*.js", { read: false })
         .pipe(mocha({ reporter: "list" }));
-});
+}));
 
-gulp.task("coverage", [ "test" ], (done) => {
+gulp.task("coverage",gulp.series( [ "test" ]), (done) => {
     gulp.src([ "src/**/*.js" ])
         .pipe(istanbul())
         .pipe(istanbul.hookRequire())
@@ -173,7 +179,7 @@ gulp.task("clean-jsdoc", (done) => {
     return del([ "publish/jsdoc/" ], done);
 });
 
-gulp.task("jsdoc", [ "clean-jsdoc" ], (cb) => {
+gulp.task("jsdoc", gulp.series([ "clean-jsdoc" ]), (cb) => {
     var config = require('./jsdoc.json');
     gulp.src([ "src/**/*.js" ], {read: false})
         .pipe(jsdoc(config, cb));
@@ -183,7 +189,7 @@ gulp.task("clean-demo", (done) => {
     return del([ "publish/demo/" ], done);
 });
 
-gulp.task("copy-demo", [ "clean-demo", "build" ], () => {
+gulp.task("copy-demo",gulp.series( [ "clean-demo", "build" ]), () => {
     return merge(
         gulp.src('demo/**/*')
             .pipe(gulp.dest('publish/demo/')),
@@ -193,11 +199,11 @@ gulp.task("copy-demo", [ "clean-demo", "build" ], () => {
             .pipe(gulp.dest('publish/demo/kuromoji/dict/')));
 });
 
-gulp.task("build-demo", [ "copy-demo" ], () => {
+gulp.task("build-demo", gulp.series([ "copy-demo" ]), () => {
     return bower({ cwd: 'publish/demo/' });
 });
 
-gulp.task("webserver", [ "build-demo", "jsdoc" ], () => {
+gulp.task("webserver",gulp.series( [ "build-demo", "jsdoc" ]), () => {
     gulp.src("publish/")
         .pipe(webserver({
             port: 8000,
@@ -206,7 +212,7 @@ gulp.task("webserver", [ "build-demo", "jsdoc" ], () => {
         }));
 });
 
-gulp.task("deploy", [ "build-demo", "jsdoc" ], () => {
+gulp.task("deploy",gulp.series( [ "build-demo", "jsdoc" ]), () => {
     return gulp.src('publish/**/*')
         .pipe(ghPages());
 });
@@ -244,6 +250,6 @@ gulp.task("release-tag", function (callback) {
     });
 });
 
-gulp.task("release", [ "test" ], () => {
+gulp.task("release",gulp.series( [ "test" ]), () => {
     sequence("release-commit", "release-tag");
 });

@@ -3,11 +3,16 @@ import { OpenJTalkOptions, OpenJTalkHandle, Text2SpeechServiceOpenJtalk } from "
 import { autoInjectable, inject } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import { Readable } from "stream";
-type VoiceKind = "normal" | "angry" | "happy" | "neutral" | "sad"|"mei_angry"|"mei_bashful"|"mei_happy"|"mei_normal"|"mei_sad"|"takumi_angry"|"takumi_happy"|"takumi_normal"|"takumi_sad"
-export const VoiceKindArray = ["normal" , "angry" , "happy" , "neutral" , "sad","mei_angry","mei_bashful","mei_happy","mei_normal","mei_sad","takumi_angry","takumi_happy","takumi_normal","takumi_sad"]
+type VoiceKind = "normal" | "angry" | "happy" | "neutral" | "sad"|"mei_angry"|"mei_bashful"|"mei_happy"|"mei_normal"|"mei_sad"|"takumi_angry"|"takumi_happy"|"takumi_normal"|"takumi_sad"|"alpha"|"beta"|"gamma"|"delta";
+export const VoiceKindArray = ["normal" , "angry" , "happy" , "neutral" , "sad","mei_angry","mei_bashful","mei_happy","mei_normal","mei_sad","takumi_angry","takumi_happy","takumi_normal","takumi_sad","alpha","beta","gamma","delta"];
 export type Opt = OpenJTalkOptions<VoiceKind> & { readName?: string, dictionary: { [k in string]: { k: string, v?: string, p?: string, p1?: string, p2?: string, p3?: string } } };
 export type Hnd = OpenJTalkHandle;
 type Data = { hnd: Hnd, prepare?: Promise<void>, load?: Promise<Readable | undefined> };
+function toFullWidth(elm:string) {
+    return elm.replace(/[A-Za-z0-9!-~]/g, function(s){
+        return String.fromCharCode(s.charCodeAt(0)+0xFEE0);
+    });
+}
 @autoInjectable()
 export default class {
     private readonly waitQueue = new Map<string, Data[]>();
@@ -15,10 +20,14 @@ export default class {
     constructor(
         pathToOpneJTalk: string,
         pathToDict: string,
-        mapOfKind2HtsVoice: { [k in VoiceKind]: string },
+        private readonly mapOfKind2HtsVoice: { [k in VoiceKind]: {path:string,volume_fix?:number} },
         @inject("kuromoji") private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
     ) {
-        this.text2SpeechService = new Text2SpeechServiceOpenJtalk(pathToOpneJTalk, pathToDict, mapOfKind2HtsVoice, process.env["OPEN_JTALK_INPUT_CHARSET"] ?? "utf8")
+        const obj={};
+        for(let k of Object.keys(mapOfKind2HtsVoice)){
+            obj[k]=mapOfKind2HtsVoice[k].path;
+        }
+        this.text2SpeechService = new Text2SpeechServiceOpenJtalk(pathToOpneJTalk, pathToDict, obj, process.env["OPEN_JTALK_INPUT_CHARSET"] ?? "utf8")
     }
     async register(conn: VoiceConnection) {
         this.waitQueue.set(conn.channel.id, []);
@@ -36,13 +45,15 @@ export default class {
             this.playNext(conn)
         }
     }
+
     async queue(conn: VoiceConnection, text: string, opt: Opt) {
         let remake_sentenses: string = "";
         let sentenses = text.split("\n").join("。");
+        const vf=this.mapOfKind2HtsVoice[opt.kind].volume_fix??0;
         if (opt.readName) {
             sentenses = opt.readName + "。" + sentenses;
         }
-
+        sentenses=toFullWidth(sentenses);
         const arr: string[] = []
         for (let e2 of this.tokenizer.tokenize(sentenses)) {
             const e3 = opt.dictionary[e2.surface_form];
@@ -72,9 +83,9 @@ export default class {
             }
         }
         remake_sentenses = arr.join("");
-
-        await this.queueRaw(conn, remake_sentenses, opt)
-
+        const copy={...opt};
+        copy.volume+=vf;
+        await this.queueRaw(conn, remake_sentenses, copy)
     }
     private async playNext(conn: VoiceConnection) {
         const cid = conn.channel.id;

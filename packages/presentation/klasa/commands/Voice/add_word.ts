@@ -1,6 +1,11 @@
 import {Command,CommandStore,KlasaMessage} from 'klasa';
 import * as GUILD_SETINGS from "../../guild_settings_keys";
 import * as LANG_KEYS from "../../lang_keys";
+function toFullWidth(elm:string) {
+    return elm.replace(/[A-Za-z0-9!-~]/g, function(s){
+        return String.fromCharCode(s.charCodeAt(0)+0xFEE0);
+    });
+}
 export default class extends Command{
     constructor(
         store: CommandStore,
@@ -19,10 +24,10 @@ export default class extends Command{
         const arr:{k:string,v?:string,p?:string,p1?:string,p2?:string,p3?:string}[]=msg.guildSettings.get(GUILD_SETINGS.text2speechDictionary);
         const index=arr.findIndex(({k,v}:{k:string,v?:string})=>word===k);
         if(index<0){
-            await msg.guildSettings.update(GUILD_SETINGS.text2speechDictionary.join("."),{k:word,v:to,p,p1,p2,p3},{action:"add"});
+            await msg.guildSettings.update(GUILD_SETINGS.text2speechDictionary.join("."),{k:toFullWidth(word),v:to,p,p1,p2,p3},{action:"add"});
             return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
         }
-        arr[index]={k:word,v:to,p,p1,p2,p3};
+        arr[index]={k:toFullWidth(word),v:to,p,p1,p2,p3};
         await msg.guildSettings.update(GUILD_SETINGS.text2speechDictionary.join("."),arr,{action:"overwrite"});
         return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
     }

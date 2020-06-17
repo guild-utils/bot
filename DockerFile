@@ -43,13 +43,18 @@ ENV HTS_VOICE_TAKUMI_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_E
 ENV HTS_VOICE_TAKUMI_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/takumi/takumi_happy.htsvoice
 ENV HTS_VOICE_TAKUMI_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/takumi/takumi_normal.htsvoice
 ENV HTS_VOICE_TAKUMI_SAD /usr/app/packages/util/open-jtalk/htsvoice/MMDAgent_Example-1.8/Voice/takumi/takumi_sad.htsvoice
+ENV HTS_VOICE_ALPHA /usr/app/packages/util/open-jtalk/htsvoice/VoiceAlpha.htsvoice
+ENV HTS_VOICE_BETA /usr/app/packages/util/open-jtalk/htsvoice/VoiceBeta.htsvoice
+ENV HTS_VOICE_GAMMA /usr/app/packages/util/open-jtalk/htsvoice/VoiceGamma.htsvoice
+ENV HTS_VOICE_DELTA /usr/app/packages/util/open-jtalk/htsvoice/VoiceDelta.htsvoice
 
-ENV KUROMOJI_DIC_PATH /usr/app/node_modules/kuromoji/dict
+ENV KUROMOJI_DIC_PATH /usr/app/packages/util/kuromoji-js/dict
 
 COPY --from=build-bin /usr/local/bin/open_jtalk /usr/local/bin/open_jtalk
 COPY --from=build-bin /usr/local/dic /usr/local/dic
 
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
+COPY packages/util/kuromoji-js/dict /usr/app/packages/util/kuromoji-js/dict
 COPY kick.js ./
 COPY lerna.json ./
 COPY tsconfig.json ./

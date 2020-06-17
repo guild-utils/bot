@@ -7,7 +7,7 @@ import { inject, autoInjectable } from "tsyringe";
 import * as USER_SETTINGS from "../user_settings_keys";
 import * as GUILD_SETINGS from "../guild_settings_keys";
 const urlRegex=/https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/
-const markRegex=/^[!"#$%&'()\*\+\-\.,\/:;<=>?@\[\\\]^_`{|}~].*/;
+const markRegex=/^[!"#$%&'()\*\+\-\.,\/:;<=>?\[\\\]^_`{|}~].*/;
 @autoInjectable()
 export default class extends Monitor {
     constructor(store: MonitorStore, file: string[], directory: string,@inject("engine") private readonly engine:Engine) {
@@ -40,10 +40,18 @@ export default class extends Monitor {
         if(content.startsWith(";")){
             return;
         }
+        console.log(content)
+        content=content.replace(/\<\@(\d*)\>/g,(e,m)=>{
+            const member=message.guild?.members.resolve(m);
+            console.log(member?.user?.settings);
+            return member?.user.settings.get(USER_SETTINGS.text2speechReadName)??member?.displayName??"";
+        });
         if(markRegex.test(content)){
             return;
         }
         content=content.replace(urlRegex,"\nURL省略\n");
+
+
         const kind=message.member?.user.settings.get(USER_SETTINGS.text2speechKind);
         let speed=message.member?.user.settings.get(USER_SETTINGS.text2speechSpeed);
         if(speed<0.5){

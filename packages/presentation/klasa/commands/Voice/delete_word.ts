@@ -1,6 +1,11 @@
 import {Command,CommandStore,KlasaMessage} from 'klasa';
 import * as GUILD_SETINGS from "../../guild_settings_keys";
 import * as LANG_KEYS from "../../lang_keys";
+function toFullWidth(elm:string) {
+    return elm.replace(/[A-Za-z0-9!-~]/g, function(s){
+        return String.fromCharCode(s.charCodeAt(0)+0xFEE0);
+    });
+}
 export default class extends Command{
     constructor(
         store: CommandStore,
@@ -17,7 +22,7 @@ export default class extends Command{
     }
     public async run(msg: KlasaMessage,[word]:[string]): Promise<KlasaMessage | KlasaMessage[] | null>{
         const arr:{k:string,v?:string,p?:string,p1?:string,p2?:string,p3?:string}[]=msg.guildSettings.get(GUILD_SETINGS.text2speechDictionary);
-        const index=arr.findIndex(({k,v}:{k:string,v?:string,p?:string,p1?:string,p2?:string,p3?:string})=>word===k);
+        const index=arr.findIndex(({k,v}:{k:string,v?:string,p?:string,p1?:string,p2?:string,p3?:string})=>toFullWidth(word)===k);
         if(index<0){
             return msg.sendLocale(LANG_KEYS.COMMAND_DELETE_WORD_SUCCESS);
         }

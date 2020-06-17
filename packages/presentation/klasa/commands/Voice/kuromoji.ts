@@ -2,6 +2,11 @@ import {Command,CommandStore,KlasaMessage} from 'klasa';
 import * as LANG_KEYS from "../../lang_keys";
 import * as kuromoji from "kuromoji";
 import { autoInjectable, inject } from 'tsyringe';
+function toFullWidth(elm:string) {
+    return elm.replace(/[A-Za-z0-9!-~]/g, function(s){
+        return String.fromCharCode(s.charCodeAt(0)+0xFEE0);
+    });
+}
 @autoInjectable()
 export default class extends Command{
     constructor(
@@ -17,8 +22,7 @@ export default class extends Command{
         });
     }
     public async run(msg: KlasaMessage,[text]:[string]): Promise<KlasaMessage | KlasaMessage[] | null>{
-        console.log(text)
-        return msg.send("```"+this.tokenizer.tokenize(text).map(e=>`${e.surface_form}(${e.pos},${e.pos_detail_1},${e.pos_detail_2},${e.pos_detail_3},${e.reading},${e.pronunciation})`).join(",")+"```");
+        return msg.send("```"+this.tokenizer.tokenize(toFullWidth(text)).map(e=>`${e.surface_form}(${e.pos},${e.pos_detail_1},${e.pos_detail_2},${e.pos_detail_3},${e.reading},${e.pronunciation})`).join(",")+"```");
     }
 
 }
