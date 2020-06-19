@@ -41,12 +41,6 @@ KlasaClient.defaultGuildSchema.add('event',f=>{
 	f.add("notificationChannel","TextChannel")
 	f.add("nextTaskId","string",{configurable:false})
 });
-KlasaClient.defaultGuildSchema.add('counter',f=>{
-	f.add("displayChannels","channel",{
-		configurable:false,
-		array:true,
-	});
-});
 KlasaClient.defaultGuildSchema.add('speech',f=>{
 	f.add("targets","TextChannel",{
 		configurable:false,

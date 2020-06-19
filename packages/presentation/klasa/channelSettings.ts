@@ -34,10 +34,5 @@ declare module 'discord.js'{
 export function initChannelsGateway(gateways:GatewayDriver){
     return gateways.register('channels', {
         schema:new Schema()
-            .add("counter",f=>{
-                f.add("role","role")
-                f.add("format","string")
-                f.add("type","string")
-            }),
     });
 }

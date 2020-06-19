@@ -1,4 +1,5 @@
 import { KlasaClientOptions } from 'klasa';
+import { Intents } from 'discord.js';
 
 export const config: KlasaClientOptions = {
     gateways:{
@@ -24,7 +25,8 @@ export const config: KlasaClientOptions = {
 				idleTimeoutMillis: Number(process.env["POSTGRESS_IDLE_TIMEOUT"])??30000,
 				connectionTimeoutMillis: 2000
 			}
-		}:undefined
+		}:undefined,
+
 	},
 	/**
 	 * Console Options
@@ -44,6 +46,9 @@ export const config: KlasaClientOptions = {
 	},
 	language:"ja_JP",
 	prefix:"$",
+	ws:{
+		intents:Intents.FLAGS.DIRECT_MESSAGES|Intents.FLAGS.GUILD_MESSAGES|Intents.FLAGS.GUILDS
+	},
 	production:process.env.NODE_ENV === 'production',
 }
 
