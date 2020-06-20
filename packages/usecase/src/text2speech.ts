@@ -50,7 +50,7 @@ export type OpenJTalkHandle={
     pathToCreatedFile?:fs.PathLike
 }
 export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Text2SpeechService<OpenJTalkOptions<VoiceKind>,OpenJTalkHandle>{
-    constructor(private readonly pathtoOpenJTalk:string,private readonly pathToDict:string,private readonly mapOfKind2HtsVoice:{[k in VoiceKind]:string},private readonly charset:string){
+    constructor(private readonly pathtoOpenJTalk:string,private readonly pathToDict:string,private readonly mapOfKind2HtsVoice:{[k in VoiceKind]:string},private readonly charset:string|undefined){
 
     }
     async spawn(hnd:OpenJTalkHandle,opt:OpenJTalkSpownOptions,text:string):Promise<void>{
@@ -63,13 +63,17 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Te
             console.log(stdout);
             console.log(stderr);
         });
-        const conv=encodeStream(this.charset);
-        conv.on("error",(...args)=>{
-            console.log(args)
-        });
-        conv.pipe(cp.stdin!);
-        conv.write(text);
-        conv.end();
+        if(this.charset){
+            const conv=encodeStream(this.charset);
+            conv.on("error",(...args)=>{
+                console.log(args)
+            });
+            conv.pipe(cp.stdin!);
+            conv.write(text);
+            conv.end();
+        }else{
+            cp.stdin?.write(text);
+        }
         cp.stdin?.end();
         cp.stdin?.on("error",(err)=>{
             console.log(err)

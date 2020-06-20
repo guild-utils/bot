@@ -27,7 +27,7 @@ export default class {
         for(let k of Object.keys(mapOfKind2HtsVoice)){
             obj[k]=mapOfKind2HtsVoice[k].path;
         }
-        this.text2SpeechService = new Text2SpeechServiceOpenJtalk(pathToOpneJTalk, pathToDict, obj, process.env["OPEN_JTALK_INPUT_CHARSET"] ?? "utf8")
+        this.text2SpeechService = new Text2SpeechServiceOpenJtalk(pathToOpneJTalk, pathToDict, obj, process.env["OPEN_JTALK_INPUT_CHARSET"])
     }
     async register(conn: VoiceConnection) {
         this.waitQueue.set(conn.channel.id, []);
