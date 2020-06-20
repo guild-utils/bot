@@ -47,7 +47,7 @@ export const config: KlasaClientOptions = {
 	language:"ja_JP",
 	prefix:"$",
 	ws:{
-		intents:Intents.FLAGS.DIRECT_MESSAGES|Intents.FLAGS.GUILD_MESSAGES|Intents.FLAGS.GUILDS
+		intents:Intents.FLAGS.DIRECT_MESSAGES|Intents.FLAGS.GUILD_MESSAGES|Intents.FLAGS.GUILDS|Intents.FLAGS.GUILD_VOICE_STATES
 	},
 	production:process.env.NODE_ENV === 'production',
 }

@@ -40,7 +40,6 @@ export default class extends Monitor {
         if(content.startsWith(";")){
             return;
         }
-        console.log(content)
         content=content.replace(/\<\@\!?(\d+)\>/g,(e,m)=>{
             const member=message.guild?.members.resolve(m);
             return member?.user.settings.get(USER_SETTINGS.text2speechReadName)??member?.displayName??"";
