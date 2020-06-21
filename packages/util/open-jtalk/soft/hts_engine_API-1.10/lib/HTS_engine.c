@@ -58,6 +58,7 @@ HTS_ENGINE_C_START;
 #include <stdlib.h>             /* for atof() */
 #include <string.h>             /* for strcpy() */
 #include <math.h>               /* for pow() */
+#include <opusenc.h>
 
 /* hts_engine libraries */
 #include "HTS_hidden.h"
@@ -744,7 +745,38 @@ void HTS_Engine_save_riff(HTS_Engine * engine, FILE * fp)
       HTS_fwrite_little_endian(&temp, sizeof(short), 1, fp);
    }
 }
-
+int HTS_Engine_save_ogg(HTS_Engine * engine,const char* path){
+  int i;
+  double x;
+  short temp;
+  HTS_GStreamSet *gss = &engine->gss;
+  int length=HTS_GStreamSet_get_total_nsamples(gss);
+  OggOpusEnc *enc;
+  OggOpusComments *comments;
+  int error;
+  comments = ope_comments_create();
+  enc = ope_encoder_create_file(path, comments, 44100, 2, 0, &error);
+  if (!enc) {
+    fprintf(stderr, "error encoding to file %s: %s\n",path, ope_strerror(error));
+    ope_comments_destroy(comments);
+    return FALSE;
+  }
+  for (i=0;i<length;++i) {
+   x = HTS_GStreamSet_get_speech(gss, i);
+   if (x > 32767.0){
+      temp = 32767;
+   }else if (x < -32768.0){
+      temp = -32768;
+   }else{
+      temp = (short) x;
+   }
+   ope_encoder_write(enc, &temp, 2);
+  }
+  ope_encoder_drain(enc);
+  ope_encoder_destroy(enc);
+  ope_comments_destroy(comments);
+  return TRUE;
+}
 /* HTS_Engine_refresh: free model per one time synthesis */
 void HTS_Engine_refresh(HTS_Engine * engine)
 {

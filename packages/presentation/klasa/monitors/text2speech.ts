@@ -62,7 +62,6 @@ export default class extends Monitor {
             message.member?.user.settings.get(USER_SETTINGS.text2speechReadName)??message.member!.displayName
                 :undefined;
         const dictionaryArr=message.guildSettings.get(GUILD_SETINGS.text2speechDictionary);
-        console.log(dictionaryArr)
         const dictionary:{[k in string]:{k:string,v?:string,p?:string,p1?:string,p2?:string,p3?:string}}={};
         for(let entry  of dictionaryArr){
             dictionary[entry.k]=entry;

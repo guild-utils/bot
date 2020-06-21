@@ -1,0 +1,125 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>不明 </title></head><body>
+<h1 id="what-is-juman">What is Juman++</h1>
+<p>A new morphological analyser that considers semantic plausibility of 
+word sequences by using a recurrent neural network language model (RNNLM).
+Version 2 has better accuracy and greatly (&gt;250x) improved analysis speed than
+the original Juman++.</p>
+<p><a href="https://travis-ci.org/ku-nlp/jumanpp"><img alt="Build Status" src="https://travis-ci.org/ku-nlp/jumanpp.svg?branch=master" /></a></p>
+<h1 id="installation">Installation</h1>
+<h2 id="system-requirements">System Requirements</h2>
+<ul>
+<li>OS: Linux, MacOS X or Windows.</li>
+<li>Compiler: C++14 compatible (will <a href="https://github.com/ku-nlp/jumanpp/issues/20">downgrade to C++11</a> later)</li>
+<li>For, example gcc 5.1+, clang 3.4+, MSVC 2017</li>
+<li>We test on GCC and clang on Linux/MacOS, mingw64-gcc and MSVC2017 on Windows</li>
+<li>CMake v3.1 or later</li>
+</ul>
+<p>Read <a href="docs/building.md">this document</a> for CentOS and RHEL derivatives or non-CMake alternatives.</p>
+<h2 id="building-from-a-package">Building from a package</h2>
+<p>Download the package from <a href="https://github.com/ku-nlp/jumanpp/releases">Releases</a></p>
+<p><strong>Important</strong>: The download should be around 300 MB. If it is not you have probably downloaded a source snapshot which does not contain a model.</p>
+<p><code>bash
+$ tar xf jumanpp-&lt;version&gt;.tar.xz # decompress the package
+$ cd jumanpp-&lt;version&gt; # move into the directory
+$ mkdir bld # make a subdirectory for build
+$ cd bld
+$ cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \ # you want to do this for performance
+  -DCMAKE_INSTALL_PREFIX=&lt;prefix&gt; # where to install Juman++
+$ make install -j&lt;parallelism&gt;</code></p>
+<h2 id="building-from-git">Building from git</h2>
+<p><strong>Important</strong>: Only the package distribution contains a pretrained model and can be used for analysis. 
+The current git version is not compatible with the models of 2.0-rc1 and 2.0-rc2.</p>
+<p><code>bash
+$ mkdir cmake-build-dir # CMake does not support in-source builds
+$ cd cmake-build-dir
+$ cmake ..
+$ make # -j</code></p>
+<h1 id="usage">Usage</h1>
+<h2 id="quick-start">Quick start</h2>
+<p><code>% echo "魅力がたっぷりと詰まっている" | jumanpp
+魅力 みりょく 魅力 名詞 6 普通名詞 1 * 0 * 0 "代表表記:魅力/みりょく カテゴリ:抽象物"
+が が が 助詞 9 格助詞 1 * 0 * 0 NIL
+たっぷり たっぷり たっぷり 副詞 8 * 0 * 0 * 0 "自動認識"
+と と と 助詞 9 格助詞 1 * 0 * 0 NIL
+詰まって つまって 詰まる 動詞 2 * 0 子音動詞ラ行 10 タ系連用テ形 14 "代表表記:詰まる/つまる ドメイン:料理・食事 自他動詞:他:詰める/つめる"
+いる いる いる 接尾辞 14 動詞性接尾辞 7 母音動詞 1 基本形 2 "代表表記:いる/いる"
+EOS</code></p>
+<h2 id="main-options">Main options</h2>
+<p><code>usage: jumanpp [options] 
+  -s, --specifics              lattice format output (unsigned int [=5])
+  --beam &lt;int&gt;                 set local beam width used in analysis (unsigned int [=5])
+  -v, --version                print version
+  -h, --help                   print this message
+  --model &lt;file&gt;               specify a model location</code></p>
+<p>Use <code>--help</code> to see more options.</p>
+<h2 id="input">Input</h2>
+<p>JUMAN++ can handle only utf-8 encoded text as an input.
+Lines beginning with <code>#</code> will be interpreted as comments.</p>
+<h1 id="other">Other</h1>
+<h2 id="demo">DEMO</h2>
+<p>You can play around our <a href="https://tulip.kuee.kyoto-u.ac.jp/demo/jumanpp_lattice?text=%E5%A4%96%E5%9B%BD%E4%BA%BA%E5%8F%82%E6%94%BF%E6%A8%A9%E3%81%AB%E5%AF%BE%E3%81%99%E3%82%8B%E8%80%83%E3%81%88%E6%96%B9%E3%81%AE%E9%81%95%E3%81%84">web demo</a>
+which displays a subset of the whole lattice.
+The demo still uses v1 but, it will be updated to v2 soon.</p>
+<h2 id="extracting-diffs-caused-by-beam-configurations">Extracting diffs caused by beam configurations</h2>
+<p>You can see sentences in which two different beam configurations produce different analyses.
+A <code>src/jumandic/jpp_jumandic_pathdiff</code> binary <a href="https://github.com/ku-nlp/jumanpp/blob/master/src/jumandic/main/path_diff.cc">(source)</a> 
+(relative to a compilation root) does it.
+The only Jumandic-specific thing here is the usage of <a href="https://github.com/ku-nlp/jumanpp/blob/master/src/jumandic/main/path_diff.cc#L195">code-generated linear model inference</a>.</p>
+<p>Use the binary as <code>jpp_jumandic_pathdiff &lt;model&gt; &lt;input&gt; &gt; &lt;output&gt;</code>.</p>
+<p>Outputs would be in the partial annotation format with a full beam results being the actual tags and trimmed beam results being written as comments.</p>
+<p>Example: 
+```</p>
+<h1 id="scores-0602687-120004">scores: -0.602687 -1.20004</h1>
+<h1 id="pos-subpos-trimmed-beam-result">子がい        pos:名詞        subpos:普通名詞 &lt;------- trimmed beam result</h1>
+<h1 id="s-idw201007-0080605751-6-count2">S-ID:w201007-0080605751-6 COUNT:2</h1>
+<p>熊本選抜にはマリノス、アントラーズのユースに行く
+        子      pos:名詞        subpos:普通名詞 &lt;------- full beam result
+        が      pos:助詞        subpos:格助詞
+        い      baseform:いる   conjtype:母音動詞       pos:動詞        conjform:基本連用形
+ます
+```</p>
+<h2 id="partial-annotation-tool">Partial Annotation Tool</h2>
+<p>We also have a partial annotation tool. Please see https://github.com/eiennohito/nlp-tools-demo for details.</p>
+<h2 id="performance-notes">Performance Notes</h2>
+<p>To get the best performance, you need to build with <a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html">extended instruction sets</a>.
+If you are planning to use Juman++ only locally,
+specify <code>-DCMAKE_CXX_FLAGS="-march=native"</code>.</p>
+<p>Works best on Intel Haswell and newer processors (because of FMA and BMI instruction set extensions).</p>
+<h2 id="using-juman-to-create-your-own-morphological-analyzer">Using Juman++ to create your own Morphological Analyzer</h2>
+<p>Juman++ is a general tool. 
+It does not depend on Jumandic or Japanese Language 
+(albeit there are some Japanese-specific functionality).
+See <a href="https://github.com/eiennohito/jumanpp-t9">this tutorial project</a>
+which shows how to implement a something similar to a 
+<a href="https://en.wikipedia.org/wiki/T9_(predictive_text)">T9 text input</a>
+for the case when there are no word boundaries in the input text.</p>
+<h2 id="publications-and-slides">Publications and Slides</h2>
+<ul>
+<li>
+<p>About the model itself: <em>Morphological Analysis for Unsegmented Languages using Recurrent Neural Network Language Model</em>. Hajime Morita, Daisuke Kawahara, Sadao Kurohashi. EMNLP 2015 <a href="http://aclweb.org/anthology/D15-1276">link</a>, <a href="https://aclanthology.coli.uni-saarland.de/papers/D15-1276/d15-1276.bib">bibtex</a>.</p>
+</li>
+<li>
+<p>V2 Improvments: <em>Juman++ v2: A Practical and Modern Morphological Analyzer</em>. Arseny Tolmachev and Kurohashi Sadao. The Proceedings of the Twenty-fourth Annual Meeting of the Association for Natural Language Processing. March 2018, Okayama, Japan. (<a href="http://www.anlp.jp/proceedings/annual_meeting/2018/pdf_dir/A5-2.pdf">pdf</a>, <a href="https://www.slideshare.net/eiennohito/juman-v2-a-practical-and-modern-morphological-analyzer">slides</a>)</p>
+</li>
+<li>
+<p>Morphological Analysis Workshop in ANLP2018 Slides: 形態素解析システムJuman++. 河原 大輔, Arseny Tolmachev. (in Japanese) <a href="https://drive.google.com/file/d/1DVnrsWw4skRgC8jU6_RkeofOQEHFwctc/view?usp=sharing">slides</a>.</p>
+</li>
+<li>
+<p><em>Juman++: A Morphological Analysis Toolkit for Scriptio Continua.</em> Arseny Tolmachev, Daisuke Kawahara and Sadao Kurohashi. EMNLP 2018, Brussels. <a href="http://aclweb.org/anthology/D18-2010">pdf</a>, <a href="https://drive.google.com/file/d/1SeiYP2z4Hb1Q0IhIe_3ydSIjCMhxnKIS/view?usp=sharing">poster</a>, <a href="https://aclanthology.coli.uni-saarland.de/papers/D18-2010/d18-2010.bib">bibtex</a>.</p>
+</li>
+</ul>
+<p>If you use Juman++ V1 in academic setting, then please cite the first work (EMNLP2015). If you use Juman++ V2, then please cite both the first and the fourth (EMNLP2018) papers. </p>
+<h2 id="authors">Authors</h2>
+<ul>
+<li>Arseny Tolmachev <arseny **at** kotonoha.ws></li>
+<li>Hajime Morita <hmorita  **at** i.kyoto-u.ac.jp>  </li>
+<li>Daisuke Kawahara <dk  **at** i.kyoto-u.ac.jp>  </li>
+<li>Sadao Kurohashi <kuro  **at** i.kyoto-u.ac.jp></li>
+</ul>
+<h2 id="acknowledgement">Acknowledgement</h2>
+<p>The list of all libraries used by JUMAN++ is <a href="libs/README.md">here</a>.</p>
+<h2 id="notice">Notice</h2>
+<p>This is a branch for the Juman++ rewrite.
+The original version lives in the <a href="https://github.com/ku-nlp/jumanpp/tree/legacy">legacy</a> branch.</p>
+</body></html>

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        ".nyagos": "lua",
+        "xstring": "cpp"
+    }
+}

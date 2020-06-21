@@ -62,7 +62,6 @@ OPEN_JTALK_C_START;
 #include "njd.h"
 #include "jpcommon.h"
 #include "HTS_engine.h"
-
 /* Sub headers */
 #include "text2mecab.h"
 #include "mecab2njd.h"
@@ -82,6 +81,10 @@ typedef struct _Open_JTalk {
    JPCommon jpcommon;
    HTS_Engine engine;
 } Open_JTalk;
+
+
+
+
 
 static void Open_JTalk_initialize(Open_JTalk * open_jtalk)
 {
@@ -166,7 +169,7 @@ static void Open_JTalk_set_audio_buff_size(Open_JTalk * open_jtalk, size_t i)
    HTS_Engine_set_audio_buff_size(&open_jtalk->engine, i);
 }
 
-static int Open_JTalk_synthesis(Open_JTalk * open_jtalk, const char *txt, FILE * wavfp,
+static int Open_JTalk_synthesis(Open_JTalk * open_jtalk, const char *txt, FILE * wavfp,const char* oggPath,
                                 FILE * logfp)
 {
    int result = 0;
@@ -191,6 +194,9 @@ static int Open_JTalk_synthesis(Open_JTalk * open_jtalk, const char *txt, FILE *
          result = 1;
       if (wavfp != NULL)
          HTS_Engine_save_riff(&open_jtalk->engine, wavfp);
+      if(oggPath!=NULL){
+         HTS_Engine_save_ogg(&open_jtalk->engine,oggPath);
+      }
       if (logfp != NULL) {
          fprintf(logfp, "[Text analysis result]\n");
          NJD_fprint(&open_jtalk->njd, logfp);
@@ -211,8 +217,9 @@ static int Open_JTalk_synthesis(Open_JTalk * open_jtalk, const char *txt, FILE *
 static void usage()
 {
    fprintf(stderr, "The Japanese TTS System \"Open JTalk\"\n");
-   fprintf(stderr, "Version 1.10 (http://open-jtalk.sourceforge.net/)\n");
+   fprintf(stderr, "Version 1.11a (https://gitlab.com/tignear/pwrd-event/-/tree/master/packages/util/open-jtalk/soft/open_jtalk-1.11)\n");
    fprintf(stderr, "Copyright (C) 2008-2016 Nagoya Institute of Technology\n");
+   fprintf(stderr, "              2020 tignear\n");
    fprintf(stderr, "All rights reserved.\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "%s", HTS_COPYRIGHT);
@@ -244,9 +251,12 @@ static void usage()
    fprintf(stderr,
            "    -m  htsvoice   : HTS voice files                                         [  N/A]\n");
    fprintf(stderr,
+           "    -oo s          : filename of output opus ogg audio (generated speech)    [  N/A]\n");
+   fprintf(stderr,
            "    -ow s          : filename of output wav audio (generated speech)         [  N/A]\n");
    fprintf(stderr,
            "    -ot s          : filename of output trace information                    [  N/A]\n");
+
    fprintf(stderr,
            "    -s  i          : sampling frequency                                      [ auto][   1--    ]\n");
    fprintf(stderr,
@@ -300,7 +310,7 @@ int main(int argc, char **argv)
    /* output file pointers */
    FILE *wavfp = NULL;
    FILE *logfp = NULL;
-
+   const char* oggfn=NULL;
    /* output usage */
    if (argc == 1)
       usage();
@@ -348,6 +358,9 @@ int main(int argc, char **argv)
                break;
             case 't':
                logfp = fopen(*++argv, "wt");
+               break;
+            case 'o':
+               oggfn=*++argv;
                break;
             default:
                fprintf(stderr, "Error: Invalid option '-o%c'.\n", *(*argv + 2));
@@ -433,10 +446,9 @@ int main(int argc, char **argv)
          txtfp = fopen(txtfn, "rt");
       }
    }
-
    /* synthesize */
    fgets(buff, MAXBUFLEN - 1, txtfp);
-   if (Open_JTalk_synthesis(&open_jtalk, buff, wavfp, logfp) != TRUE) {
+   if (Open_JTalk_synthesis(&open_jtalk, buff, wavfp, oggfn,logfp) != TRUE) {
       fprintf(stderr, "Error: waveform cannot be synthesized.\n");
       Open_JTalk_clear(&open_jtalk);
       exit(1);

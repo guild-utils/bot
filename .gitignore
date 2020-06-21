@@ -15,3 +15,11 @@ lib
 *.log
 # Ignore package locks
 package-lock.json
+.git
+!packages/util/open-jtalk/**/lib
+!packages/util/jumanpp-2.0.0-rc3/**/lib
+*.lib
+*.so
+*.obj
+*.so
+out/

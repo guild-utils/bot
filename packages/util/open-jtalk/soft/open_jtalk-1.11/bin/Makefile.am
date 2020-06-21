@@ -17,7 +17,7 @@ AM_CPPFLAGS = -I @top_srcdir@/text2mecab \
               -I @top_srcdir@/njd_set_long_vowel \
               -I @top_srcdir@/njd2jpcommon \
               -I @top_srcdir@/jpcommon \
-              -I @HTS_ENGINE_HEADER_DIR@
+              -I @HTS_ENGINE_HEADER_DIR@ 
 
 bin_PROGRAMS = open_jtalk
 
@@ -33,6 +33,8 @@ open_jtalk_LDADD = @top_srcdir@/text2mecab/libtext2mecab.a \
                    @top_srcdir@/njd_set_long_vowel/libnjd_set_long_vowel.a \
                    @top_srcdir@/njd2jpcommon/libnjd2jpcommon.a \
                    @top_srcdir@/jpcommon/libjpcommon.a \
-                   @HTS_ENGINE_LIBRARY@ -lstdc++
+                   @HTS_ENGINE_LIBRARY@ -lstdc++ \
+                   @LIBOPUSENC_LIBRARY@ \
+                   @OPUS_LIBRARY@
 
 open_jtalk_SOURCES = open_jtalk.c

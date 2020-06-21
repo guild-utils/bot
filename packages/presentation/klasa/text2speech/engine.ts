@@ -33,7 +33,6 @@ export default class {
         this.waitQueue.set(conn.channel.id, []);
     }
     private async queueRaw(conn: VoiceConnection, text: string, opt: Opt) {
-        console.log(text);
         const cid = conn.channel.id;
         const hnd = this.text2SpeechService.makeHandle();
         const queue = this.waitQueue.get(cid) ?? [];
@@ -96,9 +95,7 @@ export default class {
         await queue[0].prepare;
         if (!queue[0].load) {
             queue[0].load = this.text2SpeechService.loadVoice(queue[0].hnd);
-            console.log("loading");
         } else {
-            console.log("preload");
         }
         const stream = await queue[0].load;
         if (queue.length >= 2) {

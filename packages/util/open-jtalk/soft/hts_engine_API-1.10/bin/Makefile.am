@@ -7,7 +7,9 @@ bin_PROGRAMS = hts_engine
 
 hts_engine_SOURCES = hts_engine.c 
 
-hts_engine_LDADD = ../lib/libHTSEngine.a
+hts_engine_LDADD = ../lib/libHTSEngine.a \
+          @LIBOPUSENC_LIBRARY@ \
+          @OPUS_LIBRARY@
 
 DISTCLEANFILES = *.log *.out *~
 

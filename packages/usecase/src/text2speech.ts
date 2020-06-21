@@ -33,6 +33,7 @@ type OpenJTalkSpownOptions={
     x:string,//-x  dir        : dictionary directory                                    [  N/A]
     m:string, //-m  htsvoice   : HTS voice files                                         [  N/A]
     ow?:string,
+    oo?:string,
     ot?:string,
     s?:string,
     p?:string,
@@ -54,10 +55,13 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Te
 
     }
     async spawn(hnd:OpenJTalkHandle,opt:OpenJTalkSpownOptions,text:string):Promise<void>{
-        if(!opt.ow){
-           opt=Object.assign({},opt,{ow:uniqueFilename(os.tmpdir(),"openjtalk-dst")})
+        if(!opt.ow&&process.env["OPEN_JTALK_OUTPUT"]=="OW"){
+           opt=Object.assign({},opt,{ow:uniqueFilename(os.tmpdir(),"openjtalk-dst")+".wav"})
         }
-        const ow=opt.ow;
+        if(!opt.oo&&process.env["OPEN_JTALK_OUTPUT"]=="OO"){
+            opt=Object.assign({},opt,{oo:uniqueFilename(os.tmpdir(),"openjtalk-dst")+".ogg"})
+        }
+        const pathToCreatedFile=opt.oo;
         const cp= execFile(this.pathtoOpenJTalk,[...Object.keys(opt).flatMap(k=>[`-${k}`,`${opt[k]}`])],(error,stdout,stderr)=>{
             console.log(error);
             console.log(stdout);
@@ -86,7 +90,7 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Te
            console.log(`OpenJTalk exited with ${code}`);
            resolve(undefined);
         }));
-        hnd.pathToCreatedFile=ow;
+        hnd.pathToCreatedFile=pathToCreatedFile;
     }
     makeHandle():Handle{
         return {};

@@ -1,0 +1,46 @@
+//
+// Created by Arseny Tolmachev on 2017/05/26.
+//
+
+#include <iostream>
+#include "core/spec/spec_dsl.h"
+#include "core/codegen/feature_codegen.h"
+#include "core/dic/dic_builder.h"
+#include "core/dic/dictionary.h"
+#include "core/core.h"
+#include "util/csv_reader.h"
+#include "${CG_SPEC_INCLUDE}"
+
+namespace cg = jumanpp::core::features::codegen;
+
+int main(int argc, char** argv) {
+  if (argc != 4 && argc != 5) {
+    std::cerr << "Number of arguments (" << argc - 1 << ") was not 3 or 4\n";
+    return 1;
+  }
+
+  cg::FeatureCodegenConfig conf;
+  conf.filename = argv[1];
+  conf.className = argv[2];
+  conf.baseDirectory = argv[3];
+
+  jumanpp::core::spec::dsl::ModelSpecBuilder bldr;
+  ${CG_SPEC_NAME} ::fillSpec(bldr);
+
+  jumanpp::core::spec::AnalysisSpec spec;
+  auto s = bldr.build(&spec);
+  if (!s) {
+    std::cerr << "failed to build spec: " << s;
+    return 1;
+  }
+
+  cg::StaticFeatureCodegen sfc{conf, spec};
+
+  s = sfc.generateAndWrite();
+  if (!s) {
+    std::cerr << "failed to create static files for " << conf.filename << ": " << s;
+    return 1;
+  }
+
+  return 0;
+}

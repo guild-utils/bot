@@ -1,24 +1,36 @@
-FROM node:14-alpine AS build-bin
+FROM node:14-alpine AS build-ojt
 
-WORKDIR /usr/app
+WORKDIR /usr/builder
+RUN apk add --no-cache libopusenc-dev build-base automake autoconf m4 perl
 
-RUN apk add --no-cache --virtual .ojt build-base
+COPY packages/util/open-jtalk/soft/hts_engine_API-1.10 ./hts_engine_API-1.10
 
-COPY packages/util/open-jtalk/soft ./packages/util/open-jtalk/soft
-
-RUN cd packages/util/open-jtalk/soft/hts_engine_API-1.10 \
+RUN cd hts_engine_API-1.10 \
     && find ./ -type f -print | xargs chmod 777 \
-    && ./configure  \
+    && autoreconf -f -i \
+    && ./configure --with-charset=UTF-8 \
     && make \
     && make install 
+COPY packages/util/open-jtalk/soft/open_jtalk-1.11 ./open_jtalk-1.11
 
-RUN cd packages/util/open-jtalk/soft/open_jtalk-1.11 \
+RUN cd open_jtalk-1.11 \
     && find ./ -type f -print | xargs chmod 777 \
+    && autoreconf -f -i \
     && ./configure --with-charset=UTF-8 \
     && make \
     && make install 
 
-RUN apk del .ojt
+
+FROM alpine:3.12 AS build-jumanpp
+RUN apk add --no-cache build-base cmake protobuf-dev protoc libexecinfo-dev
+
+COPY packages/util/jumanpp-2.0.0-rc3 /usr/app/builder
+
+WORKDIR /usr/app/builder/build
+
+RUN cmake .. \
+    -DCMAKE_BUILD_TYPE=Release
+RUN make install -j8
 
 FROM node:14-alpine AS runtime
 
@@ -49,10 +61,13 @@ ENV HTS_VOICE_GAMMA /usr/app/packages/util/open-jtalk/htsvoice/VoiceGamma.htsvoi
 ENV HTS_VOICE_DELTA /usr/app/packages/util/open-jtalk/htsvoice/VoiceDelta.htsvoice
 
 ENV KUROMOJI_DIC_PATH /usr/app/packages/util/kuromoji-js/dict
+ENV JUMANPP_PATH /usr/local/bin/jumanpp
 
-COPY --from=build-bin /usr/local/bin/open_jtalk /usr/local/bin/open_jtalk
-COPY --from=build-bin /usr/local/dic /usr/local/dic
+COPY --from=build-ojt /usr/local/bin/open_jtalk /usr/local/bin/open_jtalk
+COPY --from=build-ojt /usr/local/dic /usr/local/dic
 
+COPY --from=build-jumanpp /usr/local/bin/jumanpp /usr/local/bin/jumanpp
+COPY --from=build-jumanpp /usr/local/libexec/jumanpp /usr/local/libexec/jumanpp
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
 COPY packages/util/kuromoji-js/dict /usr/app/packages/util/kuromoji-js/dict
 COPY kick.js ./
@@ -77,5 +92,4 @@ RUN apk add --no-cache --virtual .ojt git \
     && yarn global remove lerna \
     && yarn cache clean \
     && apk del .ojt
-
 CMD [ "pm2","--no-daemon","start","kick.js","--name","pwrd-event"]
