@@ -1,4 +1,4 @@
-FROM node:14-alpine AS build-ojt
+FROM alpine:3.12 AS build-ojt
 
 WORKDIR /usr/builder
 RUN apk add --no-cache libopusenc-dev build-base automake autoconf m4 perl
@@ -28,9 +28,10 @@ COPY packages/util/jumanpp-2.0.0-rc3 /usr/app/builder
 
 WORKDIR /usr/app/builder/build
 
-RUN cmake .. \
-    -DCMAKE_BUILD_TYPE=Release
-RUN make install -j8
+RUN find ./ -type f -print | xargs chmod 777 \
+    &&cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    && make install -j8
 
 FROM node:14-alpine AS runtime
 
