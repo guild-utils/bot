@@ -746,7 +746,6 @@ void HTS_Engine_save_riff(HTS_Engine * engine, FILE * fp)
    }
 }
 int HTS_Engine_save_ogg(HTS_Engine * engine,const char* path){
-   fprintf(stderr,"encoding");
   int i;
   double x;
   short temp;
