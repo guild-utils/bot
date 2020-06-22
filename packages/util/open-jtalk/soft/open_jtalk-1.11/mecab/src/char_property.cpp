@@ -190,7 +190,8 @@ bool CharProperty::compile(const char *cfile,
       CHECK_DIE(category.find(key) == category.end())
           << "category " << key << " is already defined";
 
-      CharInfo c={};
+      CharInfo c;
+      std::memset(&c, 0, sizeof(c));
       c.invoke  = std::atoi(col[1]);
       c.group   = std::atoi(col[2]);
       c.length  = std::atoi(col[3]);

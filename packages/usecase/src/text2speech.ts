@@ -48,7 +48,7 @@ type OpenJTalkSpownOptions={
     z?:string
 }
 export type OpenJTalkHandle={
-    pathToCreatedFile?:fs.PathLike
+    pathToCreatedFile?:fs.PathLike,
 }
 export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Text2SpeechService<OpenJTalkOptions<VoiceKind>,OpenJTalkHandle>{
     constructor(private readonly pathtoOpenJTalk:string,private readonly pathToDict:string,private readonly mapOfKind2HtsVoice:{[k in VoiceKind]:string},private readonly charset:string|undefined){
@@ -56,10 +56,10 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string> implements Te
     }
     async spawn(hnd:OpenJTalkHandle,opt:OpenJTalkSpownOptions,text:string):Promise<void>{
         if(!opt.ow&&process.env["OPEN_JTALK_OUTPUT"]=="OW"){
-           opt=Object.assign({},opt,{ow:uniqueFilename(os.tmpdir(),"openjtalk-dst")+".wav"})
+           opt=Object.assign({},opt,{ow:uniqueFilename(os.tmpdir(),"openjtalk-dst")+".wav"});
         }
         if(!opt.oo&&process.env["OPEN_JTALK_OUTPUT"]=="OO"){
-            opt=Object.assign({},opt,{oo:uniqueFilename(os.tmpdir(),"openjtalk-dst")+".ogg"})
+            opt=Object.assign({},opt,{oo:uniqueFilename(os.tmpdir(),"openjtalk-dst")+".opus"});
         }
         const pathToCreatedFile=opt.oo;
         const cp= execFile(this.pathtoOpenJTalk,[...Object.keys(opt).flatMap(k=>[`-${k}`,`${opt[k]}`])],(error,stdout,stderr)=>{

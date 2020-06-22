@@ -61,17 +61,6 @@ fi
 
 AC_CANONICAL_HOST
 AC_C_BIGENDIAN
-
-
-# Checks library for windows audio devices
-case "$host_os" in
- *win32* | *wince* | *cygwin* | *mingw* )
-	AC_HAVE_LIBRARY([winmm],,AC_MSG_ERROR(No winmm))
-	;;
- *)
-	;;
-esac
-
 # Define HTS_ENGINE_HEADER
 AC_ARG_WITH(libopusenc-header-path,
             AS_HELP_STRING([--with-libopusenc-header-path],[specify the libopusenc-header-path header path]),
@@ -120,6 +109,16 @@ OPUS_LIBRARY=${opus_library_path}/libopus.a
 # Define OPUS_LIBRARY_DIR
 AC_SUBST(OPUS_LIBRARY_DIR)
 OPUS_LIBRARY_DIR=${opus_library_path}
+
+# Checks library for windows audio devices
+case "$host_os" in
+ *win32* | *wince* | *cygwin* | *mingw* )
+	AC_HAVE_LIBRARY([winmm],,AC_MSG_ERROR(No winmm))
+	;;
+ *)
+	;;
+esac
+
 
 AC_CONFIG_FILES([Makefile bin/Makefile lib/Makefile])
 

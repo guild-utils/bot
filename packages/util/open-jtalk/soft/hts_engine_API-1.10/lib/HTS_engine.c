@@ -746,6 +746,7 @@ void HTS_Engine_save_riff(HTS_Engine * engine, FILE * fp)
    }
 }
 int HTS_Engine_save_ogg(HTS_Engine * engine,const char* path){
+   fprintf(stderr,"encoding");
   int i;
   double x;
   short temp;
@@ -755,12 +756,18 @@ int HTS_Engine_save_ogg(HTS_Engine * engine,const char* path){
   OggOpusComments *comments;
   int error;
   comments = ope_comments_create();
-  enc = ope_encoder_create_file(path, comments, 44100, 2, 0, &error);
+  enc = ope_encoder_create_file(path, comments,  engine->condition.sampling_frequency, 1, 0, &error);
   if (!enc) {
     fprintf(stderr, "error encoding to file %s: %s\n",path, ope_strerror(error));
     ope_comments_destroy(comments);
     return FALSE;
   }
+   /*error = ope_encoder_ctl(enc, OPUS_SET_BITRATE(engine->condition.sampling_frequency * sizeof(short)));
+   if (error<0)
+   {
+      fprintf(stderr, "failed to set bitrate: %s\n", opus_strerror(err));
+      return FALSE;
+   }*/
   for (i=0;i<length;++i) {
    x = HTS_GStreamSet_get_speech(gss, i);
    if (x > 32767.0){
@@ -770,7 +777,7 @@ int HTS_Engine_save_ogg(HTS_Engine * engine,const char* path){
    }else{
       temp = (short) x;
    }
-   ope_encoder_write(enc, &temp, 2);
+   ope_encoder_write(enc, &temp, 1);
   }
   ope_encoder_drain(enc);
   ope_encoder_destroy(enc);

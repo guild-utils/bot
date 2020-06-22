@@ -18,7 +18,7 @@ export default class {
     private readonly waitQueue = new Map<string, Data[]>();
     private readonly text2SpeechService: Text2SpeechServiceOpenJtalk<VoiceKind>;
     constructor(
-        pathToOpneJTalk: string,
+        pathToOpenJTalk: string,
         pathToDict: string,
         private readonly mapOfKind2HtsVoice: { [k in VoiceKind]: {path:string,volume_fix?:number} },
         @inject("kuromoji") private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
@@ -27,7 +27,7 @@ export default class {
         for(let k of Object.keys(mapOfKind2HtsVoice)){
             obj[k]=mapOfKind2HtsVoice[k].path;
         }
-        this.text2SpeechService = new Text2SpeechServiceOpenJtalk(pathToOpneJTalk, pathToDict, obj, process.env["OPEN_JTALK_INPUT_CHARSET"])
+        this.text2SpeechService = new Text2SpeechServiceOpenJtalk(pathToOpenJTalk, pathToDict, obj, process.env["OPEN_JTALK_INPUT_CHARSET"])
     }
     async register(conn: VoiceConnection) {
         this.waitQueue.set(conn.channel.id, []);
@@ -41,7 +41,7 @@ export default class {
 
         entry.prepare = this.text2SpeechService.prepareVoice(hnd, text, opt);
         if (queue.length === 0) {
-            this.playNext(conn)
+            this.playNext(conn);
         }
     }
 

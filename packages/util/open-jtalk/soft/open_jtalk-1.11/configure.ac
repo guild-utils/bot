@@ -243,12 +243,7 @@ HTS_ENGINE_LIBRARY=${hts_engine_library_path}/libHTSEngine.a
 AC_SUBST(HTS_ENGINE_LIBRARY_DIR)
 HTS_ENGINE_LIBRARY_DIR=${hts_engine_library_path}
 
-
-
-
-
-
-# Define HTS_ENGINE_HEADER
+# Define LIBOPUSENC_HEADER_DIR
 AC_ARG_WITH(libopusenc-header-path,
             AS_HELP_STRING([--with-libopusenc-header-path],[specify the libopusenc-header-path header path]),
             [libopusenc_header_path=$withval],
@@ -295,8 +290,6 @@ OPUS_LIBRARY=${opus_library_path}/libopus.a
 # Define OPUS_LIBRARY_DIR
 AC_SUBST(OPUS_LIBRARY_DIR)
 OPUS_LIBRARY_DIR=${opus_library_path}
-
-
 
 
 # Check for windows audio devices
