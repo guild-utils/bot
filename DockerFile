@@ -33,7 +33,7 @@ RUN find ./ -type f -print | xargs chmod 777 \
     &&cd build \
     &&cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
-    && make install -j8
+    && make install -j
 
 FROM node:14-alpine AS runtime
 
