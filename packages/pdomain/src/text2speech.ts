@@ -1,6 +1,6 @@
 import { Readable } from "stream";
-export type VoiceOptions = unknown;
-export type Handle = unknown;
+export type VoiceOptions = Record<string, unknown>;
+export type Handle = Record<string, unknown>;
 export interface Text2SpeechService<
   Opt extends VoiceOptions,
   Hnd extends Handle
