@@ -8,6 +8,8 @@
   "private": true,
   "workspaces": [
     "packages/**"
-  ]
-  
+  ],
+  "scripts": {
+    "fmt":"prettier --write *.js"
+  }
 }

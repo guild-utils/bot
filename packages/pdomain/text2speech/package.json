@@ -1,5 +1,13 @@
 {
     "name": "domain_text2speech",
     "main": "../lib/text2speech.js",
-    "types": "../lib/text2speech.d.ts"
+    "types": "../lib/text2speech.d.ts",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^3.4.0",
+        "@typescript-eslint/parser": "^3.4.0",
+        "eslint": "^7.3.1",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "prettier": "^2.0.5"
+    }
 }

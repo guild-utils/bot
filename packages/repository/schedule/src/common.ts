@@ -1,5 +1,4 @@
-
-export type Metadata={
-    guildId:string,
-    time:string
+export type Metadata = {
+  guildId: string;
+  time: string;
 };
