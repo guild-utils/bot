@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "reflect-metadata";
 import { config as dotenv } from "dotenv";
 const result = dotenv();
@@ -16,6 +17,8 @@ import { nextTaskId } from "./guild_settings_keys";
 import { initChannelsGateway } from "./channelSettings";
 import engine, { VoiceKindArray } from "./text2speech/engine";
 import * as kuromoji from "kuromoji";
+import { Settings } from "klasa";
+import { Schema } from "klasa";
 
 if (result) {
   console.log(result.parsed);
@@ -30,10 +33,20 @@ class Client extends KlasaClient {
     gameEventNotificationRepository.init(this);
     // Add any properties to your Klasa Client
   }
-
   // Add any methods to your Klasa Client
 }
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+Client.use(require("klasa-member-gateway"));
+declare module "discord.js" {
+  interface GuildMember {
+    settings: Settings;
+  }
+}
+declare module "klasa" {
+  interface GatewayDriver {
+    members: Gateway;
+  }
+}
 const usecase = new GameEventUseCaseImpl<
   GssGameEventRepository,
   GssCollectionGroupIdT,
@@ -56,7 +69,8 @@ KlasaClient.defaultGuildSchema.add("speech", (f) => {
   f.add("readName", "boolean", { default: true });
   f.add("dictionary", "any", { configurable: false, array: true, default: [] });
 });
-KlasaClient.defaultUserSchema.add("speech", (f) => {
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+((KlasaClient as any).defaultMemberSchema as Schema).add("speech", (f) => {
   f.add("kind", "string", {
     default: "neutral",
     filter: (client, value, schema, lang) => {
@@ -87,7 +101,7 @@ container.register("GameEventNotificationRepository", {
 });
 
 async function main() {
-  await new Promise((resolve, reject) => {
+  await new Promise((resolve) => {
     kuromoji
       .builder({ dicPath: process.env["KUROMOJI_DIC_PATH"] })
       .build((err, tokenizer) => {
@@ -150,8 +164,9 @@ async function main() {
         resolve();
       });
   });
+
   const client = new Client(config);
   initChannelsGateway(client.gateways);
-  client.login(token);
+  await client.login(token);
 }
-main();
+main().catch(console.log);

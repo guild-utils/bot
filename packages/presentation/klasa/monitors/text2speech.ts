@@ -2,11 +2,13 @@ import { Monitor } from "klasa";
 import { KlasaMessage } from "klasa";
 import { text2speechTargetTextChannels } from "../guild_settings_keys";
 import { MonitorStore } from "klasa";
-import Engine from "../text2speech/engine";
+import Engine, { VoiceKind } from "../text2speech/engine";
 import { inject, autoInjectable } from "tsyringe";
-import * as USER_SETTINGS from "../user_settings_keys";
+import * as GUILD_MEMBER_SETTINGS from "../guild_member_settings_keys";
 import * as GUILD_SETINGS from "../guild_settings_keys";
+// eslint-disable-next-line no-useless-escape
 const urlRegex = /https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/;
+// eslint-disable-next-line no-useless-escape
 const markRegex = /^[!"#$%&'()\*\+\-\.,\/:;<=>?\[\\\]^_`{|}~].*/;
 @autoInjectable()
 export default class extends Monitor {
@@ -29,7 +31,7 @@ export default class extends Monitor {
     });
   }
 
-  async run(message: KlasaMessage) {
+  async run(message: KlasaMessage): Promise<void> {
     if (!message.guild) {
       return;
     }
@@ -40,17 +42,18 @@ export default class extends Monitor {
       return;
     }
     if (!message.guild.voice?.connection) {
-      message.guildSettings.reset(text2speechTargetTextChannels);
+      await message.guildSettings.reset(text2speechTargetTextChannels);
       return;
     }
     let content = message.content;
     if (content.startsWith(";")) {
       return;
     }
+    // eslint-disable-next-line no-useless-escape
     content = content.replace(/\<\@\!?(\d+)\>/g, (e, m) => {
       const member = message.guild?.members.resolve(m);
       return (
-        member?.user.settings.get(USER_SETTINGS.text2speechReadName) ??
+        member?.settings.get(GUILD_MEMBER_SETTINGS.text2speechReadName) ??
         member?.displayName ??
         ""
       );
@@ -60,28 +63,42 @@ export default class extends Monitor {
     }
     content = content.replace(urlRegex, "\nURL省略\n");
 
-    const kind = message.member?.user.settings.get(
-      USER_SETTINGS.text2speechKind
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const kind: VoiceKind | undefined = message.member?.settings.get(
+      GUILD_MEMBER_SETTINGS.text2speechKind
     );
-    let speed = message.member?.user.settings.get(
-      USER_SETTINGS.text2speechSpeed
+    if (kind === undefined) {
+      return;
+    }
+
+    let speed: number | undefined = message.member?.settings.get(
+      GUILD_MEMBER_SETTINGS.text2speechSpeed
     );
+    if (speed === undefined) {
+      return;
+    }
     if (speed < 0.5) {
       speed = 0.5;
     }
 
-    const tone = message.member?.user.settings.get(
-      USER_SETTINGS.text2speechTone
+    const tone: number | undefined = message.member?.settings.get(
+      GUILD_MEMBER_SETTINGS.text2speechTone
     );
-    const volume = message.member?.user.settings.get(
-      USER_SETTINGS.text2speechVolume
-    );
-    const readName = message.guildSettings.get(
+    if (tone === undefined) {
+      return;
+    }
+    const volume: number =
+      message.member?.user.settings.get(
+        GUILD_MEMBER_SETTINGS.text2speechVolume
+      ) ?? 0;
+    const readName: string | undefined = message.guildSettings.get(
       GUILD_SETINGS.text2speechReadName
     )
-      ? message.member?.user.settings.get(USER_SETTINGS.text2speechReadName) ??
-        message.member!.displayName
+      ? message.member?.settings.get(
+          GUILD_MEMBER_SETTINGS.text2speechReadName
+        ) ?? message.member?.displayName
       : undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const dictionaryArr = message.guildSettings.get(
       GUILD_SETINGS.text2speechDictionary
     );
@@ -95,10 +112,11 @@ export default class extends Monitor {
         p3?: string;
       };
     } = {};
-    for (let entry of dictionaryArr) {
+    for (const entry of dictionaryArr) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
       dictionary[entry.k] = entry;
     }
-    this.engine.queue(message.guild.voice.connection, content, {
+    await this.engine.queue(message.guild.voice.connection, content, {
       kind,
       speed,
       tone,

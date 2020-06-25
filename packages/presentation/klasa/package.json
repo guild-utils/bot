@@ -32,7 +32,8 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "klasa-member-gateway":"dirigeants/klasa-member-gateway"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",

@@ -7,7 +7,7 @@ import {
 import { autoInjectable, inject } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import { Readable } from "stream";
-type VoiceKind =
+export type VoiceKind =
   | "normal"
   | "angry"
   | "happy"
@@ -26,7 +26,7 @@ type VoiceKind =
   | "beta"
   | "gamma"
   | "delta";
-export const VoiceKindArray = [
+export const VoiceKindArray: VoiceKind[] = [
   "normal",
   "angry",
   "happy",
@@ -84,7 +84,8 @@ export default class {
     private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
   ) {
     const obj = {};
-    for (let k of Object.keys(mapOfKind2HtsVoice)) {
+    for (const k of Object.keys(mapOfKind2HtsVoice)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
       obj[k] = mapOfKind2HtsVoice[k].path;
     }
     this.text2SpeechService = new Text2SpeechServiceOpenJtalk(
@@ -94,9 +95,11 @@ export default class {
       process.env["OPEN_JTALK_INPUT_CHARSET"]
     );
   }
-  async register(conn: VoiceConnection) {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async register(conn: VoiceConnection): Promise<void> {
     this.waitQueue.set(conn.channel.id, []);
   }
+  // eslint-disable-next-line @typescript-eslint/require-await
   private async queueRaw(conn: VoiceConnection, text: string, opt: Opt) {
     const cid = conn.channel.id;
     const hnd = this.text2SpeechService.makeHandle();
@@ -106,12 +109,12 @@ export default class {
 
     entry.prepare = this.text2SpeechService.prepareVoice(hnd, text, opt);
     if (queue.length === 0) {
-      this.playNext(conn);
+      this.playNext(conn).catch(console.log);
     }
   }
 
-  async queue(conn: VoiceConnection, text: string, opt: Opt) {
-    let remake_sentenses: string = "";
+  async queue(conn: VoiceConnection, text: string, opt: Opt): Promise<void> {
+    let remake_sentenses = "";
     let sentenses = text.split("\n").join("。");
     const vf = this.mapOfKind2HtsVoice[opt.kind].volume_fix ?? 0;
     if (opt.readName) {
@@ -119,7 +122,7 @@ export default class {
     }
     sentenses = toFullWidth(sentenses);
     const arr: string[] = [];
-    for (let e2 of this.tokenizer.tokenize(sentenses)) {
+    for (const e2 of this.tokenizer.tokenize(sentenses)) {
       const e3 = opt.dictionary[e2.surface_form];
       if (!e3) {
         arr.push(e2.surface_form);
@@ -166,7 +169,6 @@ export default class {
     await queue[0].prepare;
     if (!queue[0].load) {
       queue[0].load = this.text2SpeechService.loadVoice(queue[0].hnd);
-    } else {
     }
     const stream = await queue[0].load;
     if (queue.length >= 2) {
@@ -176,21 +178,23 @@ export default class {
     }
     if (!stream) {
       const queue2 = [...queue];
-      queue2.shift()!;
+      queue2.shift();
       this.waitQueue.set(cid, queue2);
-      this.playNext(conn);
+      this.playNext(conn).catch(console.log);
       return;
     }
     const dispatcher = conn.play(stream);
-    dispatcher.on("finish", async () => {
+    dispatcher.on("finish", () => {
       const queue2 = [...(this.waitQueue.get(cid) ?? [])];
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const hnd = queue2.shift()!.hnd;
       this.waitQueue.set(cid, queue2);
-      this.playNext(conn);
-      this.text2SpeechService.closeVoice(hnd);
+      this.playNext(conn).catch(console.log);
+      this.text2SpeechService.closeVoice(hnd).catch(console.log);
     });
   }
-  async unregister(conn: VoiceConnection | undefined | null) {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async unregister(conn: VoiceConnection | undefined | null): Promise<void> {
     if (!conn) {
       return;
     }

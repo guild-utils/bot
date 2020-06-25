@@ -19,7 +19,7 @@ export default class extends Event {
       event: "klasaReady",
     });
   }
-  async run() {
+  async run(): Promise<void> {
     console.log("init");
 
     if (REGISTER_TO_NOTIFICATION_REPOSTORY_WHEN_LAUNCH) {
@@ -31,7 +31,7 @@ export default class extends Event {
           if (typeof gsid !== "string") {
             return;
           }
-          this.gameEventNotificationRepository.register(
+          await this.gameEventNotificationRepository.register(
             e.id,
             (await this.gameEvent.allEvents(gsid)).map((e2) => e2[1])
           );

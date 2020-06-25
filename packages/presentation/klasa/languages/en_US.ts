@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Language, util, LanguageStore, LanguageOptions } from "klasa";
 import * as moment from "moment-timezone";
 
@@ -370,6 +374,8 @@ module.exports = class extends Language {
 					${arr.join(",")}
                 `;
     },
+    COMMAND_CONF_GUILD_MEMBER_DESCRIPTION:
+      "Define per-member settings on guild.",
   };
 
   async init() {

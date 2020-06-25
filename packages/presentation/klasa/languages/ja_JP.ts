@@ -1,4 +1,8 @@
 // Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { Language, util, LanguageStore, LanguageOptions } from "klasa";
 import * as moment from "moment-timezone";
 
@@ -360,6 +364,8 @@ export default class extends Language {
         ","
       )}`;
     },
+    COMMAND_CONF_GUILD_MEMBER_DESCRIPTION:
+      "サーバー単位でのユーザーの設定をする。",
   };
   constructor(
     store: LanguageStore,
@@ -372,7 +378,7 @@ export default class extends Language {
     this.language = { ...this.KLASA_MESSAGES, ...this.PWRD_EVENTS_MESSAGES };
   }
 
-  async init() {
+  async init(): Promise<void> {
     await super.init();
   }
 }

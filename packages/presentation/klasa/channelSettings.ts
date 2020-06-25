@@ -6,7 +6,17 @@
 import { Settings } from "klasa";
 import { GatewayDriver } from "klasa";
 import { Schema } from "klasa";
-import { Structures } from "discord.js";
+import {
+  Structures,
+  CategoryChannel,
+  DMChannel,
+  NewsChannel,
+  StoreChannel,
+  TextChannel,
+  VoiceChannel,
+  Snowflake,
+} from "discord.js";
+import { Client } from "klasa";
 
 declare module "klasa" {
   interface GatewayDriver {
@@ -29,20 +39,32 @@ const targets: (
   "StoreChannel",
 ];
 for (const sname of targets) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Structures.extend(sname, (ChannelClazz: any) => {
-    class Pwrd_Events_Channel extends ChannelClazz {
-      constructor(...args) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        super(...args);
-        this.settings = this.client.gateways.channels.get(this.id, true);
+  Structures.extend(
+    sname,
+    (
+      ChannelClazz:
+        | typeof TextChannel
+        | typeof DMChannel
+        | typeof VoiceChannel
+        | typeof CategoryChannel
+        | typeof NewsChannel
+        | typeof StoreChannel
+    ) => {
+      class Pwrd_Events_Channel extends ChannelClazz {
+        settings: Settings;
+        id!: Snowflake;
+        client!: Client;
+        constructor(client: Client, data?: Record<string, unknown>) {
+          super(client, data);
+          this.settings = this.client.gateways.channels.get(this.id, true);
+        }
+        toJSON() {
+          return { ...super.toJSON(), settings: this.settings.toJSON() };
+        }
       }
-      toJSON() {
-        return { ...super.toJSON(), settings: this.settings.toJSON() };
-      }
+      return Pwrd_Events_Channel as any;
     }
-    return Pwrd_Events_Channel as any;
-  });
+  );
 }
 
 declare module "discord.js" {
