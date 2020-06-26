@@ -1,15 +1,13 @@
-default:
-
+image: docker:19.03.11
+services:
+  - docker:19.03.11-dind
 build:
-  image: docker:19.03.11
   stage: build
-  services:
-    - docker:19.03.11-dind
   script: 
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - ls
-    - docker build -t $CI_REGISTRY/tts-bot:latest .
-    - docker push $CI_REGISTRY/tts-bot:latest
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+
 deploy:
   stage: deploy
   script:

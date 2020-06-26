@@ -376,6 +376,8 @@ module.exports = class extends Language {
     },
     COMMAND_CONF_GUILD_MEMBER_DESCRIPTION:
       "Define per-member settings on guild.",
+    COMMAND_JUMANPP_DESCRIPTION: "jumanppで形態素解析する。",
+    COMMAND_KUROMOJI_DESCRIPTION: "kuromojiで形態素解析する。",
   };
 
   async init() {
