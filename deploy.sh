@@ -1,2 +1,3 @@
-apk update && apk add openssh
-chmod 0400 "$SSH_KEY"
+sudo docker stop tts-bot||true
+sudo docker rm tts-bot||true
+sudo docker run -d --name tts-bot --net tts-bot-net $CI_REGISTRY/tts-bot:latest
