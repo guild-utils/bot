@@ -1,9 +1,9 @@
 {
-  "name": "klasa-ts",
+  "name": "guild-utils-j",
   "version": "1.0.0",
-  "description": "A barebones TypeScript Klasa Bot Template!",
-  "repository": "https://github.com/kyranet/klasa-ts-template",
-  "author": "Antonio Román <kyradiscord@gmail.com>",
+  "description": "a discord bot",
+  "repository": "https://gitlab.com/guild-utils-j/guild-utils-j",
+  "author": "tig<tignear+m@gmail.com>",
   "license": "UNLICENSE",
   "private": true,
   "workspaces": [
