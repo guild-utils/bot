@@ -1,4 +1,4 @@
-const {GatewayStorage,Settings}= require('klasa');
+const {Gateway,Settings}= require('klasa');
 const { Collection } = require('discord.js');
 
 /**
@@ -7,7 +7,7 @@ const { Collection } = require('discord.js');
  * The Gateway class that manages the data input, parsing, and output, of an entire database, while keeping a cache system sync with the changes.
  * @extends GatewayStorage
  */
-class MemberGateway extends GatewayStorage {
+class MemberGateway extends Gateway {
 
 	/**
 	 * @since 0.0.1
@@ -17,35 +17,8 @@ class MemberGateway extends GatewayStorage {
 	 * @param {string} provider The provider's name for this gateway
 	 */
 	constructor(store, type, schema, provider) {
-		super(store.client, "members", schema, provider);
+		super(store, "members", schema, provider);
 		this.idLength=37;
-		/**
-		 * The GatewayDriver that manages this Gateway
-		 * @since 0.0.1
-		 * @type {GatewayDriver}
-		 */
-		this.store = store;
-
-		/**
-		 * The cached entries for this Gateway or the external datastore to get the settings from
-		 * @since 0.0.1
-		 * @type {external:Collection<string, Settings>|external:DataStore}
-		 */
-		//this.cache = (type in this.client) && this.client[type].cache instanceof Map ? this.client[type].cache : new Collection();
-
-		/**
-		 * The synchronization queue for all Settings instances
-		 * @since 0.5.0
-		 * @type {external:Collection<string, Promise<Settings>>}
-		 */
-		this.syncQueue = new Collection();
-
-		/**
-		 * @since 0.5.0
-		 * @type {boolean}
-		 * @private
-		 */
-		Object.defineProperty(this, '_synced', { value: false, writable: true });
 	}
 
 	/**
@@ -56,7 +29,7 @@ class MemberGateway extends GatewayStorage {
 	 * @private
 	 */
 	get Settings() {
-		return MemberSettings;
+		return Settings;
 	}
 
 	/**
@@ -86,7 +59,6 @@ class MemberGateway extends GatewayStorage {
 	 * @returns {?(Gateway|Settings)}
 	 */
 	async sync(input = [...[...this.client.guilds.cache.values()].flatMap(guild=>[...guild.members.cache.values()].map(member=>guild.id+"."+member.user.id))]) {
-		console.log("input:",input)
 		if (Array.isArray(input)) {
 			if (!this._synced) this._synced = true;
 			const entries = await this.provider.getAll(this.type, input);
