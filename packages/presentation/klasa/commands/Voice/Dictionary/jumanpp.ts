@@ -1,5 +1,5 @@
 import { Command, CommandStore, KlasaMessage } from "klasa";
-import * as LANG_KEYS from "../../lang_keys";
+import * as LANG_KEYS from "../../../lang_keys";
 import { execFile } from "child_process";
 import { encodeStream } from "iconv-lite";
 function toFullWidth(elm: string) {

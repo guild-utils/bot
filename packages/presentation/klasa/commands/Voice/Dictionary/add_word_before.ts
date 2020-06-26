@@ -1,6 +1,6 @@
 import { Command, CommandStore, KlasaMessage } from "klasa";
-import * as GUILD_SETINGS from "../../guild_settings_keys";
-import * as LANG_KEYS from "../../lang_keys";
+import * as GUILD_SETINGS from "../../../guild_settings_keys";
+import * as LANG_KEYS from "../../../lang_keys";
 function toFullWidth(elm: string) {
   return elm.replace(/[A-Za-z0-9!-~]/g, function (s) {
     return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
@@ -9,47 +9,36 @@ function toFullWidth(elm: string) {
 export default class extends Command {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
-      usage:
-        "<word:string> [to:string] [pos:string] [pos_detail_1:string] [pos_detail_2:string] [pos_detail_3:string]",
+      usage: "<word:string> [to:string]",
       runIn: ["text"],
-      aliases: ["aw"],
+      aliases: ["awb"],
       description: (lang) => lang.get(LANG_KEYS.COMMAND_ADD_WORD_DESCRIPTION),
       usageDelim: " ",
     });
   }
   public async run(
     msg: KlasaMessage,
-    [word, to, p, p1, p2, p3]: [
-      string,
-      string?,
-      string?,
-      string?,
-      string?,
-      string?
-    ]
+    [word, to]: [string, string?]
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
     const arr: {
       k: string;
       v?: string;
-      p?: string;
-      p1?: string;
-      p2?: string;
-      p3?: string;
-    }[] = msg.guildSettings.get(GUILD_SETINGS.text2speechDictionary);
+    }[] = msg.guildSettings.get(GUILD_SETINGS.text2speechDictionaryBefore);
+    const fword = toFullWidth(word);
     const index = arr.findIndex(
-      ({ k, v }: { k: string; v?: string }) => toFullWidth(word) === k
+      ({ k }: { k: string; v?: string }) => fword === k
     );
     if (index < 0) {
       await msg.guildSettings.update(
-        GUILD_SETINGS.text2speechDictionary.join("."),
-        { k: toFullWidth(word), v: to, p, p1, p2, p3 },
+        GUILD_SETINGS.text2speechDictionaryBefore.join("."),
+        { k: fword, v: to },
         { action: "add" }
       );
       return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
     }
-    arr[index] = { k: toFullWidth(word), v: to, p, p1, p2, p3 };
+    arr[index] = { k: fword, v: to };
     await msg.guildSettings.update(
-      GUILD_SETINGS.text2speechDictionary.join("."),
+      GUILD_SETINGS.text2speechDictionaryBefore.join("."),
       arr,
       { action: "overwrite" }
     );

@@ -72,5 +72,9 @@ $aw 単語 たんご 名詞 一般 * *
 - DMでの音声生成。
 - Embed Viewによる表示。
 - スケジューリング機能のDSLを根本的に改善する(GoogleSpreadSheetを使い続けるかも要検討)
+- CI
+- 読み上げ文字数の制限
+- 読み上げ時間の制限
 ## v2
 - OpenJTalkを改造してjumanppを用いて喋るようにする。
+- Web Dashboard

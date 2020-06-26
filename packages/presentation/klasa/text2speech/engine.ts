@@ -58,6 +58,9 @@ export type Opt = OpenJTalkOptions<VoiceKind> & {
       p3?: string;
     };
   };
+  dictionaryA: [string, string?][];
+  dictionaryB: [string, string?][];
+  maxReadLimit: number;
 };
 export type Hnd = OpenJTalkHandle;
 type Data = {
@@ -114,13 +117,15 @@ export default class {
   }
 
   async queue(conn: VoiceConnection, text: string, opt: Opt): Promise<void> {
-    let remake_sentenses = "";
     let sentenses = text.split("\n").join("。");
     const vf = this.mapOfKind2HtsVoice[opt.kind].volume_fix ?? 0;
     if (opt.readName) {
       sentenses = opt.readName + "。" + sentenses;
     }
     sentenses = toFullWidth(sentenses);
+    for (const e of opt.dictionaryB) {
+      sentenses = sentenses.split(e[0]).join(e[1]);
+    }
     const arr: string[] = [];
     for (const e2 of this.tokenizer.tokenize(sentenses)) {
       const e3 = opt.dictionary[e2.surface_form];
@@ -155,10 +160,16 @@ export default class {
         arr.push(e3.v);
       }
     }
-    remake_sentenses = arr.join("");
+    sentenses = arr.join("");
+    for (const e of opt.dictionaryA) {
+      sentenses = sentenses.split(e[0]).join(e[1]);
+    }
     const copy = { ...opt };
     copy.volume += vf;
-    await this.queueRaw(conn, remake_sentenses, copy);
+    if (sentenses.length > opt.maxReadLimit) {
+      sentenses = sentenses.substr(0, opt.maxReadLimit);
+    }
+    await this.queueRaw(conn, sentenses, copy);
   }
   private async playNext(conn: VoiceConnection) {
     const cid = conn.channel.id;

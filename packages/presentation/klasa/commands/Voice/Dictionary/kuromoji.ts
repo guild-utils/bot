@@ -1,5 +1,5 @@
 import { Command, CommandStore, KlasaMessage } from "klasa";
-import * as LANG_KEYS from "../../lang_keys";
+import * as LANG_KEYS from "../../../lang_keys";
 import * as kuromoji from "kuromoji";
 import { autoInjectable, inject } from "tsyringe";
 function toFullWidth(elm: string) {
@@ -32,7 +32,8 @@ export default class extends Command {
           .tokenize(toFullWidth(text))
           .map(
             (e) =>
-              `${e.surface_form}(${e.pos},${e.pos_detail_1},${e.pos_detail_2},${e.pos_detail_3},${e.reading},${e.pronunciation})`
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              `${e.surface_form}(${e.pos} ${e.pos_detail_1} ${e.pos_detail_2} ${e.pos_detail_3},${e.reading},${e.pronunciation})`
           )
           .join(",") +
         "```"

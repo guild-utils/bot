@@ -59,7 +59,6 @@ module.exports = class extends Command {
   }
 
   async set(message: KlasaMessage, [key, ...valueToSet]: string[]) {
-    console.log(message.member!.settings.id, message.member!.settings);
     await message.member!.settings.sync();
     const status = await message.member!.settings.update(
       key,

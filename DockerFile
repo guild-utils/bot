@@ -87,9 +87,9 @@ COPY packages/usecase ./packages/usecase
 COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
 COPY packages/presentation/klasa ./packages/presentation/klasa
-
+COPY packages/presentation/klasa-member-gateway ./packages/presentation/klasa-member-gateway
 RUN apk add --no-cache --virtual .ojt git \
-    && yarn global add lerna \
+    && yarn global add lerna\
     && lerna bootstrap \
     && lerna run build \
     && yarn global remove lerna \

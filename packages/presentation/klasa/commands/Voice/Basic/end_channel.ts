@@ -1,8 +1,8 @@
 import { Command, CommandStore, KlasaMessage } from "klasa";
 import { inject, autoInjectable } from "tsyringe";
-import { text2speechTargetTextChannels } from "../../guild_settings_keys";
-import * as LANG_KEYS from "../../lang_keys";
-import Engine from "../../text2speech/engine";
+import { text2speechTargetTextChannels } from "../../../guild_settings_keys";
+import * as LANG_KEYS from "../../../lang_keys";
+import Engine from "../../../text2speech/engine";
 @autoInjectable()
 export default class extends Command {
   constructor(

@@ -208,36 +208,13 @@ export default class extends Language {
       `Pong! (往復所要時間: ${diff}ms、Heartbeat: ${ping}ms)`,
     COMMAND_INVITE: () => [
       `サーバーに${this.client.user!.username}を追加するには:`,
-      `<${this.client.invite}>`,
-      util.codeBlock(
-        "",
-        [
-          "現在のすべてのコマンドを使用するために必要な最小限の権限を要求する上記のリンクが生成されます。",
-          "すべての権限がすべてのサーバーにとって正しいわけではないので、ボックスのチェックを外すことを恐れないでください。",
-          "ボットが許可されている以上の権限を必要とするコマンドを使用しようとすると、そのことが通知されます。",
-        ].join(" ")
-      ),
-      "バグを見つけたら <https://github.com/dirigeants/klasa> に問題を提出してください。",
+      `${this.client.invite}`,
+      "バグを見つけたら https://gitlab.com/guild-utils-j/guild-utils-j/-/issues/new へお願いします。",
     ],
     COMMAND_INVITE_DESCRIPTION: "ボットの招待リンクを表示します。",
     COMMAND_INFO: [
-      "KlasaはDiscord.jsライブラリ上に構築された「プラグ・アンド・プレイ」フレームワークです。",
-      "ほとんどのコードはモジュール化されており、開発者はKlasaをニーズに合わせて編集できます。",
-      "",
-      "Klasa に組み込まれているいくつかの機能です",
-      "• 🐇💨 ES2017の対応による高速な読み込み（`async`/`await`）",
-      "• 🎚🎛 自分のフィールドで拡張できるクライアント/サーバー/ユーザ設定",
-      "• 💬 自動化されたパラメータ解決機能とオンザフライでコマンドをロード/リロードする機能を備えたカスタマイズ可能なコマンドシステム",
-      '• 👀 "Monitors" でメッセージと編集を見ることができます（検閲、スパム保護など）',
-      '• ⛔ "Inhibitors" で適用したい条件に基づいてコマンドが実行されないようにすることができます（権限、ブラックリストなど）',
-      '• 🗄 "Providers" であなたの選択したデータベースの使用を簡素化します',
-      '• ✅ "Finalizers" でコマンドの成功後に実行されます（ログ、統計の収集、応答のクリーンアップなど）',
-      '• ➕ "Extendables" で既存のDiscord.jsクラスまたはKlasaクラスにメソッド、ゲッター/セッター、または静的プロパティを受動的に追加します',
-      '• 🌐 "Languages" でボットの応答をローカライズすることが可能です',
-      '• ⏲ "Tasks" で将来実行されるようにスケジュールしたり、必要に応じて繰り返し実行できます',
-      "",
-      "すべてのユーザーに対応できる100％カスタマイズ可能なフレームワークになることを願っています。利用可能な場合は、頻繁な更新とバグ修正を行います。",
-      "もし興味がある場合は、https://klasa.js.org をご覧ください。",
+      "いまのところこのBotは読み上げが可能です。",
+      "詳細はhelpコマンドまたは https://gitlab.com/guild-utils-j/guild-utils-j/-/blob/master/README.md を参照してください。",
     ],
     COMMAND_INFO_DESCRIPTION: "このボットに関するいくつかの情報を提供します。",
     COMMAND_HELP_DESCRIPTION: "コマンドリストと説明を表示します。",
@@ -293,7 +270,11 @@ export default class extends Language {
       `• Klasa        :: v${klasaVersion}`,
       `• Discord.js   :: v${discordVersion}`,
       `• Node.js      :: ${processVersion}`,
-      //`• Shard        :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${this.client.options.totalShardCount}`
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+      `• Shard        :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.client.options as any).totalShardCount
+      }`,
     ],
     COMMAND_STATS_DESCRIPTION: "ボットの詳細と、統計情報を表示します。",
     MESSAGE_PROMPT_TIMEOUT: "プロンプトがタイムアウトしました。",

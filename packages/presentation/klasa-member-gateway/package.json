@@ -1,6 +1,6 @@
 {
   "name": "klasa-member-gateway",
-  "version": "0.0.1-dev",
+  "version": "1.0.0",
   "description": "Klasa Member Gateway: a simple plugin for the klasa bot framework that adds an efficient per-member settings gateway.",
   "homepage": "https://klasa.js.org/",
   "bugs": {
@@ -34,5 +34,6 @@
   },
   "engines": {
     "node": ">=8.6.0"
-  }
+  },
+  "private":"true"
 }

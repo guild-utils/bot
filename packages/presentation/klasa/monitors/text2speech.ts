@@ -62,7 +62,7 @@ export default class extends Monitor {
       return;
     }
     content = content.replace(urlRegex, "\nURL省略\n");
-
+    content = content.replace(/```.*```/g, "");
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const kind: VoiceKind | undefined = message.member?.settings.get(
       GUILD_MEMBER_SETTINGS.text2speechKind
@@ -99,6 +99,11 @@ export default class extends Monitor {
         ) ?? message.member?.displayName
       : undefined;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const dictionaryB: [
+      string,
+      (string | undefined)?
+    ][] = message.guildSettings.get(GUILD_SETINGS.text2speechDictionaryBefore);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const dictionaryArr = message.guildSettings.get(
       GUILD_SETINGS.text2speechDictionary
     );
@@ -116,13 +121,25 @@ export default class extends Monitor {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
       dictionary[entry.k] = entry;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const dictionaryA: [
+      string,
+      (string | undefined)?
+    ][] = message.guildSettings.get(GUILD_SETINGS.text2speechDictionaryAfter);
+
+    const maxReadLimit: number = message.guildSettings.get(
+      GUILD_SETINGS.text2speechMaxReadLimit
+    );
     await this.engine.queue(message.guild.voice.connection, content, {
       kind,
       speed,
       tone,
       volume,
       readName,
+      dictionaryB,
       dictionary,
+      dictionaryA,
+      maxReadLimit,
     });
   }
 }
