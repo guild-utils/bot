@@ -10,6 +10,7 @@
     "es6-dynamic-template": "^2.0.0",
     "gss": "^1.0.0",
     "klasa": "dirigeants/klasa#v0.5.0",
+    "klasa-member-gateway": "^0.0.1-dev",
     "kuromoji": "^0.1.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
@@ -32,8 +33,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5",
-    "typescript": "^3.8.3",
-    "klasa-member-gateway":"dirigeants/klasa-member-gateway"
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",

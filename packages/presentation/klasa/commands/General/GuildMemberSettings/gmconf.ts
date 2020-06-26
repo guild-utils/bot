@@ -59,13 +59,14 @@ module.exports = class extends Command {
   }
 
   async set(message: KlasaMessage, [key, ...valueToSet]: string[]) {
+    console.log(message.member!.settings.id, message.member!.settings);
+    await message.member!.settings.sync();
     const status = await message.member!.settings.update(
       key,
       valueToSet.join(" "),
       message,
       { avoidUnconfigurable: true, action: "add" }
     );
-    await message.member!.settings.sync();
     return (
       this.check(message, key, status) ||
       message.sendLocale("COMMAND_CONF_UPDATED", [

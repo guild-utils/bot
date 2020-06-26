@@ -1,7 +1,9 @@
-const { GatewayStorage, Settings, util: { getIdentifier } } = require('klasa');
+const {GatewayStorage,Settings}= require('klasa');
 const { Collection } = require('discord.js');
 
 /**
+ * <danger>You should never create a Gateway instance by yourself.
+ * Please check {@link UnderstandingSettingsGateway} about how to construct your own Gateway.</danger>
  * The Gateway class that manages the data input, parsing, and output, of an entire database, while keeping a cache system sync with the changes.
  * @extends GatewayStorage
  */
@@ -11,28 +13,35 @@ class MemberGateway extends GatewayStorage {
 	 * @since 0.0.1
 	 * @param {GatewayDriver} store The GatewayDriver instance which initiated this instance
 	 * @param {string} type The name of this Gateway
-	 * @param {external:Schema} schema The schema for this gateway
+	 * @param {Schema} schema The schema for this gateway
 	 * @param {string} provider The provider's name for this gateway
 	 */
 	constructor(store, type, schema, provider) {
-		super(store.client, type, schema, provider);
-
+		super(store.client, "members", schema, provider);
+		this.idLength=37;
 		/**
 		 * The GatewayDriver that manages this Gateway
 		 * @since 0.0.1
-		 * @type {external:GatewayDriver}
+		 * @type {GatewayDriver}
 		 */
 		this.store = store;
 
 		/**
-		 * The synchronization queue for all Settings instances
+		 * The cached entries for this Gateway or the external datastore to get the settings from
 		 * @since 0.0.1
-		 * @type {external:Collection<string, Promise<external:Settings>>}
+		 * @type {external:Collection<string, Settings>|external:DataStore}
+		 */
+		//this.cache = (type in this.client) && this.client[type].cache instanceof Map ? this.client[type].cache : new Collection();
+
+		/**
+		 * The synchronization queue for all Settings instances
+		 * @since 0.5.0
+		 * @type {external:Collection<string, Promise<Settings>>}
 		 */
 		this.syncQueue = new Collection();
 
 		/**
-		 * @since 0.0.1
+		 * @since 0.5.0
 		 * @type {boolean}
 		 * @private
 		 */
@@ -41,95 +50,68 @@ class MemberGateway extends GatewayStorage {
 
 	/**
 	 * The Settings that this class should make.
-	 * @since 0.0.1
-	 * @type {external:Settings}
+	 * @since 0.5.0
+	 * @type {Settings}
 	 * @readonly
 	 * @private
 	 */
 	get Settings() {
-		return Settings;
+		return MemberSettings;
 	}
 
 	/**
-	 * The ID length for all entries.
-	 * @since 0.0.1
-	 * @type {number}
-	 * @readonly
-	 * @private
+	 * Get an entry from the cache.
+	 * @since 0.5.0
+	 * @param {string} id The key to get from the cache
+	 * @param {boolean} [create = false] Whether SG should create a new instance of Settings in the background, if the entry does not already exist.
+	 * @returns {?Settings}
 	 */
-	get idLength() {
-		// 18 + 1 + 18: `{MEMBERID}.{GUILDID}`
-		return 37;
-	}
-
-	/**
-	 * Get a Settings entry from this gateway
-	 * @since 0.0.1
-	 * @param {string|string[]} id The id for this instance
-	 * @returns {?external:Settings}
-	 */
-	get(id) {
-		const [guildID, memberID] = typeof id === 'string' ? id.split('.') : id;
-
-		const guild = this.client.guilds.get(guildID);
-		if (guild) {
-			const member = guild.members.get(memberID);
-			return member && member.settings;
+	get(id, create = false) {
+		const [guildId,userId]=typeof id==="string"?id.split("."):id;
+		const guild = this.client.guilds.resolve(guildId);
+		const entry=guild.members.resolve(userId);
+		if (entry) return entry.settings;
+		if (create) {
+			const settings = new this.Settings(this,{id:guildId+"."+userId});
+			if (this._synced && this.schema.size) settings.sync(true).catch(err => this.client.emit('error', err));
+			return settings;
 		}
-
-		return undefined;
-	}
-
-	/**
-	 * Create a new Settings for this gateway
-	 * @since 0.0.1
-	 * @param {string|string[]} id The id for this instance
-	 * @param {Object<string, *>} [data={}] The data for this Settings instance
-	 * @returns {external:Settings}
-	 */
-	create(id, data = {}) {
-		const [guildID, memberID] = typeof id === 'string' ? id.split('.') : id;
-		const entry = this.get([guildID, memberID]);
-		if (entry) return entry;
-
-		const settings = new this.Settings(this, { id: `${guildID}.${memberID}`, ...data });
-		if (this._synced) settings.sync();
-		return settings;
+		return null;
 	}
 
 	/**
 	 * Sync either all entries from the cache with the persistent database, or a single one.
 	 * @since 0.0.1
 	 * @param {(Array<string>|string)} [input=Array<string>] An object containing a id property, like discord.js objects, or a string
-	 * @returns {?(MemberGateway|external:Settings)}
+	 * @returns {?(Gateway|Settings)}
 	 */
-	async sync(input = this.client.guilds.reduce((keys, guild) => keys.concat(guild.members.map(member => member.settings.id)), [])) {
+	async sync(input = [...[...this.client.guilds.cache.values()].flatMap(guild=>[...guild.members.cache.values()].map(member=>guild.id+"."+member.user.id))]) {
+		console.log("input:",input)
 		if (Array.isArray(input)) {
 			if (!this._synced) this._synced = true;
 			const entries = await this.provider.getAll(this.type, input);
+			console.log(entries);
+
 			for (const entry of entries) {
 				if (!entry) continue;
-
-				// Get the entry from the cache
 				const cache = this.get(entry.id);
-				if (!cache) continue;
-
-				cache._existsInDB = true;
-				cache._patch(entry);
+				if (cache) {
+					if (!cache._existsInDB) cache._existsInDB = true;
+					cache._patch(entry);
+				}
 			}
 
 			// Set all the remaining settings from unknown status in DB to not exists.
-			for (const guild of this.client.guilds.values()) {
-				for (const member of guild.members.values()) if (member.settings._existsInDB !== true) member.settings._existsInDB = false;
+			for (const guild of this.client.guilds.cache.values()) {
+				for( const entry of guild.members.cache.values()){
+					if (entry.settings._existsInDB === null) entry.settings._existsInDB = false;
+				}
 			}
 			return this;
 		}
 
-		const target = getIdentifier(input);
-		if (!target) throw new TypeError('The selected target could not be resolved to a string.');
-
-		const cache = this.get(target);
-		return cache ? cache.sync() : null;
+		const cache = this.get((input && input.id) || input);
+		return cache ? cache.sync(true) : null;
 	}
 
 }
