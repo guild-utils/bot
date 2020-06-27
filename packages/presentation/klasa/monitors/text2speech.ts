@@ -88,7 +88,6 @@ export default class extends Monitor {
     }
     content = content.replace(urlRegex, "\nURL省略\n");
     content = content.replace(/```.*```/g, "");
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const kind: VoiceKind | undefined = resolveConf(
       message,
       GUILD_MEMBER_SETTINGS.text2speechKind
@@ -104,8 +103,8 @@ export default class extends Monitor {
     if (speed === undefined) {
       return;
     }
-    if (speed < 0.5) {
-      speed = 0.5;
+    if (speed < 0.3) {
+      speed = 0.3;
     }
 
     const tone: number | undefined = resolveConf(
