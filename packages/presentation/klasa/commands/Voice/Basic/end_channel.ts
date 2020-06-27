@@ -21,6 +21,7 @@ export default class extends Command {
   public async run(
     msg: KlasaMessage
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await this.engine.unregister(msg.guild!.voice?.connection);
     const arr: string[] = msg.guildSettings.get(
       text2speechTargetTextChannels.join(".")

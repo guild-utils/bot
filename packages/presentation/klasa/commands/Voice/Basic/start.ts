@@ -13,6 +13,7 @@ export default class extends Command {
   ) {
     super(store, file, directory, {
       usage: "",
+      requiredPermissions: ["CONNECT", "SPEAK"],
       runIn: ["text"],
       aliases: ["s"],
       description: (lang) => lang.get(LANG_KEYS.COMMAND_START_DESCRIPTION),

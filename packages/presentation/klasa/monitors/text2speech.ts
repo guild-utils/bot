@@ -6,10 +6,34 @@ import Engine, { VoiceKind } from "../text2speech/engine";
 import { inject, autoInjectable } from "tsyringe";
 import * as GUILD_MEMBER_SETTINGS from "../guild_member_settings_keys";
 import * as GUILD_SETINGS from "../guild_settings_keys";
+import { Guild, User } from "discord.js";
 // eslint-disable-next-line no-useless-escape
 const urlRegex = /https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/;
 // eslint-disable-next-line no-useless-escape
 const markRegex = /^[!"#$%&'()\*\+\-\.,\/:;<=>?\[\\\]^_`{|}~].*/;
+function resolveConf<T>(message: KlasaMessage, key: string[] | string): T {
+  return message.member?.settings.get(key) ?? message.author.settings.get(key);
+}
+function resolveUserNameFromMessage(message: KlasaMessage): string {
+  return (
+    message.member?.settings.get(GUILD_MEMBER_SETTINGS.text2speechReadName) ??
+    message.member?.nickname ??
+    message.author.settings.get(GUILD_MEMBER_SETTINGS.text2speechReadName) ??
+    message.author.username
+  );
+}
+function resolveUserNameFromGuildAndId(
+  guild: Guild,
+  user: User
+): string | undefined {
+  const member = guild.members.resolve(user);
+  return (
+    member?.settings.get(GUILD_MEMBER_SETTINGS.text2speechReadName) ??
+    member?.nickname ??
+    user.settings.get(GUILD_MEMBER_SETTINGS.text2speechReadName) ??
+    user.username
+  );
+}
 @autoInjectable()
 export default class extends Monitor {
   constructor(
@@ -51,10 +75,11 @@ export default class extends Monitor {
     }
     // eslint-disable-next-line no-useless-escape
     content = content.replace(/\<\@\!?(\d+)\>/g, (e, m) => {
-      const member = message.guild?.members.resolve(m);
+      const user = this.client.users.resolve(m);
       return (
-        member?.settings.get(GUILD_MEMBER_SETTINGS.text2speechReadName) ??
-        member?.displayName ??
+        (message.guild &&
+          user &&
+          resolveUserNameFromGuildAndId(message.guild, user)) ||
         ""
       );
     });
@@ -64,14 +89,16 @@ export default class extends Monitor {
     content = content.replace(urlRegex, "\nURL省略\n");
     content = content.replace(/```.*```/g, "");
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const kind: VoiceKind | undefined = message.member?.settings.get(
+    const kind: VoiceKind | undefined = resolveConf(
+      message,
       GUILD_MEMBER_SETTINGS.text2speechKind
     );
     if (kind === undefined) {
       return;
     }
 
-    let speed: number | undefined = message.member?.settings.get(
+    let speed: number | undefined = resolveConf(
+      message,
       GUILD_MEMBER_SETTINGS.text2speechSpeed
     );
     if (speed === undefined) {
@@ -81,23 +108,18 @@ export default class extends Monitor {
       speed = 0.5;
     }
 
-    const tone: number | undefined = message.member?.settings.get(
+    const tone: number | undefined = resolveConf(
+      message,
       GUILD_MEMBER_SETTINGS.text2speechTone
     );
+
     if (tone === undefined) {
       return;
     }
     const volume: number =
-      message.member?.user.settings.get(
-        GUILD_MEMBER_SETTINGS.text2speechVolume
-      ) ?? 0;
-    const readName: string | undefined = message.guildSettings.get(
-      GUILD_SETINGS.text2speechReadName
-    )
-      ? message.member?.settings.get(
-          GUILD_MEMBER_SETTINGS.text2speechReadName
-        ) ?? message.member?.displayName
-      : undefined;
+      resolveConf(message, GUILD_MEMBER_SETTINGS.text2speechVolume) ?? 0;
+    const readName: string = resolveUserNameFromMessage(message);
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const dictionaryB: [
       string,

@@ -36,7 +36,7 @@ class Client extends KlasaClient {
   // Add any methods to your Klasa Client
 }
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-Client.use(require("member-gateway-cutomized"));
+Client.use(require("klasa-member-gateway"));
 declare module "discord.js" {
   interface GuildMember {
     settings: Settings;
@@ -98,6 +98,28 @@ KlasaClient.defaultGuildSchema.add("speech", (f) => {
 });
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 ((KlasaClient as any).defaultMemberSchema as Schema).add("speech", (f) => {
+  f.add("kind", "string", {
+    filter: (_client, value) => {
+      return !VoiceKindArray.includes(value);
+    },
+  });
+  f.add("speed", "float", {
+    min: 0.3,
+    filter: (_client, value) => {
+      return value < 0.3;
+    },
+  });
+  f.add("tone", "float", { default: 0.0 });
+  f.add("volume", "float", {
+    max: 10,
+    filter: (_client, value) => {
+      return value > 10;
+    },
+  });
+  f.add("readName", "string");
+});
+
+KlasaClient.defaultUserSchema.add("speech", (f) => {
   f.add("kind", "string", {
     default: "neutral",
     filter: (_client, value) => {

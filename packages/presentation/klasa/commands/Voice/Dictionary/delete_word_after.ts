@@ -11,7 +11,7 @@ export default class extends Command {
     super(store, file, directory, {
       usage: "<word:string>",
       runIn: ["text"],
-      aliases: ["dw"],
+      aliases: ["dwa"],
       description: (lang) =>
         lang.get(LANG_KEYS.COMMAND_DELETE_WORD_DESCRIPTION),
       usageDelim: " ",

@@ -12,7 +12,7 @@ export default class extends Command {
     super(store, file, directory, {
       usage: "<text:string>",
       runIn: ["dm", "text"],
-      description: (lang) => lang.get(LANG_KEYS.COMMAND_KUROMOJI_DESCRIPTION),
+      description: (lang) => lang.get(LANG_KEYS.COMMAND_JUMANPP_DESCRIPTION),
     });
   }
   public async run(
@@ -25,6 +25,7 @@ export default class extends Command {
     return await new Promise((resolve) => {
       console.log(process.env["JUMANPP_PATH"]);
       const cp = execFile(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         process.env["JUMANPP_PATH"]!,
         [],
         (error, stdout, stderr) => {

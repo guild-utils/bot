@@ -19,6 +19,7 @@ module.exports = class extends Command {
       description: (language) =>
         language.get(COMMAND_CONF_GUILD_MEMBER_DESCRIPTION),
       usage: "<set|show|remove|reset> (key:key) (value:value) [...]",
+      aliases: ["gmconf"],
       usageDelim: " ",
     });
 
