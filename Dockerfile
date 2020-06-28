@@ -43,6 +43,8 @@ RUN yarn global add pm2
 
 ENV OPEN_JTALK_BIN /usr/local/bin/open_jtalk
 ENV OPEN_JTALK_DIC /usr/local/dic
+ENV OPEN_JTALK_OUTPUT OO
+
 ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
 ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
 ENV HTS_VOICE_HAPPY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-happy.htsvoice
