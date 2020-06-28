@@ -84,6 +84,7 @@ export default class {
     private readonly mapOfKind2HtsVoice: {
       [k in VoiceKind]: { path: string; volume_fix?: number };
     },
+    type: string | undefined,
     @inject("kuromoji")
     private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
   ) {
@@ -92,7 +93,7 @@ export default class {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
       obj[k] = mapOfKind2HtsVoice[k].path;
     }
-    this.type = ["OO", "OW"].includes(process.env["OPEN_JTALK_OUTPUT"] ?? "OO")
+    this.type = ["OO", "OW"].includes(type ?? "OO")
       ? ((process.env["OPEN_JTALK_OUTPUT"] ?? "OO") as "OO" | "OW")
       : "OO";
     this.text2SpeechService = new Text2SpeechServiceOpenJtalk(

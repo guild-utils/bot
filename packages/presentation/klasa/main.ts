@@ -17,6 +17,7 @@ import { nextTaskId } from "./guild_settings_keys";
 import { initChannelsGateway } from "./channelSettings";
 import engine, { VoiceKindArray } from "./text2speech/engine";
 import * as kuromoji from "kuromoji";
+import * as ENV from "./env";
 import { Settings } from "klasa";
 import { Schema } from "klasa";
 import { GOOGLE_API_CREDENTIAL } from "./env";
@@ -217,6 +218,7 @@ async function main() {
               delta: { path: process.env["HTS_VOICE_DELTA"]! },
               gamma: { path: process.env["HTS_VOICE_GAMMA"]! },
             },
+            ENV.OPEN_JTALK_OUTPUT,
             tokenizer
           ),
         });

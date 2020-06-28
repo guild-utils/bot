@@ -8,3 +8,4 @@ export const POSTGRES_PASSWORD = process.env["POSTGRES_PASSWORD"];
 export const POSTGRES_MAX = process.env["POSTGRES_MAX"];
 export const POSTGRES_IDLE_TIMEOUT = process.env["POSTGRES_IDLE_TIMEOUT"];
 export const GOOGLE_API_CREDENTIAL = process.env["GOOGLE_API_CREDENTIAL"];
+export const OPEN_JTALK_OUTPUT = process.env["OPEN_JTALK_OUTPUT"];
