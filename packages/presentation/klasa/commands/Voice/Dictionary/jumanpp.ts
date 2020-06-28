@@ -43,6 +43,7 @@ export default class extends Command {
         conv.on("error", (...args) => {
           console.log(args);
         });
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         conv.pipe(cp.stdin!);
         conv.write(toFullWidth(text));
         conv.end();

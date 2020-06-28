@@ -116,6 +116,28 @@ POSTGRES_IDLE_TIMEOUT=1000
 ### Windowsでネイティブに動かしたい。
 頑張ってください。
 
+### gitlab container registryのやつを使う。
+```
+docker pull registry.gitlab.com/guild-utils-j/guild-utils-j:latest
+docker tag registry.gitlab.com/guild-utils-j/guild-utils-j:latest guj:latest
+docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v dbdata:/var/lib/postgresql/data postgres-alpine
+docker stop guj||true
+docker rm guj||true
+docker run -d --name guj --net guj-net --env-file=.env guj:latest
+```
+
+.env  
+```
+GUILD_UTILS_J_DISCORD_TOKEN=
+GUILD_UTILS_J_PROVIDER=postgresql
+POSTGRES_DATABASE=postgres
+POSTGRES_PASSWORD=mysecretpassword
+POSTGRES_HOST=guj-net
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_MAX=30
+POSTGRES_IDLE_TIMEOUT=1000
+```
 ## ロードマップ
 
 ### v1
@@ -139,7 +161,6 @@ htsvoice、OpenJTalk、HTS Engine API、Jumanpp、kuromoji-js、klasa-member-gat
 その他の他者の著作物についてもそのライセンスに従います。  
 tignear(tig#2552)の制作部分はUnlicenseです。  
 アイコンの利用は許可しません。  
-
 
 ## 制作
 プログラム: tignear(tig#2552)  
