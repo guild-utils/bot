@@ -109,7 +109,7 @@ KlasaClient.defaultGuildSchema.add("speech", (f) => {
       return value < 0.3;
     },
   });
-  f.add("tone", "float", { default: 0.0 });
+  f.add("tone", "float");
   f.add("volume", "float", {
     max: 10,
     filter: (_client, value) => {
@@ -133,7 +133,7 @@ KlasaClient.defaultUserSchema.add("speech", (f) => {
       return value < 0.3;
     },
   });
-  f.add("tone", "float");
+  f.add("tone", "float", { default: 0.0 });
   f.add("volume", "float", {
     default: 0.0,
     max: 10,

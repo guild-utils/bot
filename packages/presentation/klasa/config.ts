@@ -57,5 +57,8 @@ export const config: KlasaClientOptions = {
   },
   production: process.env.NODE_ENV === "production",
 };
-
-export const token: string = process.env["PWRD_EVENT_DISCORD_TOKEN"]!;
+const rawtoken = process.env["GUILD_UTILS_J_DISCORD_TOKEN"];
+if (!rawtoken) {
+  throw new Error("token GUILD_UTILS_J_DISCORD_TOKEN is not set");
+}
+export const token: string = rawtoken;

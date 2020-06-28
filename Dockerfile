@@ -39,7 +39,6 @@ FROM node:14-alpine AS runtime
 
 WORKDIR /usr/app
 
-RUN apk add ffmpeg
 RUN yarn global add pm2
 
 ENV OPEN_JTALK_BIN /usr/local/bin/open_jtalk
@@ -95,4 +94,4 @@ RUN apk add --no-cache --virtual .ojt git \
     && yarn global remove lerna \
     && yarn cache clean \
     && apk del .ojt
-CMD [ "pm2","--no-daemon","start","kick.js","--name","pwrd-event"]
+CMD [ "pm2","--no-daemon","start","kick.js","--name","guild-utils-j"]

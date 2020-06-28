@@ -1,10 +1,10 @@
 # Guild Utils J
 klasaで作られています。
 
-# 機能
+## 機能
  - 読み上げ
 
-# prefix
+## prefix
 デフォルトのプレフィックスは$です。  
 メンションでも動作します。  
 また``[~] Guild Utils J``のようにニックネームを変更してやると~がprefixになります。  
@@ -15,8 +15,8 @@ prefixを設定するコマンドは以下です。
 $conf set prefix !
 ```
 
-# 読み上げ
-## 基本
+## 読み上げ
+### 基本
 以下のどちらかのコマンドで読み上げを開始します。
 ```
 $start
@@ -37,14 +37,14 @@ $e
 
 発言者の名前あるいはメンションを読み上げるときの読みの設定が可能です。
 ```
-$gmconf set speech.readName 神
+$gmconf set speech.readName ねこ
 ```
 その他tone,volume,speed,kindが各ギルドで別個に設定できます。  
 kindの一覧は以下のコマンドでご確認ください。
 ```
 $help s
 ```
-## 辞書について
+### 辞書
 kuromoji.jsの辞書を少し変更してwを切り出せるようにしたものによって形態素解析し、形態素ごとに辞書に当てはまったものを置換する形で使用しています。  
 kuromoji.jsとOpenJTalk内部のmecabで使用されている辞書が異なるため、読み上げ結果と読みの出力が異なる場合があります。  
 
@@ -61,13 +61,13 @@ $awa 単語 たんご
 
 誤った読み上げに関する情報を募集しています。(どうにかして修正できるかもしれないので)
 
-## jumanppコマンドについて
+### jumanppコマンドについて
 将来のバージョンで使用する予定のソフトウェアです。  
 ちゃんと書けばこんなにマシになるんだと思うためにつけました。いまのところそれ以外の意味はありません。
 
-# ロードマップ
+## ロードマップ
 
-## v1
+### v1
 - N-APIを用いてHTS Engine APIからOpusをメモリ上に直接出力し、NodeJSからDiscordへ直接送信する。
 - 複数のbotアカウントを用いて一サーバーの複数のVCで読み上げが可能になるようにする。
 - 辞書のインポート、エクスポート。
@@ -82,3 +82,41 @@ $awa 単語 たんご
 ## v2
 - OpenJTalkを改造してjumanppを用いて喋るようにする。
 - Web Dashboard
+
+## セルフホスト
+```
+docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v dbdata:/var/lib/postgresql/data postgres-alpine
+docker build -t guj .
+docker stop guj||true
+docker rm guj||true
+docker run -d --name guj --net guj-net --env-file=.env guj
+```
+  
+.env  
+```
+GUILD_UTILS_J_DISCORD_TOKEN=
+GOOGLE_API_CREDENTIAL=
+PWRD_EVENT_PROVIDER=postgresql
+POSTGRESS_DATABASE=postgres
+POSTGRESS_PASSWORD=mysecretpassword
+POSTGRESS_HOST=guj-net
+POSTGRESS_PORT=5432
+POSTGRESS_USER=postgres
+POSTGRESS_MAX=30
+POSTGRESS_IDLE_TIMEOUT=1000
+OPEN_JTALK_OUTPUT=OO
+```
+
+### Windowsでネイティブに動かしたい。
+頑張ってください。
+
+## ライセンス
+htsvoice、OpenJTalk、HTS Engine API、Jumanpp、kuromoji-js、klasa-member-gatewayについてはそれぞれのライセンスにしたがいます。  
+その他の他者の著作物についてもそのライセンスに従います。  
+tignear(tig#2552)の制作部分はUnlicenseです。  
+アイコンの利用は許可しません。  
+
+
+## 制作
+プログラム: tignear(tig#2552)  
+アイコン: 匿名希望らしいので伏せておきます…

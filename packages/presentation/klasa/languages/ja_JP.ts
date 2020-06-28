@@ -209,12 +209,13 @@ export default class extends Language {
     COMMAND_INVITE: () => [
       `サーバーに${this.client.user!.username}を追加するには:`,
       `${this.client.invite}`,
-      "バグを見つけたら https://gitlab.com/guild-utils-j/guild-utils-j/-/issues/new へお願いします。",
+      "バグを見つけたら https://gitlab.com/guild-utils-j/guild-utils-j/-/issues へお願いします。",
     ],
     COMMAND_INVITE_DESCRIPTION: "ボットの招待リンクを表示します。",
     COMMAND_INFO: [
       "いまのところこのBotは読み上げが可能です。",
       "詳細はhelpコマンドまたは https://gitlab.com/guild-utils-j/guild-utils-j/-/blob/master/README.md を参照してください。",
+      "プログラム:tig#2552 アイコン:匿名希望らしいので伏せます",
     ],
     COMMAND_INFO_DESCRIPTION: "このボットに関するいくつかの情報を提供します。",
     COMMAND_HELP_DESCRIPTION: "コマンドリストと説明を表示します。",
@@ -301,33 +302,6 @@ export default class extends Language {
     COMMAND_NEXT_DESCRIPTION: "イベントを近い順に並べます。",
     COMMAND_PUT_DESCRIPTION: "イベントを追加します。",
     COMMAND_UPDATE_DESCRIPTION: "スプレッドシートの更新を適用します。",
-    COMMAND_SHOW_DESCRIPTION: "カウンターについての情報を表示します。",
-    COMMAND_SHOW_RESULT: (display, role, format) =>
-      `${display} ${role} ${format}`,
-    COMMAND_SET_DESCRIPTION:
-      "テキストチャンネルまたはボイスチャンネルをカウンターにします。targetはロール(ID,メンション)またはbot,member,humanです。",
-    COMMAND_SET_SUCCESS: "成功",
-    COMMAND_UNSET_DESCRIPTION:
-      "テキストチャンネルまたはボイスチャンネルでのカウントをやめます。",
-    COMMAND_UNSET_SUCCESS: "成功",
-    COMMAND_RECOUNT_DESCRIPTION:
-      "すべてのカウンターについてカウントし直します。",
-    COMMAND_RECOUNT_START: "カウントを開始しています。",
-    COMMAND_RECOUNT_SUCCESS: "終了",
-    COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:
-      "与えようとしているロールはあなたの最高のロールより高いものです。",
-    COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:
-      "あなたはロールを管理する権限を持っていません。",
-    COMMAND_SET_INVALID_TARGET:
-      "targetはロール(ID,メンション)またはbot,member,humanである必要があります。",
-    COMMAND_SET_BOT_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL: (
-      channels
-    ) =>
-      `botはターゲットのチャンネル(${channels})におけるチャンネルの管理権限を持っていません。`,
-    COMMAND_SET_YOU_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL: (
-      channels
-    ) =>
-      `あなたはターゲットのチャンネル(${channels})におけるチャンネルの管理権限を持っていません。`,
     COMMAND_END_SUCCESS: "読み上げを終了しました。",
     COMMAND_END_DESCRIPTION: "読み上げを終了します。",
     COMMAND_START_DESCRIPTION: "読み上げを開始します。",
@@ -341,9 +315,12 @@ export default class extends Language {
     COMMAND_DELETE_WORD_DESCRIPTION: "単語を辞書から削除します。",
     COMMAND_DELETE_WORD_SUCCESS: "単語を辞書から削除しました。",
     COMMAND_START_EXTENDED_HELP: (arr) => {
-      return `声の種類はuserconf set speech.kind で変更できます。現在kindに設定できる値は以下のとおりです。\n${arr.join(
-        ","
-      )}`;
+      return [
+        `声の種類はgmconf/userconf set speech.kind で変更できます。現在kindに設定できる値は以下のとおりです。\n${arr.join(
+          ","
+        )}`,
+        "基本的に設定はgmconf→userconfの順番で見に行きます。ただし、名前についてはgmconf→nickname→userconfの順番に見に行きます。",
+      ].join("\n");
     },
     COMMAND_CONF_GUILD_MEMBER_DESCRIPTION:
       "サーバー単位でのユーザーの設定をする。",

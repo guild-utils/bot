@@ -59,19 +59,20 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
     private readonly pathtoOpenJTalk: string,
     private readonly pathToDict: string,
     private readonly mapOfKind2HtsVoice: { [k in VoiceKind]: string },
-    private readonly charset: string | undefined
+    private readonly charset: string | undefined,
+    private readonly type: "OO" | "OW"
   ) {}
   async spawn(
     hnd: OpenJTalkHandle,
     opt: OpenJTalkSpownOptions,
     text: string
   ): Promise<void> {
-    if (!opt.ow && process.env["OPEN_JTALK_OUTPUT"] == "OW") {
+    if (!opt.ow && this.type === "OW") {
       opt = Object.assign({}, opt, {
         ow: uniqueFilename(os.tmpdir(), "openjtalk-dst") + ".wav",
       });
     }
-    if (!opt.oo && process.env["OPEN_JTALK_OUTPUT"] == "OO") {
+    if (!opt.oo && this.type === "OO") {
       opt = Object.assign({}, opt, {
         oo: uniqueFilename(os.tmpdir(), "openjtalk-dst") + ".opus",
       });

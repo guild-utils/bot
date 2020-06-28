@@ -306,7 +306,8 @@ module.exports = class extends Language {
       `• Klasa      :: v${klasaVersion}`,
       `• Discord.js :: v${discordVersion}`,
       `• Node.js    :: ${processVersion}`,
-      //`• Shard      :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${this.client.options!.totalShardCount}`
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,prettier/prettier, @typescript-eslint/no-unnecessary-type-assertion,@typescript-eslint/no-explicit-any
+      `• Shard      :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${(this.client.options! as any).totalShardCount}`
     ],
     COMMAND_STATS_DESCRIPTION: "Provides some details about the bot and stats.",
     MESSAGE_PROMPT_TIMEOUT: "The prompt has timed out.",
@@ -332,30 +333,6 @@ module.exports = class extends Language {
     COMMAND_NEXT_DESCRIPTION: "Displays events in order.",
     COMMAND_PUT_DESCRIPTION: "Add a new event.",
     COMMAND_UPDATE_DESCRIPTION: "Update the bot with the spreadsheet.",
-    COMMAND_SHOW_DESCRIPTION: "Show counters information.",
-    COMMAND_SHOW_RESULT: (display, role, format) =>
-      `${display} ${role} ${format}`,
-    COMMAND_SET_SUCCESS: "Updated.",
-    COMMAND_SET_DESCRIPTION: "Turn text or voice channels into counters.",
-    COMMAND_RECOUNT_DESCRIPTION: "Recount all counters.",
-    COMMAND_RECOUNT_START: "Counting is starting.",
-    COMMAND_RECOUNT_SUCCESS: "Updated.",
-    COMMAND_UNSET_DESCRIPTION: "Stop counting on text or voice channels.",
-    COMMAND_UNSET_SUCCESS: "Success.",
-    COMMAND_ADD_ROLE_COMMON_YOUR_HIGHEST_ROLE_IS_LOWER_THAN_TARGET_ROLE:
-      "Your highest roll is lower than the one you are trying to give.",
-    COMMAND_ADD_ROLE_COMMON_YOU_HAVENT_MANAGE_ROLE_PERMISSION:
-      "You do not have permission to manage roles.",
-    COMMAND_SET_INVALID_TARGET:
-      "Target must be a role (ID, mention) or bot, member, human.",
-    COMMAND_SET_BOT_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL: (
-      channel
-    ) =>
-      `Bot doesn't have MANGE_CHANNEL permission on target channel,${channel}.`,
-    COMMAND_SET_YOU_DONT_HAVE_MANGE_CHANNEL_PERMISSON_ON_TARGET_CHANNEL: (
-      channel
-    ) =>
-      `You don't have MANGE_CHANNEL permission on target channel,${channel}.`,
     COMMAND_END_SUCCESS: "Reading is finished.",
     COMMAND_END_DESCRIPTION: "Reading is finished.",
     COMMAND_START_DESCRIPTION: "Start reading aloud.",
@@ -376,8 +353,10 @@ module.exports = class extends Language {
     },
     COMMAND_CONF_GUILD_MEMBER_DESCRIPTION:
       "Define per-member settings on guild.",
-    COMMAND_JUMANPP_DESCRIPTION: "jumanppで形態素解析する。",
-    COMMAND_KUROMOJI_DESCRIPTION: "kuromojiで形態素解析する。",
+    COMMAND_JUMANPP_DESCRIPTION:
+      "Morphological analysis is performed with jumanpp.",
+    COMMAND_KUROMOJI_DESCRIPTION:
+      "Morphological analysis is performed with kuromoji.js.",
   };
 
   async init() {

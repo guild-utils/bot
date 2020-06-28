@@ -77,6 +77,7 @@ function toFullWidth(elm: string) {
 export default class {
   private readonly waitQueue = new Map<string, Data[]>();
   private readonly text2SpeechService: Text2SpeechServiceOpenJtalk<VoiceKind>;
+  private readonly type: "OO" | "OW";
   constructor(
     pathToOpenJTalk: string,
     pathToDict: string,
@@ -91,11 +92,15 @@ export default class {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
       obj[k] = mapOfKind2HtsVoice[k].path;
     }
+    this.type = ["OO", "OW"].includes(process.env["OPEN_JTALK_OUTPUT"] ?? "OO")
+      ? ((process.env["OPEN_JTALK_OUTPUT"] ?? "OO") as "OO" | "OW")
+      : "OO";
     this.text2SpeechService = new Text2SpeechServiceOpenJtalk(
       pathToOpenJTalk,
       pathToDict,
       obj,
-      process.env["OPEN_JTALK_INPUT_CHARSET"]
+      process.env["OPEN_JTALK_INPUT_CHARSET"],
+      this.type
     );
   }
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -194,7 +199,9 @@ export default class {
       this.playNext(conn).catch(console.log);
       return;
     }
-    const dispatcher = conn.play(stream);
+    const dispatcher = conn.play(stream, {
+      type: this.type === "OO" ? "ogg/opus" : "unknown",
+    });
     dispatcher.on("finish", () => {
       const queue2 = [...(this.waitQueue.get(cid) ?? [])];
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
