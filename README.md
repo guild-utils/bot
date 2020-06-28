@@ -65,26 +65,10 @@ $awa 単語 たんご
 将来のバージョンで使用する予定のソフトウェアです。  
 ちゃんと書けばこんなにマシになるんだと思うためにつけました。いまのところそれ以外の意味はありません。
 
-## ロードマップ
-
-### v1
-- N-APIを用いてHTS Engine APIからOpusをメモリ上に直接出力し、NodeJSからDiscordへ直接送信する。
-- 複数のbotアカウントを用いて一サーバーの複数のVCで読み上げが可能になるようにする。
-- 辞書のインポート、エクスポート。
-- 読み上げ設定インポート、エクスポート。
-- 読み上げ設定ガチャ。
-- 読み上げ設定プリセット。(コマンド一つで声を変えれるように)
-- DMでの音声生成。
-- Embed Viewによる表示。
-- スケジューリング機能のDSLを根本的に改善する(GoogleSpreadSheetを使い続けるかも要検討)
-- CI
-- 読み上げ時間の制限
-## v2
-- OpenJTalkを改造してjumanppを用いて喋るようにする。
-- Web Dashboard
-
 ## セルフホスト
 ```
+git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
+cd guild-utils-j
 docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v dbdata:/var/lib/postgresql/data postgres-alpine
 docker build -t guj .
 docker stop guj||true
@@ -107,8 +91,50 @@ POSTGRES_IDLE_TIMEOUT=1000
 OPEN_JTALK_OUTPUT=OO
 ```
 
+### 余計なものいらないので読み上げだけください!
+```
+git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
+cd guild-utils-j
+docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v dbdata:/var/lib/postgresql/data postgres-alpine
+docker build -f WithoutJumanpp.Dockerfile -t guj .
+docker stop guj||true
+docker rm guj||true
+docker run -d --name guj --net guj-net --env-file=.env guj
+```
+
+.env  
+```
+GUILD_UTILS_J_DISCORD_TOKEN=
+GUILD_UTILS_J_PROVIDER=postgresql
+POSTGRES_DATABASE=postgres
+POSTGRES_PASSWORD=mysecretpassword
+POSTGRES_HOST=guj-net
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_MAX=30
+POSTGRES_IDLE_TIMEOUT=1000
+OPEN_JTALK_OUTPUT=OO
+```
 ### Windowsでネイティブに動かしたい。
 頑張ってください。
+
+## ロードマップ
+
+### v1
+- N-APIを用いてHTS Engine APIからOpusをメモリ上に直接出力し、NodeJSからDiscordへ直接送信する。
+- 複数のbotアカウントを用いて一サーバーの複数のVCで読み上げが可能になるようにする。
+- 辞書のインポート、エクスポート。
+- 読み上げ設定インポート、エクスポート。
+- 読み上げ設定ガチャ。
+- 読み上げ設定プリセット。(コマンド一つで声を変えれるように)
+- DMでの音声生成。
+- Embed Viewによる表示。
+- スケジューリング機能のDSLを根本的に改善する(GoogleSpreadSheetを使い続けるかも要検討)
+- CI
+- 読み上げ時間の制限
+## v2
+- OpenJTalkを改造してjumanppを用いて喋るようにする。
+- Web Dashboard
 
 ## ライセンス
 htsvoice、OpenJTalk、HTS Engine API、Jumanpp、kuromoji-js、klasa-member-gatewayについてはそれぞれのライセンスにしたがいます。  

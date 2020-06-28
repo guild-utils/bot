@@ -3,6 +3,8 @@ import { autoInjectable, inject } from "tsyringe";
 import * as moment from "moment-timezone";
 import { GameEventUseCase } from "usecase/game-event";
 import { GameEvent } from "pdomain/game-event";
+import { GOOGLE_API_CREDENTIAL } from "../../env";
+
 import {
   googleSpreadSheetId,
   momentLocale,
@@ -22,6 +24,7 @@ export default class Next extends Command {
       usage: "[collectionName:string]",
       runIn: ["text"],
       requiredPermissions: ["SEND_MESSAGES"],
+      enabled: Boolean(GOOGLE_API_CREDENTIAL),
       description: (lang) => lang.get(LANG_KEYS.COMMAND_NEXT_DESCRIPTION),
     });
     this.gameEvent = gameEvent;
@@ -37,7 +40,7 @@ export default class Next extends Command {
       ? await this.process(gsid, collectionName, now)
       : await this.gameEvent.nextEvents(gsid, now);
     return msg.sendMessage(
-      list.map(([c, e, m]) => {
+      list.map(([, e, m]) => {
         const tzt = m
           .clone()
           .tz(msg.guildSettings.get(momentTZ))

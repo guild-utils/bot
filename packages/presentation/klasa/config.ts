@@ -1,6 +1,6 @@
 import { KlasaClientOptions } from "klasa";
 import { Intents } from "discord.js";
-
+import * as ENV from "./env";
 export const config: KlasaClientOptions = {
   gateways: {},
   consoleEvents: {
@@ -12,19 +12,18 @@ export const config: KlasaClientOptions = {
     wtf: true,
   },
   providers: {
-    default: process.env["GUILD_UTILS_J_PROVIDER"],
+    default: ENV.GUILD_UTILS_J_PROVIDER,
     postgresql:
-      process.env["GUILD_UTILS_J_PROVIDER"] === "postgresql"
+      ENV.GUILD_UTILS_J_PROVIDER === "postgresql"
         ? {
-            host: process.env["POSTGRES_HOST"],
-            port: process.env["POSTGRES_PORT"],
-            database: process.env["POSTGRES_DATABASE"],
-            user: process.env["POSTGRES_USER"],
-            password: process.env["POSTGRES_PASSWORD"],
+            host: ENV.POSTGRES_HOST,
+            port: ENV.POSTGRES_PORT,
+            database: ENV.POSTGRES_DATABASE,
+            user: ENV.POSTGRES_USER,
+            password: ENV.POSTGRES_PASSWORD,
             options: {
-              max: process.env["POSTGRES_MAX"],
-              idleTimeoutMillis:
-                Number(process.env["POSTGRES_IDLE_TIMEOUT"]) ?? 30000,
+              max: ENV.POSTGRES_MAX,
+              idleTimeoutMillis: ENV.POSTGRES_IDLE_TIMEOUT,
               connectionTimeoutMillis: 2000,
             },
           }
@@ -59,6 +58,6 @@ export const config: KlasaClientOptions = {
 };
 const rawtoken = process.env["GUILD_UTILS_J_DISCORD_TOKEN"];
 if (!rawtoken) {
-  throw new Error("token GUILD_UTILS_J_DISCORD_TOKEN is not set");
+  throw new Error("GUILD_UTILS_J_DISCORD_TOKEN is not set.Please set!\n");
 }
 export const token: string = rawtoken;

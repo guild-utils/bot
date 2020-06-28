@@ -21,13 +21,8 @@ import { FixedDSLParser } from "fixed-dsl";
 import { PeriodicalDSLParser } from "periodical-dsl";
 import { TimingToNotifyDSLParser } from "timing-to-notify-dsl";
 import * as moment from "moment-timezone";
-const credentialString = process.env["GOOGLE_API_CREDENTIAL"];
-if (!credentialString) {
-  throw TypeError("GOOGLE_API_CREDENTIAL isn't found!");
-}
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const credential: ServiceAccountCredentials = JSON.parse(credentialString);
 export type GssCollectionGroupIdT = GoogleSpreadsheet;
 class GssCollectionName<kindT extends GameEventKind>
   implements CollectionNameBase<kindT> {
@@ -68,10 +63,10 @@ export class GssGameEventRepository
   private fixedParser: FixedDSLParser = new FixedDSLParser();
   private periodicalParser: PeriodicalDSLParser = new PeriodicalDSLParser();
   private timingToNotifyParser: TimingToNotifyDSLParser = new TimingToNotifyDSLParser();
-
+  constructor(private readonly credential: ServiceAccountCredentials) {}
   async collcetionGroupId(idString: string): Promise<GssCollectionGroupIdT> {
     const sheet = new GoogleSpreadsheet(idString);
-    await sheet.useServiceAccountAuth(credential);
+    await sheet.useServiceAccountAuth(this.credential);
     return sheet;
   }
   async listCollectionName(

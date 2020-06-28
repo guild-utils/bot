@@ -4,6 +4,7 @@ import { GameEventUseCase } from "usecase/game-event";
 import { GameEvent } from "pdomain/game-event";
 import { googleSpreadSheetId } from "../../guild_settings_keys";
 import * as LANG_KEYS from "../../lang_keys";
+import { GOOGLE_API_CREDENTIAL } from "../../env";
 
 @autoInjectable()
 export default class Put extends Command {
@@ -18,6 +19,7 @@ export default class Put extends Command {
       usage: "<collectionName:string> <values:string>[...]",
       usageDelim: " ",
       runIn: ["text"],
+      enabled: Boolean(GOOGLE_API_CREDENTIAL),
       requiredPermissions: ["SEND_MESSAGES"],
       description: (lang) => lang.get(LANG_KEYS.COMMAND_PUT_DESCRIPTION),
     });

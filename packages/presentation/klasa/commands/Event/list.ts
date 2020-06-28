@@ -2,7 +2,7 @@ import { Command, CommandStore, KlasaMessage } from "klasa";
 import { inject, autoInjectable } from "tsyringe";
 import { GameEvent } from "pdomain/game-event";
 import { GameEventUseCase } from "usecase/game-event";
-
+import { GOOGLE_API_CREDENTIAL } from "../../env";
 import { googleSpreadSheetId } from "../../guild_settings_keys";
 import * as LANG_KEYS from "../../lang_keys";
 @autoInjectable()
@@ -17,6 +17,7 @@ export default class extends Command {
     super(store, file, directory, {
       usage: "[collectionName:string]",
       runIn: ["text"],
+      enabled: Boolean(GOOGLE_API_CREDENTIAL),
       requiredPermissions: ["SEND_MESSAGES"],
       description: (lang) => lang.get(LANG_KEYS.COMMAND_LIST_DESCRIPTION),
     });

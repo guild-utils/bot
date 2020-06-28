@@ -2,6 +2,7 @@ import { Command, CommandStore, KlasaMessage } from "klasa";
 import * as LANG_KEYS from "../../../lang_keys";
 import { execFile } from "child_process";
 import { encodeStream } from "iconv-lite";
+import * as ENV from "../../../env";
 function toFullWidth(elm: string) {
   return elm.replace(/[A-Za-z0-9!-~]/g, function (s) {
     return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
@@ -12,6 +13,7 @@ export default class extends Command {
     super(store, file, directory, {
       usage: "<text:string>",
       runIn: ["dm", "text"],
+      enabled: Boolean(ENV.JUMANPP_PATH),
       description: (lang) => lang.get(LANG_KEYS.COMMAND_JUMANPP_DESCRIPTION),
     });
   }

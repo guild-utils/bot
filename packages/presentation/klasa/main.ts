@@ -19,6 +19,7 @@ import engine, { VoiceKindArray } from "./text2speech/engine";
 import * as kuromoji from "kuromoji";
 import { Settings } from "klasa";
 import { Schema } from "klasa";
+import { GOOGLE_API_CREDENTIAL } from "./env";
 
 if (result) {
   console.log(result.parsed);
@@ -47,20 +48,34 @@ declare module "klasa" {
     members: Gateway;
   }
 }
-const usecase = new GameEventUseCaseImpl<
-  GssGameEventRepository,
-  GssCollectionGroupIdT,
-  HKTGssCollectionName
->(new GssGameEventRepository());
-KlasaClient.defaultGuildSchema.add("momentLocale", "string", { default: "ja" });
-KlasaClient.defaultGuildSchema.add("momentTZ", "string", {
-  default: "Asia/Tokyo",
-});
-KlasaClient.defaultGuildSchema.add("event", (f) => {
-  f.add("sheet", "GoogleSpreadSheet");
-  f.add("notificationChannel", "TextChannel");
-  f.add("nextTaskId", "string", { configurable: false });
-});
+if (GOOGLE_API_CREDENTIAL) {
+  const usecase = new GameEventUseCaseImpl<
+    GssGameEventRepository,
+    GssCollectionGroupIdT,
+    HKTGssCollectionName
+  >(new GssGameEventRepository(JSON.parse(GOOGLE_API_CREDENTIAL)));
+  container.register("GameEventUseCase", { useValue: usecase });
+  container.register("GameEventNotificationRepository", {
+    useValue: gameEventNotificationRepository,
+  });
+  KlasaClient.defaultGuildSchema.add("event", (f) => {
+    f.add("sheet", "GoogleSpreadSheet");
+    f.add("notificationChannel", "TextChannel");
+    f.add("nextTaskId", "string", { configurable: false });
+  });
+  KlasaClient.defaultGuildSchema.add("momentLocale", "string", {
+    default: "ja",
+  });
+  KlasaClient.defaultGuildSchema.add("momentTZ", "string", {
+    default: "Asia/Tokyo",
+  });
+} else {
+  container.register("GameEventUseCase", { useValue: {} });
+  container.register("GameEventNotificationRepository", {
+    useValue: {},
+  });
+}
+
 KlasaClient.defaultGuildSchema.add("speech", (f) => {
   f.add("targets", "TextChannel", {
     configurable: false,
@@ -142,11 +157,6 @@ KlasaClient.defaultUserSchema.add("speech", (f) => {
     },
   });
   f.add("readName", "string");
-});
-
-container.register("GameEventUseCase", { useValue: usecase });
-container.register("GameEventNotificationRepository", {
-  useValue: gameEventNotificationRepository,
 });
 
 async function main() {
