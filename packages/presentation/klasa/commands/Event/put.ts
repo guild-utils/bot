@@ -12,7 +12,7 @@ export default class Put extends Command {
     store: CommandStore,
     file: string[],
     directory: string,
-    @inject("GameEventUseCase") gameEvent?: GameEventUseCase
+    @inject("GameEventUseCase") gameEvent: GameEventUseCase
   ) {
     super(store, file, directory, {
       usage: "<collectionName:string> <values:string>[...]",
@@ -21,18 +21,18 @@ export default class Put extends Command {
       requiredPermissions: ["SEND_MESSAGES"],
       description: (lang) => lang.get(LANG_KEYS.COMMAND_PUT_DESCRIPTION),
     });
-    this.gameEvent = gameEvent!;
+    this.gameEvent = gameEvent;
   }
   public async run(
     msg: KlasaMessage,
     [collectionName, ...params]: string[]
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
-    const gsid = msg.guildSettings.get(googleSpreadSheetId);
+    const gsid: string = msg.guildSettings.get(googleSpreadSheetId);
     const list = await this.gameEvent.collection(gsid, collectionName);
     const arr: GameEvent[] = list.events;
     await this.gameEvent.put(gsid, collectionName, params);
     const rep = [
-      `**${list.name}** ${list.kind}`,
+      `**${list.name.name}** ${list.kind}`,
       ...arr.map((e) => e.name),
     ].join("\n");
     return msg.sendMessage(rep);

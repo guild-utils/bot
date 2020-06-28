@@ -12,19 +12,19 @@ export const config: KlasaClientOptions = {
     wtf: true,
   },
   providers: {
-    default: process.env["PWRD_EVENT_PROVIDER"],
+    default: process.env["GUILD_UTILS_J_PROVIDER"],
     postgresql:
-      process.env["PWRD_EVENT_PROVIDER"] === "postgresql"
+      process.env["GUILD_UTILS_J_PROVIDER"] === "postgresql"
         ? {
-            host: process.env["POSTGRESS_HOST"],
-            port: process.env["POSTGRESS_PORT"],
-            database: process.env["POSTGRESS_DATABASE"],
-            user: process.env["POSTGRESS_USER"],
-            password: process.env["POSTGRESS_PASSWORD"],
+            host: process.env["POSTGRES_HOST"],
+            port: process.env["POSTGRES_PORT"],
+            database: process.env["POSTGRES_DATABASE"],
+            user: process.env["POSTGRES_USER"],
+            password: process.env["POSTGRES_PASSWORD"],
             options: {
-              max: process.env["POSTGRESS_MAX"],
+              max: process.env["POSTGRES_MAX"],
               idleTimeoutMillis:
-                Number(process.env["POSTGRESS_IDLE_TIMEOUT"]) ?? 30000,
+                Number(process.env["POSTGRES_IDLE_TIMEOUT"]) ?? 30000,
               connectionTimeoutMillis: 2000,
             },
           }

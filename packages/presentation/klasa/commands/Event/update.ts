@@ -24,6 +24,7 @@ export default class extends Command {
     msg: KlasaMessage
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
     await this.notifyRepo.register(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       msg.guild!.id,
       (
         await this.gameEventUseCase.allEvents(

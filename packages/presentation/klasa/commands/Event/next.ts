@@ -16,7 +16,7 @@ export default class Next extends Command {
     store: CommandStore,
     file: string[],
     directory: string,
-    @inject("GameEventUseCase") gameEvent?: GameEventUseCase
+    @inject("GameEventUseCase") gameEvent: GameEventUseCase
   ) {
     super(store, file, directory, {
       usage: "[collectionName:string]",
@@ -24,13 +24,13 @@ export default class Next extends Command {
       requiredPermissions: ["SEND_MESSAGES"],
       description: (lang) => lang.get(LANG_KEYS.COMMAND_NEXT_DESCRIPTION),
     });
-    this.gameEvent = gameEvent!;
+    this.gameEvent = gameEvent;
   }
   public async run(
     msg: KlasaMessage,
     [collectionName]: [string | undefined]
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
-    const gsid = msg.guildSettings.get(googleSpreadSheetId);
+    const gsid: string = msg.guildSettings.get(googleSpreadSheetId);
     const now = moment.utc();
 
     const list = collectionName
@@ -42,11 +42,12 @@ export default class Next extends Command {
           .clone()
           .tz(msg.guildSettings.get(momentTZ))
           .locale(msg.guildSettings.get(momentLocale));
-        return e.name + ":" + tzt.format("llll") + `(${tzt})`;
+        return e.name + ":" + tzt.format("llll");
       })
     );
   }
-  async process(gsid: any, collectionName: string, now: moment.Moment) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async process(gsid: string, collectionName: string, now: moment.Moment) {
     const [c, e] = await this.gameEvent.nextEventsWithName(
       gsid,
       collectionName,
