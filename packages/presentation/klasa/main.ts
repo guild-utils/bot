@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "reflect-metadata";
+import Plugin from "klasa-member-gateway";
 import { config as dotenv } from "dotenv";
 const result = dotenv();
 import { KlasaClient, KlasaClientOptions } from "klasa";
@@ -37,18 +38,14 @@ class Client extends KlasaClient {
   }
   // Add any methods to your Klasa Client
 }
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-Client.use(require("klasa-member-gateway"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-assignment
+Client.use(Plugin);
 declare module "discord.js" {
   interface GuildMember {
     settings: Settings;
   }
 }
-declare module "klasa" {
-  interface GatewayDriver {
-    members: Gateway;
-  }
-}
+
 if (GOOGLE_API_CREDENTIAL) {
   const usecase = new GameEventUseCaseImpl<
     GssGameEventRepository,

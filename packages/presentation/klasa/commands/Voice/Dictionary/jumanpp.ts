@@ -25,7 +25,6 @@ export default class extends Command {
   }
   async spawn(text: string): Promise<string> {
     return await new Promise((resolve) => {
-      console.log(ENV.JUMANPP_PATH);
       const cp = execFile(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ENV.JUMANPP_PATH!,

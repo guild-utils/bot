@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "author": "Dirigeants",
-  "main": "src/index.js",
-  "types": "typings/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/dirigeants/klasa-member-gateway.git"
@@ -17,7 +17,8 @@
   "scripts": {
     "lint": "npx eslint --fix src && npx eslint --fix --config .eslintrcmd.json --ext md guides && npx tslint --fix 'typings/*.ts'",
     "test:lint": "npx eslint src && npx tslint 'typings/*.ts' && npx eslint --config .eslintrcmd.json --ext md guides && npx markdownlint guides README.md",
-    "docs": "npx dg --source src --custom guides/.docconfig.json --output dist/docs.json --logging"
+    "docs": "npx dg --source src --custom guides/.docconfig.json --output dist/docs.json --logging",
+    "build":"tsc -p ."
   },
   "peerDependencies": {
     "klasa": "github:dirigeants/klasa#master"
