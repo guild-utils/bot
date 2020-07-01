@@ -1,6 +1,6 @@
 {
   "name": "timing-to-notify-dsl",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "dependencies": {
     "moment": "^2.24.0",
     "parjs": "^0.12.7",

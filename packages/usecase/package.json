@@ -27,10 +27,10 @@
     "fmt": "prettier --write **/*.ts"
   },
   "files": [
-    "lib",
+    "dist",
     "game-event"
   ],
   "directories": {
-    "lib": "lib"
+    "lib": "dist"
   }
 }

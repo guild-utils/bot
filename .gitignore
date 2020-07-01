@@ -5,7 +5,6 @@ node_modules/
 # Ignore bwd folders/files
 dist/
 bwd/
-lib
 *.tsbuildinfo
 
 # Ignore the config file (contains sensitive information such as tokens)

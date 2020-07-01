@@ -1,7 +1,7 @@
 {
     "name": "domain_game-event",
-    "main": "../lib/game-event.js",
-    "types": "../lib/game-event.d.ts",
+    "main": "../dist/game-event.js",
+    "types": "../dist/game-event.d.ts",
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^3.4.0",
         "@typescript-eslint/parser": "^3.4.0",

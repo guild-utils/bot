@@ -30,10 +30,10 @@
 
   },
   "files": [
-    "lib",
+    "dist",
     "credential.json"
   ],
   "directories": {
-    "lib": "lib"
+    "lib": "dist"
   }
 }

@@ -23,10 +23,10 @@
     "fmt": "prettier --write **/*.ts"
   },
   "files": [
-    "lib",
+    "dist",
     "./*.ts"
   ],
   "directories": {
-    "lib": "lib"
+    "lib": "dist"
   }
 }

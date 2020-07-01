@@ -1,6 +1,6 @@
 {
   "name": "fixed-dsl",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "dependencies": {
     "parjs": "^0.12.7",
     "pdomain": "^1.0.0"
