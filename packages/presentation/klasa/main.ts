@@ -14,7 +14,6 @@ import { GameEventUseCaseImpl } from "usecase/game-event";
 import { GameEventNotificationRepositoryKlasa } from "schedule";
 import { taskName } from "./tasks/event-notice";
 import { config, token } from "./config";
-import { nextTaskId } from "./guild_settings_keys";
 import { initChannelsGateway } from "./channelSettings";
 import engine, { VoiceKindArray } from "./text2speech/engine";
 import * as kuromoji from "kuromoji";
@@ -22,13 +21,20 @@ import * as ENV from "./env";
 import { Settings } from "klasa";
 import { Schema } from "klasa";
 import { GOOGLE_API_CREDENTIAL } from "./env";
+import {
+  KlasaRepository,
+  Service as GRPCService,
+  ServerResponseTransformer,
+} from "presentation_rpc-server";
+import * as GUILD_SETINGS from "./guild_settings_keys";
+import { GRPCServer } from "./grpc";
 
 if (result) {
   console.log(result.parsed);
 }
 const gameEventNotificationRepository = new GameEventNotificationRepositoryKlasa(
   taskName,
-  nextTaskId
+  GUILD_SETINGS.nextTaskId
 );
 class Client extends KlasaClient {
   constructor(options: KlasaClientOptions) {
@@ -164,6 +170,7 @@ async function main() {
       .build((err, tokenizer) => {
         console.log(err);
         container.register("kuromoji", { useValue: tokenizer });
+
         container.register("engine", {
           useValue: new engine(
             process.env["OPEN_JTALK_BIN"]!,
@@ -224,7 +231,15 @@ async function main() {
   });
 
   const client = new Client(config);
+  const configRepo = new KlasaRepository(client.gateways);
+  container.register("ConfigRepository", {
+    useValue: configRepo,
+  });
+  const trans = new ServerResponseTransformer();
+  const grpcService: GRPCService = new GRPCService(configRepo, trans);
+  const grpc = new GRPCServer(grpcService);
   initChannelsGateway(client.gateways);
+  grpc.run();
   await client.login(token);
 }
 main().catch(console.log);

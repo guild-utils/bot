@@ -8,7 +8,7 @@ import {
   GameEventCollection,
   HKTCollectionName,
   nextNoticeTime,
-} from "pdomain/game-event";
+} from "domain_core/game-event";
 import { GameEventUseCase } from "usecase/game-event";
 import { Metadata } from "schedule";
 import {

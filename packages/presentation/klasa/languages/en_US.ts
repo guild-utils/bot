@@ -307,7 +307,9 @@ module.exports = class extends Language {
       `• Discord.js :: v${discordVersion}`,
       `• Node.js    :: ${processVersion}`,
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,prettier/prettier, @typescript-eslint/no-unnecessary-type-assertion,@typescript-eslint/no-explicit-any
-      `• Shard      :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${(this.client.options! as any).totalShardCount}`
+      `• Shard      :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${
+        (this.client.options! as any).totalShardCount
+      }`,
     ],
     COMMAND_STATS_DESCRIPTION: "Provides some details about the bot and stats.",
     MESSAGE_PROMPT_TIMEOUT: "The prompt has timed out.",

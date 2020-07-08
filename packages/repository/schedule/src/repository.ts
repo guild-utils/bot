@@ -2,7 +2,7 @@ import {
   GameEventNotificationRepository,
   GameEvent,
   nextNoticeTime,
-} from "pdomain/game-event";
+} from "domain_core/game-event";
 import * as moment from "moment-timezone";
 
 import { KlasaClient } from "klasa";

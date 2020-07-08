@@ -4,7 +4,7 @@
   "dependencies": {
     "moment": "^2.24.0",
     "parjs": "^0.12.7",
-    "pdomain": "^1.0.0"
+    "domain_core": "^1.0.0"
   },
   "devDependencies": {
     "@types/moment-timezone": "^0.5.13",

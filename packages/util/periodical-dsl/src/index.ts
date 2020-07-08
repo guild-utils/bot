@@ -1,4 +1,4 @@
-import { GameEventTimingPeriodical } from "pdomain/game-event";
+import { GameEventTimingPeriodical } from "domain_core/game-event";
 import * as moment from "moment-timezone";
 
 export class PeriodicalDSLParser {

@@ -1,6 +1,6 @@
 import { Command, CommandStore, KlasaMessage } from "klasa";
 import { inject, autoInjectable } from "tsyringe";
-import { GameEvent } from "pdomain/game-event";
+import { GameEvent } from "domain_core/game-event";
 import { GameEventUseCase } from "usecase/game-event";
 import { GOOGLE_API_CREDENTIAL } from "../../env";
 import { googleSpreadSheetId } from "../../guild_settings_keys";

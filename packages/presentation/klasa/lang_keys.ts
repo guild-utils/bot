@@ -1,5 +1,5 @@
 import * as moment from "moment-timezone";
-import { GameEvent } from "pdomain/game-event";
+import { GameEvent } from "domain_core/game-event";
 import { VoiceKindArray } from "./text2speech/engine";
 
 export type PWRD_LANG_TYPE = {

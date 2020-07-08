@@ -7,6 +7,7 @@ import {
 import { autoInjectable, inject } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import { Readable } from "stream";
+import { Dictionary } from "domain_configs";
 export type VoiceKind =
   | "normal"
   | "angry"
@@ -48,18 +49,7 @@ export const VoiceKindArray: VoiceKind[] = [
 ];
 export type Opt = OpenJTalkOptions<VoiceKind> & {
   readName?: string;
-  dictionary: {
-    [k in string]: {
-      k: string;
-      v?: string;
-      p?: string;
-      p1?: string;
-      p2?: string;
-      p3?: string;
-    };
-  };
-  dictionaryA: [string, string?][];
-  dictionaryB: [string, string?][];
+  dictionary: Dictionary;
   maxReadLimit: number;
 };
 export type Hnd = OpenJTalkHandle;
@@ -129,45 +119,62 @@ export default class {
       sentenses = opt.readName + "。" + sentenses;
     }
     sentenses = toFullWidth(sentenses);
-    for (const e of opt.dictionaryB) {
+    for (const e of opt.dictionary.before) {
       sentenses = sentenses.split(e[0]).join(e[1]);
     }
     const arr: string[] = [];
     for (const e2 of this.tokenizer.tokenize(sentenses)) {
-      const e3 = opt.dictionary[e2.surface_form];
+      const e3 = opt.dictionary.entrys.get(e2.surface_form);
       if (!e3) {
         arr.push(e2.surface_form);
         continue;
       }
-      if (!(e2.pos === e3.p || e3.p === "*" || e3.p === undefined)) {
-        arr.push(e2.surface_form);
-        continue;
-      }
       if (
-        !(e2.pos_detail_1 === e3.p1 || e3.p1 === "*" || e3.p1 === undefined)
+        !(e2.pos === e3.p || e3.p === "*" || e3.p === "" || e3.p === undefined)
       ) {
         arr.push(e2.surface_form);
         continue;
       }
       if (
-        !(e2.pos_detail_2 === e3.p2 || e3.p2 === "*" || e3.p2 === undefined)
+        !(
+          e2.pos_detail_1 === e3.p1 ||
+          e3.p1 === "*" ||
+          e3.p1 === "" ||
+          e3.p1 === undefined
+        )
       ) {
         arr.push(e2.surface_form);
         continue;
       }
       if (
-        !(e2.pos_detail_3 === e3.p3 || e3.p3 === "*" || e3.p3 === undefined)
+        !(
+          e2.pos_detail_2 === e3.p2 ||
+          e3.p2 === "*" ||
+          e3.p2 === "" ||
+          e3.p2 === undefined
+        )
+      ) {
+        arr.push(e2.surface_form);
+        continue;
+      }
+      if (
+        !(
+          e2.pos_detail_3 === e3.p3 ||
+          e3.p3 === "*" ||
+          e3.p3 === "" ||
+          e3.p3 === undefined
+        )
       ) {
         arr.push(e2.surface_form);
 
         continue;
       }
-      if (e3.v) {
-        arr.push(e3.v);
+      if (e3.to) {
+        arr.push(e3.to);
       }
     }
     sentenses = arr.join("");
-    for (const e of opt.dictionaryA) {
+    for (const e of opt.dictionary.after) {
       sentenses = sentenses.split(e[0]).join(e[1]);
     }
     const copy = { ...opt };
@@ -205,11 +212,13 @@ export default class {
     });
     dispatcher.on("finish", () => {
       const queue2 = [...(this.waitQueue.get(cid) ?? [])];
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const hnd = queue2.shift()!.hnd;
+      const sf = queue2.shift();
+      if (sf) {
+        const hnd = sf.hnd;
+        this.text2SpeechService.closeVoice(hnd).catch(console.log);
+      }
       this.waitQueue.set(cid, queue2);
       this.playNext(conn).catch(console.log);
-      this.text2SpeechService.closeVoice(hnd).catch(console.log);
     });
   }
   // eslint-disable-next-line @typescript-eslint/require-await

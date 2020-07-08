@@ -1,7 +1,7 @@
 import {
   GameEventTimingFixed,
   GameEventTimingFixedEntry,
-} from "pdomain/game-event";
+} from "domain_core/game-event";
 import { regexp, whitespace, int, ParjsCombinator, ResultKind } from "parjs";
 import {
   between,
@@ -70,10 +70,10 @@ const timing = timingEntry
   .pipe(flatten<GameEventTimingFixedEntry>())
   .pipe(map((e) => new GameEventTimingFixed(e)));
 export class FixedDSLParser {
-  async parse(src: string, tz: string): Promise<GameEventTimingFixed> {
+  parse(src: string, tz: string): Promise<GameEventTimingFixed> {
     const r = timing.parse(src, { tz });
     if (r.isOk) {
-      return r.value;
+      return Promise.resolve(r.value);
     }
     throw new TypeError(`invalid source string ${src}`);
   }

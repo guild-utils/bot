@@ -62,15 +62,19 @@ COPY tsconfig.json ./
 COPY package.json ./
 COPY yarn.lock ./
 
-COPY packages/pdomain ./packages/pdomain
+COPY packages/domains/core ./packages/domains/core
+COPY packages/domains/configs ./packages/domains/configs
 COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
 COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
 COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
 COPY packages/usecase ./packages/usecase
 COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
-COPY packages/presentation/klasa ./packages/presentation/klasa
+COPY packages/presentation/shared-config ./packages/presentation/shared-config
 COPY packages/presentation/klasa-member-gateway ./packages/presentation/klasa-member-gateway
+COPY packages/presentation/klasa ./packages/presentation/klasa
+COPY packages/presentation/rpc-server ./packages/presentation/rpc-server
+
 RUN apk add --no-cache --virtual .ojt git \
     && yarn global add lerna\
     && lerna bootstrap \

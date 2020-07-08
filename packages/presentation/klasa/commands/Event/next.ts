@@ -2,7 +2,7 @@ import { Command, CommandStore, KlasaMessage } from "klasa";
 import { autoInjectable, inject } from "tsyringe";
 import * as moment from "moment-timezone";
 import { GameEventUseCase } from "usecase/game-event";
-import { GameEvent } from "pdomain/game-event";
+import { GameEvent } from "domain_core/game-event";
 import { GOOGLE_API_CREDENTIAL } from "../../env";
 
 import {

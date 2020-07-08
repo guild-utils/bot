@@ -1,5 +1,5 @@
 {
-  "name": "pdomain",
+  "name": "domain_core",
   "version": "1.0.0",
   "license": "MIT",
   "devDependencies": {

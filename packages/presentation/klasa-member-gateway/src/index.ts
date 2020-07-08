@@ -14,7 +14,9 @@ declare module 'klasa' {
 }
 import Client from './lib/Client';
 export default {
+	[KlasaClient.plugin]: Client[KlasaClient.plugin]
+};
+export {
 	Client,
 	MemberGateway,
-	[KlasaClient.plugin]: Client[KlasaClient.plugin]
 };

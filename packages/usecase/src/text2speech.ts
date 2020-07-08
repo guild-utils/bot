@@ -1,4 +1,4 @@
-import { Text2SpeechService, Handle } from "pdomain/text2speech";
+import { Text2SpeechService, Handle } from "domain_core/text2speech";
 import { execFile } from "child_process";
 import * as fs from "fs";
 import * as os from "os";
@@ -88,7 +88,9 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
         ),
       ],
       (error, stdout, stderr) => {
-        console.log(error);
+        if (error) {
+          console.log(error);
+        }
         console.log(stdout);
         console.log(stderr);
       }

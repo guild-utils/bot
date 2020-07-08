@@ -11,7 +11,7 @@ import {
   GameEventPeriodical,
   GameEventCollectionFixed,
   GameEventCollectionPeriodical,
-} from "pdomain/game-event";
+} from "domain_core/game-event";
 import {
   GoogleSpreadsheet,
   GoogleSpreadsheetWorksheet,

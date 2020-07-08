@@ -1,6 +1,6 @@
 import { Event, EventStore } from "klasa";
 import { autoInjectable, inject } from "tsyringe";
-import { GameEventNotificationRepository } from "pdomain/game-event";
+import { GameEventNotificationRepository } from "domain_core/game-event";
 import { GameEventUseCase } from "usecase/game-event";
 import { googleSpreadSheetId } from "../guild_settings_keys";
 import { REGISTER_TO_NOTIFICATION_REPOSTORY_WHEN_LAUNCH } from "../global_settings";

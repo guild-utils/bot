@@ -10,7 +10,7 @@ import {
 import { COMMAND_CONF_GUILD_MEMBER_DESCRIPTION } from "../../../lang_keys";
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const { toTitleCase, codeBlock } = util;
-module.exports = class extends Command {
+export default class extends Command {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
       guarded: true,
@@ -32,7 +32,7 @@ module.exports = class extends Command {
     });
   }
 
-  async show(message: KlasaMessage, [key]: string[]) {
+  async show(message: KlasaMessage, [key]: string[]): Promise<KlasaMessage> {
     const path = this.client.gateways.members.getPath(key, {
       avoidUnconfigurable: true,
       errors: false,
@@ -59,7 +59,10 @@ module.exports = class extends Command {
     ]);
   }
 
-  async set(message: KlasaMessage, [key, ...valueToSet]: string[]) {
+  async set(
+    message: KlasaMessage,
+    [key, ...valueToSet]: string[]
+  ): Promise<KlasaMessage> {
     await message.member!.settings.sync();
     const status = await message.member!.settings.update(
       key,
@@ -79,7 +82,10 @@ module.exports = class extends Command {
     );
   }
 
-  async remove(message: KlasaMessage, [key, ...valueToRemove]: string[]) {
+  async remove(
+    message: KlasaMessage,
+    [key, ...valueToRemove]: string[]
+  ): Promise<KlasaMessage> {
     await message.member!.settings.sync();
     const status = await message.member!.settings.update(
       key,
@@ -99,7 +105,7 @@ module.exports = class extends Command {
     );
   }
 
-  async reset(message: KlasaMessage, [key]: string[]) {
+  async reset(message: KlasaMessage, [key]: string[]): Promise<KlasaMessage> {
     await message.member!.settings.sync();
     const status = await message.member!.settings.reset(key);
     return (
@@ -118,10 +124,10 @@ module.exports = class extends Command {
     message: KlasaMessage,
     key: string,
     { errors, updated }: SettingsUpdateResult
-  ) {
+  ): Promise<KlasaMessage> | null {
     if (errors.length) return message.sendMessage(errors[0]);
     if (!updated.length)
       return message.sendLocale("COMMAND_CONF_NOCHANGE", [key]);
     return null;
   }
-};
+}

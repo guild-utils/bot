@@ -7,7 +7,7 @@ import {
   HKTCollectionName,
   HKTCollectionNameU,
   nextTiming,
-} from "pdomain/game-event";
+} from "domain_core/game-event";
 
 export abstract class GameEventUseCase {
   abstract async listCollectionName(

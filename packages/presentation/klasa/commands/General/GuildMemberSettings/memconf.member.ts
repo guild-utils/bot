@@ -11,7 +11,7 @@ import { COMMAND_CONF_GUILD_MEMBER_DESCRIPTION } from "../../../lang_keys";
 import { User } from "discord.js";
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const { toTitleCase, codeBlock } = util;
-module.exports = class extends Command {
+export default class extends Command {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
       guarded: true,
@@ -35,7 +35,10 @@ module.exports = class extends Command {
     });
   }
 
-  async show(message: KlasaMessage, [user, key]: [User, string]) {
+  async show(
+    message: KlasaMessage,
+    [user, key]: [User, string]
+  ): Promise<KlasaMessage> {
     const path = this.client.gateways.members.getPath(key, {
       avoidUnconfigurable: true,
       errors: false,
@@ -65,7 +68,10 @@ module.exports = class extends Command {
     ]);
   }
 
-  async set(message: KlasaMessage, [user, key, ...valueToSet]: [User, string]) {
+  async set(
+    message: KlasaMessage,
+    [user, key, ...valueToSet]: [User, string]
+  ): Promise<KlasaMessage> {
     const target = await message
       .guild!.members.fetch(user)
       .catch(() => undefined);
@@ -91,7 +97,7 @@ module.exports = class extends Command {
   async remove(
     message: KlasaMessage,
     [user, key, ...valueToRemove]: [User, string]
-  ) {
+  ): Promise<KlasaMessage> {
     const target = await message
       .guild!.members.fetch(user)
       .catch(() => undefined);
@@ -114,7 +120,10 @@ module.exports = class extends Command {
     );
   }
 
-  async reset(message: KlasaMessage, [user, key]: [User, string]) {
+  async reset(
+    message: KlasaMessage,
+    [user, key]: [User, string]
+  ): Promise<KlasaMessage> {
     const target = await message
       .guild!.members.fetch(user)
       .catch(() => undefined);
@@ -136,10 +145,10 @@ module.exports = class extends Command {
     message: KlasaMessage,
     key: string,
     { errors, updated }: SettingsUpdateResult
-  ) {
+  ): Promise<KlasaMessage> | null {
     if (errors.length) return message.sendMessage(errors[0]);
     if (!updated.length)
       return message.sendLocale("COMMAND_CONF_NOCHANGE", [key]);
     return null;
   }
-};
+}
