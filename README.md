@@ -66,30 +66,59 @@ $awa 単語 たんご
 ちゃんと書けばこんなにマシになるんだと思うためにつけました。いまのところそれ以外の意味はありません。
 
 ## セルフホスト
+shell  
 ```
 git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
 cd guild-utils-j
+docker network create -d bridge guj-net
 docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v dbdata:/var/lib/postgresql/data postgres-alpine
-docker build -t guj .
-docker stop guj||true
-docker rm guj||true
-docker run -d --name guj --net guj-net --env-file=.env guj
+docker build -t guj-main .
+docker build -t guj-sub -f Sub.DockerFile .
+docker stop guj-main||true
+docker stop guj-sub||true
+docker rm guj-main||true
+docker rm guj-sub||true
+docker run -d --name guj-main --net guj-net --env-file=.main.env guj-main
+docker run -d --name guj-sub --net guj-net --env-file=.sub.env -v $(pwd)/sub-1:/usr/app/packages/presentation/sub/dist/bwd guj-sub
 ```
-  
-.env  
+
+power-shell
 ```
-GUILD_UTILS_J_DISCORD_TOKEN=
+git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
+cd guild-utils-j
+docker network create -d bridge guj-net
+docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v dbdata:/var/lib/postgresql/data postgres-alpine
+docker build -t guj-main .
+docker build -t guj-sub -f Sub.DockerFile .
+docker stop guj-main
+docker stop guj-sub
+docker rm guj-main
+docker rm guj-sub
+docker run -d --name guj-main --net guj-net --env-file=.main.env guj-main
+docker run -d --name guj-sub --net guj-net --env-file=.sub.env -v ${pwd}/docker/sub-1:/usr/app/packages/presentation/sub/dist/bwd guj-sub
+```
+
+
+.main.env  
+```
+GUILD_UTILS_J_MAIN_DISCORD_TOKEN=
 GOOGLE_API_CREDENTIAL=
 GUILD_UTILS_J_PROVIDER=postgresql
 POSTGRES_DATABASE=postgres
 POSTGRES_PASSWORD=mysecretpassword
-POSTGRES_HOST=guj-net
+POSTGRES_HOST=guj-db
 POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_MAX=30
 POSTGRES_IDLE_TIMEOUT=1000
 ```
 
+.sub.env  
+```
+GUILD_UTILS_J_SUB_DISCORD_TOKEN=
+GUILD_UTILS_J_PROVIDER=json
+GUILD_UTILS_J_RPC_SERVER=guj-main:50051
+```
 ### 余計なものいらないので読み上げだけください!
 ```
 git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
@@ -107,7 +136,7 @@ GUILD_UTILS_J_DISCORD_TOKEN=
 GUILD_UTILS_J_PROVIDER=postgresql
 POSTGRES_DATABASE=postgres
 POSTGRES_PASSWORD=mysecretpassword
-POSTGRES_HOST=guj-net
+POSTGRES_HOST=guj-db
 POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_MAX=30

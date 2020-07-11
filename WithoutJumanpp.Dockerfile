@@ -62,7 +62,8 @@ COPY tsconfig.json ./
 COPY package.json ./
 COPY yarn.lock ./
 
-COPY packages/domains/core ./packages/domains/core
+COPY packages/domains/game-event ./packages/domains/game-event
+COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
 COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
 COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
@@ -72,8 +73,10 @@ COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
 COPY packages/presentation/shared-config ./packages/presentation/shared-config
 COPY packages/presentation/klasa-member-gateway ./packages/presentation/klasa-member-gateway
-COPY packages/presentation/klasa ./packages/presentation/klasa
+COPY packages/presentation/configs-klasa ./packages/presentation/configs-klasa
 COPY packages/presentation/rpc-server ./packages/presentation/rpc-server
+COPY packages/presentation/core ./packages/presentation/core
+COPY packages/presentation/main ./packages/presentation/main
 
 RUN apk add --no-cache --virtual .ojt git \
     && yarn global add lerna\

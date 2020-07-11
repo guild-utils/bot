@@ -1,7 +1,7 @@
 import {
   GameEventTimingFixed,
   GameEventTimingFixedEntry,
-} from "domain_core/game-event";
+} from "domain_game-event";
 import { regexp, whitespace, int, ParjsCombinator, ResultKind } from "parjs";
 import {
   between,

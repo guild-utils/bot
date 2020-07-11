@@ -1,14 +1,36 @@
 {
-    "name": "usecase_game-event",
-    "main": "../dist/game-event.js",
-    "types": "../dist/game-event.d.ts",
-    "devDependencies": {
-        "@types/moment-timezone": "^0.5.13",
-        "@typescript-eslint/eslint-plugin": "^3.4.0",
-        "@typescript-eslint/parser": "^3.4.0",
-        "eslint": "^7.3.1",
-        "eslint-config-prettier": "^6.11.0",
-        "eslint-plugin-prettier": "^3.1.4",
-        "prettier": "^2.0.5"
-    }
+  "name": "usecase_game-event",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "devDependencies": {
+    "@types/iconv-lite": "^0.0.1",
+    "@types/moment-timezone": "^0.5.13",
+    "@types/node": "^13.11.0",
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.0",
+    "domain_game-event": "^1.0.0"
+  },
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "build": "tsc -p .",
+    "fmt": "prettier --write **/*.ts"
+  },
+  "files": [
+    "dist",
+    "game-event"
+  ],
+  "directories": {
+    "lib": "dist"
+  }
 }

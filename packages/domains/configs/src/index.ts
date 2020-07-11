@@ -23,7 +23,11 @@ export type AppliedVoiceConfig={
   tone:number;
   volume:number;
   maxReadLimit:number;
+  allpass:number|undefined;
+  intone:number;
+  threshold:number;
 }
-export interface Repository {
-  appliedVoiceConfig(guild:string,user:string,nickname:string|undefined,username:string):Promise<AppliedVoiceConfig>
+export interface Usecase {
+  appliedVoiceConfig(guild:string,user:string,nickname:string|undefined,username:string):Promise<AppliedVoiceConfig>;
+  getUserReadName(guild:string,user:string,nickname:string|undefined,username:string):Promise<string>;
 }

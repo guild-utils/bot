@@ -6,5 +6,5 @@
         "rootDir": "./src",
         "baseUrl": "./"
       },
-    "include": [ "src", "protos/config_pb.js", "protos/config_grpc_pb.d.ts", "protos/config_pb.d.ts", "protos/config_grpc_pb.js"]
+    "include": [ "src", "../protos/config_pb.js", "../protos/config_grpc_pb.d.ts", "../protos/config_pb.d.ts", "../protos/config_grpc_pb.js", "../../usecase/configs-klasa/src/index.ts", "../../usecase/configs-klasa/src/OverloadedParameters.ts"]
 }

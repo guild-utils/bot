@@ -24,3 +24,4 @@ package-lock.json
 *.so
 out/
 /scripts
+/docker

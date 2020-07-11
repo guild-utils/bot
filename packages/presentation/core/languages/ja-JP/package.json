@@ -1,0 +1,7 @@
+{
+  "name": "presentation_core_lang_ja",
+  "version": "1.0.0",
+  "main": "../../dist/languages-helper/ja-JP.js",
+  "types": "../../dist/languages-helper/ja-JP.d.ts",
+  "license": "MIT"
+}

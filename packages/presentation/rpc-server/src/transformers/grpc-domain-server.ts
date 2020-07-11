@@ -1,4 +1,4 @@
-import * as GRPC from "../../protos/config_pb";
+import * as GRPC from "presentation_protos/config_pb";
 import * as Domain from "domain_configs";
 
 export class ResponseTransformer {
@@ -46,6 +46,9 @@ export class ResponseTransformer {
     r.setSpeed(from.speed);
     r.setDictionary(this.transformDictionary(from.dictionary));
     r.setMaxreadlimit(from.maxReadLimit);
+    r.setAllpass(from.allpass ?? -1);
+    r.setIntone(from.intone);
+    r.setThreshold(from.threshold);
     return r;
   }
 }

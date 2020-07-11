@@ -2645,11 +2645,6 @@ es5-ext@^0.10.35, es5-ext@^0.10.46, es5-ext@^0.10.50:
     es6-symbol "~3.1.3"
     next-tick "~1.0.0"
 
-es6-dynamic-template@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/es6-dynamic-template/-/es6-dynamic-template-2.0.0.tgz#92d50d0f365099046b5633d09cac22bf4ab8df72"
-  integrity sha512-IAqfK798nfdxi8n2QGnej/8h/IMYp+1JQ3YVAIxw12blm8hoEi3ER7xZadbQ9pX5AGYBHt4tVombHnTP/yk9LA==
-
 es6-iterator@^2.0.1, es6-iterator@^2.0.3, es6-iterator@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/es6-iterator/-/es6-iterator-2.0.3.tgz#a7de889141a05a94b0854403b2d0a0fbfa98f3b7"
@@ -3821,10 +3816,10 @@ google-p12-pem@^2.0.0:
   dependencies:
     node-forge "^0.9.0"
 
-google-protobuf@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.5.0.tgz#b8cc63c74d83457bd8a9a904503c8efb26bca339"
-  integrity sha1-uMxjx02DRXvYqakEUDyO+ya8ozk=
+google-protobuf@3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.8.0.tgz#4fd2ee3a97751cb543dc5de85ffd264aff9f4980"
+  integrity sha512-tx39PTc//HaIT7K/baUF/8JYLGDozEi1e4xwPP1qSx3InP78cNpbSJpxiDsDMwj77qNOndVBDXnn7oi9zKxZew==
 
 "google-spreadsheet@git+https://github.com/the-vampiire/node-google-spreadsheet.git#v4-typings":
   version "3.0.5"
@@ -3888,12 +3883,11 @@ grpc@^1.24.3:
     node-pre-gyp "^0.15.0"
     protobufjs "^5.0.3"
 
-grpc_tools_node_protoc_ts@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/grpc_tools_node_protoc_ts/-/grpc_tools_node_protoc_ts-4.1.0.tgz#3a5ff0022f7e0ab3a708309f1ff7e61c5c5a63af"
-  integrity sha512-+10Q2LhTalc41e+hCfP7lCLYfyDlAdntEKTn43QHE3CPafNHRu5KgqAHkDg4cUiDEJFUcKhddaYUPI5uR7c2AA==
+grpc_tools_node_protoc_ts@tignear/grpc_tools_node_protoc_ts:
+  version "4.1.1"
+  resolved "https://codeload.github.com/tignear/grpc_tools_node_protoc_ts/tar.gz/0d226bd3b6f24db5a062c2da97cc1ccd56c41766"
   dependencies:
-    google-protobuf "3.5.0"
+    google-protobuf "3.8.0"
     handlebars "4.7.4"
     handlebars-helpers "0.10.0"
 
@@ -8289,6 +8283,11 @@ stream-via@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/stream-via/-/stream-via-1.0.4.tgz#8dccbb0ac909328eb8bc8e2a4bd3934afdaf606c"
   integrity sha512-DBp0lSvX5G9KGRDTkR/R+a29H+Wk2xItOF+MpZLLNDWbEV9tGPnqLPxHEYjmiz8xGtJHRIqmI+hCjmNzqoA4nQ==
+
+string-replace-async@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/string-replace-async/-/string-replace-async-2.0.0.tgz#c3224e89d1216d6116e6e229cf74223cd84a733b"
+  integrity sha512-AHMupZscUiDh07F1QziX7PLoB1DQ/pzu19vc8Xa8LwZcgnOXaw7yCgBuSYrxVEfaM2d8scc3Gtp+i+QJZV+spw==
 
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
