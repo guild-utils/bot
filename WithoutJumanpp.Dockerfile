@@ -87,4 +87,6 @@ RUN apk add --no-cache --virtual .ojt git \
     && yarn global remove lerna \
     && yarn cache clean \
     && apk del .ojt
+ENV GUILD_UTILS_J_ROLE main
+
 CMD [ "pm2","--no-daemon","start","kick.js","--name","guild-utils-j"]
