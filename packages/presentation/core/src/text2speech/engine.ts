@@ -227,4 +227,8 @@ export default class {
     }
     this.waitQueue.delete(conn.channel.id);
   }
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async skip(conn: VoiceConnection): Promise<void> {
+    conn.dispatcher.end();
+  }
 }

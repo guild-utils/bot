@@ -295,5 +295,6 @@ export default class extends Language {
         "基本的に設定はmemconf→userconfの順番で見に行きます。ただし、名前についてはmemconf→nickname→userconfの順番に見に行きます。",
       ].join("\n");
     },
+    COMMAND_SKIP_DESCRIPTION: "現在読み上げている文章を飛ばします。",
   };
 }
