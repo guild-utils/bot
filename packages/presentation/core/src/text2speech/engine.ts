@@ -4,10 +4,15 @@ import {
   OpenJTalkHandle,
   Text2SpeechServiceOpenJtalk,
 } from "usecase_text2speech";
+import {
+  OpenJtalkGRPCHandle,
+  Text2SpeechServiceOpenJtalkGRPC,
+} from "usecase_text2speech-grpc";
 import { autoInjectable, inject } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import { Readable } from "stream";
 import { Dictionary } from "domain_configs";
+import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 export type VoiceKind =
   | "normal"
   | "angry"
@@ -52,9 +57,10 @@ export type Opt = OpenJTalkOptions<VoiceKind> & {
   dictionary: Dictionary;
   maxReadLimit: number;
 };
-export type Hnd = OpenJTalkHandle;
+export type Service = Text2SpeechServiceOpenJtalk<VoiceKind>;
+export type ServiceGRPC = Text2SpeechServiceOpenJtalkGRPC<VoiceKind>;
 type Data = {
-  hnd: Hnd;
+  hnd: OpenJtalkGRPCHandle | OpenJTalkHandle;
   prepare?: Promise<void>;
   load?: Promise<Readable | undefined>;
 };
@@ -66,7 +72,9 @@ function toFullWidth(elm: string) {
 @autoInjectable()
 export default class {
   private readonly waitQueue = new Map<string, Data[]>();
-  private readonly text2SpeechService: Text2SpeechServiceOpenJtalk<VoiceKind>;
+  private readonly text2SpeechService: Service;
+  private readonly text2SpeechServiceGRPC: ServiceGRPC | undefined;
+
   private readonly type: "OO" | "OW";
   constructor(
     pathToOpenJTalk: string,
@@ -75,6 +83,7 @@ export default class {
       [k in VoiceKind]: { path: string; volume_fix?: number };
     },
     type: string | undefined,
+    mixer: IMixerClient | undefined,
     @inject("kuromoji")
     private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
   ) {
@@ -92,6 +101,9 @@ export default class {
       process.env["OPEN_JTALK_INPUT_CHARSET"],
       this.type
     );
+    this.text2SpeechServiceGRPC = mixer
+      ? new Text2SpeechServiceOpenJtalkGRPC(mixer)
+      : undefined;
   }
   // eslint-disable-next-line @typescript-eslint/require-await
   async register(conn: VoiceConnection): Promise<void> {
@@ -100,12 +112,16 @@ export default class {
   // eslint-disable-next-line @typescript-eslint/require-await
   private async queueRaw(conn: VoiceConnection, text: string, opt: Opt) {
     const cid = conn.channel.id;
-    const hnd = this.text2SpeechService.makeHandle();
+    const hnd = (
+      this.text2SpeechServiceGRPC ?? this.text2SpeechService
+    ).makeHandle();
     const queue = this.waitQueue.get(cid) ?? [];
     const entry: Data = { hnd };
     this.waitQueue.set(cid, [...queue, entry]);
 
-    entry.prepare = this.text2SpeechService.prepareVoice(hnd, text, opt);
+    entry.prepare = (
+      this.text2SpeechServiceGRPC ?? this.text2SpeechService
+    ).prepareVoice(hnd, text, opt);
     if (queue.length === 0) {
       this.playNext(conn).catch(console.log);
     }
@@ -191,12 +207,16 @@ export default class {
     }
     await queue[0].prepare;
     if (!queue[0].load) {
-      queue[0].load = this.text2SpeechService.loadVoice(queue[0].hnd);
+      queue[0].load = (
+        this.text2SpeechServiceGRPC ?? this.text2SpeechService
+      ).loadVoice(queue[0].hnd);
     }
     const stream = await queue[0].load;
     if (queue.length >= 2) {
       queue[1].load = queue[1].prepare?.then(() =>
-        this.text2SpeechService.loadVoice(queue[1].hnd)
+        (this.text2SpeechServiceGRPC ?? this.text2SpeechService).loadVoice(
+          queue[1].hnd
+        )
       );
     }
     if (!stream) {
@@ -206,15 +226,23 @@ export default class {
       this.playNext(conn).catch(console.log);
       return;
     }
+    console.log("VoiceConnection#plat will Call:", stream);
+
     const dispatcher = conn.play(stream, {
-      type: this.type === "OO" ? "ogg/opus" : "unknown",
+      type: this.text2SpeechServiceGRPC
+        ? "opus"
+        : this.type === "OO"
+        ? "ogg/opus"
+        : "unknown",
     });
     dispatcher.on("finish", () => {
       const queue2 = [...(this.waitQueue.get(cid) ?? [])];
       const sf = queue2.shift();
       if (sf) {
         const hnd = sf.hnd;
-        this.text2SpeechService.closeVoice(hnd).catch(console.log);
+        (this.text2SpeechServiceGRPC ?? this.text2SpeechService)
+          .closeVoice(hnd)
+          .catch(console.log);
       }
       this.waitQueue.set(cid, queue2);
       this.playNext(conn).catch(console.log);

@@ -6,7 +6,9 @@
   "license": "MIT",
   "dependencies": {
     "string-replace-async": "^2.0.0",
-    "usecase_text2speech":"^1.0.0"
+    "usecase_text2speech":"^1.0.0",
+    "usecase_text2speech-grpc":"^1.0.0"
+
   },
   "devDependencies": {
     "@types/kuromoji": "^0.1.0",

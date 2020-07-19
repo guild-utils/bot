@@ -14,6 +14,7 @@ import * as GUILD_SETINGS from "./guild_settings_keys";
 import initRpcServer from "./bootstrap/grpc";
 import initGameEvent from "./bootstrap/schedule";
 import initText2Speech from "./bootstrap/text2speech";
+import initStartBoard from "./bootstrap/starBoard";
 if (result) {
   console.log(result.parsed);
 }
@@ -48,6 +49,7 @@ async function main() {
   initChannelsGateway(client.gateways);
 
   initRpcServer(configRepo);
+  initStartBoard();
   await client.login(token);
 }
 main().catch(console.log);

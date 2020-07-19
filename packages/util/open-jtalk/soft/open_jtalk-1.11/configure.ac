@@ -255,42 +255,19 @@ AC_ARG_WITH(libopusenc-header-path,
 #AC_MSG_RESULT($hts_engine_header_path/HTS_engine.h)
 #AC_SUBST(HTS_ENGINE_HEADER)
 #HTS_ENGINE_HEADER=${hts_engine_header_path}/HTS_engine.h
+AC_ARG_WITH(libopusenc-header-path,
+            AS_HELP_STRING([--with-libopusenc-header-path],[specify the libopusenc-header-path header path]),
+            [libopusenc_header_path=$withval],
+            [libopusenc_header_path='/usr/include/opus'])
 
 # Define LIBOPUSENC_HEADER_DIR
 AC_SUBST(LIBOPUSENC_HEADER_DIR)
 LIBOPUSENC_HEADER_DIR=${libopusenc_header_path}
 AC_MSG_NOTICE(${libopusenc_header_path})
-# Define LIBOPUSENC_LIBRARY
-AC_ARG_WITH(libopusenc-library-path,
-            AS_HELP_STRING([--with-libopusenc-library-path],[specify the libopusenc library path]),
-            [libopusenc_library_path=$withval],
-            [libopusenc_library_path='/usr/lib'])
-if test ! -f "${libopusenc_library_path}/libopusenc.a"; then
-   AC_MSG_ERROR(Cannot find libopusenc.a)
-fi
-AC_MSG_CHECKING(for libopusenc.a)
-AC_MSG_RESULT($libopusenc_library_path/libopusenc.a)
-AC_SUBST(LIBOPUSENC_LIBRARY)
-LIBOPUSENC_LIBRARY=${libopusenc_library_path}/libopusenc.a
-
-# Define LIBOPUSENC_LIBRARY_DIR
-AC_SUBST(LIBOPUSENC_LIBRARY_DIR)
-LIBOPUSENC_LIBRARY_DIR=${libopusenc_library_path}
-
-# Define OPUS_LIBRARY
-AC_ARG_WITH(opus-library,
-            AS_HELP_STRING([--with-opus-library-path],[specify the libopusenc library path]),
-            [opus_library_path=$withval],
-            [opus_library_path='/usr/lib'])
-AC_MSG_CHECKING(for libopus.a)
-AC_MSG_RESULT($opus_library_path/libopus.a)
-AC_SUBST(OPUS_LIBRARY)
-OPUS_LIBRARY=${opus_library_path}/libopus.a
-
-# Define OPUS_LIBRARY_DIR
-AC_SUBST(OPUS_LIBRARY_DIR)
-OPUS_LIBRARY_DIR=${opus_library_path}
-
+PKG_CHECK_MODULES(OPUS,[opus])
+PKG_CHECK_MODULES(LIBOPUSENC,[libopusenc])
+PKG_CHECK_MODULES(PROTOBUF,[protobuf])
+PKG_CHECK_MODULES(GRPCPP,[grpc++])
 
 # Check for windows audio devices
 case "$host_os" in

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message RequestVoiceMixing{
+  string htsvoice=1;
+  string text=2;
+  float speed=3;
+  float tone=4;
+  float volume=5;
+  float maxReadLimit=6 [deprecated=true];;
+  float allpass=7;
+  float intone=8;
+  float threshold=9;
+}
+message ChunkedData{
+  bytes data=1;
+}
+service Mixer {
+  rpc mixing(RequestVoiceMixing) returns (stream ChunkedData);
+}

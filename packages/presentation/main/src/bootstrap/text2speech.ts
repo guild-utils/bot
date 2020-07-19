@@ -3,12 +3,17 @@ import { KlasaClient } from "klasa";
 import { DependencyContainer } from "tsyringe";
 import { Schema } from "klasa";
 import { VoiceKindArray, initEngineAndKuromoji } from "presentation_core";
-
+import { credentials } from "grpc";
+import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
 export default async function initText2Speech(
   container: DependencyContainer
 ): Promise<void> {
   initSchema();
-  await initEngineAndKuromoji(container);
+  const grpcMixerClient = new MixerClient(
+    process.env["GUJ_MIXER_RPC_SERVER"]!,
+    credentials.createInsecure()
+  );
+  await initEngineAndKuromoji(container, grpcMixerClient);
 }
 
 function initSchema() {

@@ -34,7 +34,7 @@ export type OpenJTalkOptions<VoiceKind extends string> = {
     -g  f          : volume (dB)                                             [  0.0][    --    ]
     -z  i          : audio buffer size (if i==0, turn off)                   [    0][   0--    ]
  */
-type OpenJTalkSpownOptions = {
+type OpenJTalkSpawnOptions = {
   x: string;
   m: string;
   ow?: string;
@@ -66,7 +66,7 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
   ) {}
   async spawn(
     hnd: OpenJTalkHandle,
-    opt: OpenJTalkSpownOptions,
+    opt: OpenJTalkSpawnOptions,
     text: string
   ): Promise<void> {
     if (!opt.ow && this.type === "OW") {
@@ -82,15 +82,16 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
       });
     }
     const pathToCreatedFile = opt.oo;
+    const args=[
+      ...Object.entries(opt).flatMap(
+        ([k, v]: [string, string | undefined]) => {
+          return v ? [`-${k}`, `${v}`] : [];
+        }
+      ),
+    ];
     const cp = execFile(
       this.pathtoOpenJTalk,
-      [
-        ...Object.entries(opt).flatMap(
-          ([k, v]: [string, string | undefined]) => {
-            return v ? [`-${k}`, `${v}`] : [];
-          }
-        ),
-      ],
+      args,
       (error, stdout, stderr) => {
         if (error) {
           console.log(error);
@@ -148,7 +149,7 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
         fm: String(options.tone),
         u: String(options.threshold),
         a: options.allpass?String(options.allpass):undefined ,
-        b: String(options.intone)
+        jf: String(options.intone)
       },
       text
     );

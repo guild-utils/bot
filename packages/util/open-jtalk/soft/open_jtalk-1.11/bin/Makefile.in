@@ -315,11 +315,11 @@ open_jtalk_LDADD = @top_srcdir@/text2mecab/libtext2mecab.a \
                    @top_srcdir@/jpcommon/libjpcommon.a \
                    @HTS_ENGINE_LIBRARY@ -lstdc++
 
-open_jtalk_SOURCES = open_jtalk.c
+open_jtalk_SOURCES = open_jtalk.cpp
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
+.SUFFIXES: .c .o .obj .cpp
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \

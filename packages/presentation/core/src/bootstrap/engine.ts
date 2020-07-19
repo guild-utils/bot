@@ -2,8 +2,10 @@
 import { DependencyContainer } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import Engine from "../text2speech/engine";
+import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 export function initEngineAndKuromoji(
-  container: DependencyContainer
+  container: DependencyContainer,
+  mixer: IMixerClient
 ): Promise<void> {
   return new Promise((resolve) => {
     kuromoji
@@ -64,6 +66,7 @@ export function initEngineAndKuromoji(
               gamma: { path: process.env["HTS_VOICE_GAMMA"]! },
             },
             process.env["OPEN_JTALK_OUTPUT"],
+            mixer,
             tokenizer
           ),
         });

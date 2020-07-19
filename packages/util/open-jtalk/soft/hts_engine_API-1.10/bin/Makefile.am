@@ -9,7 +9,8 @@ hts_engine_SOURCES = hts_engine.c
 
 hts_engine_LDADD = ../lib/libHTSEngine.a \
           @LIBOPUSENC_LIBRARY@ \
-          @OPUS_LIBRARY@
+          @LIBOPUSENC_LIBS@ \
+          @OPUS_LIBS@
 
 DISTCLEANFILES = *.log *.out *~
 

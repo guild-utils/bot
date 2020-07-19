@@ -2,7 +2,7 @@
 EXTRA_DIST = Makefile.mak
 
 AM_CPPFLAGS = -I @top_srcdir@/include \
-              -I @LIBOPUSENC_HEADER_DIR@
+              -I @LIBOPUSENC_HEADER_DIR@ 
 
 lib_LIBRARIES = libHTSEngine.a 
 

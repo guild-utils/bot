@@ -1,0 +1,13 @@
+{
+  "name": "sound-mixing-proto",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "generate": "scripts/generate"
+  },
+  "devDependencies": {
+    "grpc-tools": "^1.9.0",
+    "grpc_tools_node_protoc_ts": "tignear/grpc_tools_node_protoc_ts",
+    "protoc": "^1.0.4"
+  }
+}

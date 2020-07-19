@@ -17,10 +17,20 @@ AM_CPPFLAGS = -I @top_srcdir@/text2mecab \
               -I @top_srcdir@/njd_set_long_vowel \
               -I @top_srcdir@/njd2jpcommon \
               -I @top_srcdir@/jpcommon \
-              -I @HTS_ENGINE_HEADER_DIR@
+              -I @HTS_ENGINE_HEADER_DIR@ \
+              -I @LIBOPUSENC_HEADER_DIR@ \
+              @GRPCPP_CFLAGS@ \
+              @PROTOBUF_CFLAGS@
 
 bin_PROGRAMS = open_jtalk
 
+open_jtalk_LDFLAGS = @LIBOPUSENC_LIBS@ \
+                     @OPUS_LIBS@ \
+                     @GRPCPP_LIBS@ \
+                     @PROTOBUF_LIBS@ \
+                     -pthread \
+                     -Wl,--no-as-needed -lgrpc++_reflection -Wl,--as-needed\
+                     -ldl 
 open_jtalk_LDADD = @top_srcdir@/text2mecab/libtext2mecab.a \
                    @top_srcdir@/mecab/src/libmecab.a \
                    @top_srcdir@/mecab2njd/libmecab2njd.a \
@@ -33,7 +43,7 @@ open_jtalk_LDADD = @top_srcdir@/text2mecab/libtext2mecab.a \
                    @top_srcdir@/njd_set_long_vowel/libnjd_set_long_vowel.a \
                    @top_srcdir@/njd2jpcommon/libnjd2jpcommon.a \
                    @top_srcdir@/jpcommon/libjpcommon.a \
-                   @HTS_ENGINE_LIBRARY@ -lstdc++ \
-                   @LIBOPUSENC_LIBRARY@ \
-                   @OPUS_LIBRARY@
-open_jtalk_SOURCES = open_jtalk.c
+                   @HTS_ENGINE_LIBRARY@ 
+open_jtalk_SOURCES = open_jtalk.cpp \
+                      ../../sound-mixing-proto/index.pb.cc \
+                      ../../sound-mixing-proto/index.grpc.pb.cc

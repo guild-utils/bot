@@ -66,13 +66,6 @@ AC_ARG_WITH(libopusenc-header-path,
             AS_HELP_STRING([--with-libopusenc-header-path],[specify the libopusenc-header-path header path]),
             [libopusenc_header_path=$withval],
             [libopusenc_header_path='/usr/include/opus'])
-#if test ! -f "${libopusenc_header_path}/HTS_engine.h"; then
-#   AC_MSG_ERROR(Cannot find HTS_engine.h)
-#fi
-#AC_MSG_CHECKING(for HTS_engine.h)
-#AC_MSG_RESULT($hts_engine_header_path/HTS_engine.h)
-#AC_SUBST(HTS_ENGINE_HEADER)
-#HTS_ENGINE_HEADER=${hts_engine_header_path}/HTS_engine.h
 
 # Define LIBOPUSENC_HEADER_DIR
 AC_SUBST(LIBOPUSENC_HEADER_DIR)
@@ -109,7 +102,8 @@ OPUS_LIBRARY=${opus_library_path}/libopus.a
 # Define OPUS_LIBRARY_DIR
 AC_SUBST(OPUS_LIBRARY_DIR)
 OPUS_LIBRARY_DIR=${opus_library_path}
-
+PKG_CHECK_MODULES(OPUS,[opus])
+PKG_CHECK_MODULES(LIBOPUSENC,[libopusenc])
 # Checks library for windows audio devices
 case "$host_os" in
  *win32* | *wince* | *cygwin* | *mingw* )
