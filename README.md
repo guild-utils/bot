@@ -66,8 +66,8 @@ $awa 単語 たんご
 ちゃんと書けばこんなにマシになるんだと思うためにつけました。いまのところそれ以外の意味はありません。
 
 ## セルフホスト(ビルド)
-**Git LFSが必要です** 
-**Mixerを使用する場合は#[Mixer](https://github.com/guild-utils/mixer)も参照してください** 
+**Git LFSが必要です**  
+**Mixerを使用する場合は#[Mixer](https://github.com/guild-utils/mixer)も参照してください**  
 shell  
 ```
 git clone --depth 1 https://github.com/guild-utils/bot.git
@@ -121,7 +121,7 @@ GUILD_UTILS_J_PROVIDER=json
 GUILD_UTILS_J_RPC_SERVER=guj-main:50051
 ```
 ### 余計なものいらないので読み上げだけください!
-**Git LFSが必要です** 
+**Git LFSが必要です**  
 ```
 git clone --depth 1 https://github.com/guild-utils/bot.git
 cd guild-utils-j
