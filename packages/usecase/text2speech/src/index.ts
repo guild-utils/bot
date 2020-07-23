@@ -1,4 +1,4 @@
-import { Text2SpeechService, Handle } from "domain_text2speech";
+import { Text2SpeechService, VoiceHandle } from "domain_text2speech";
 import { execFile } from "child_process";
 import * as fs from "fs";
 import * as os from "os";
@@ -52,23 +52,16 @@ type OpenJTalkSpawnOptions = {
   g?: string;
   z?: string;
 };
-export type OpenJTalkHandle = {
-  pathToCreatedFile?: fs.PathLike;
-};
-export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
-  implements Text2SpeechService<OpenJTalkOptions<VoiceKind>, OpenJTalkHandle> {
-  constructor(
-    private readonly pathtoOpenJTalk: string,
+export class OpenJTalkHandle<VoiceKind extends string> implements VoiceHandle {
+  constructor(    private readonly pathtoOpenJTalk: string,
     private readonly pathToDict: string,
     private readonly mapOfKind2HtsVoice: { [k in VoiceKind]: string },
     private readonly charset: string | undefined,
-    private readonly type: "OO" | "OW"
-  ) {}
-  async spawn(
-    hnd: OpenJTalkHandle,
-    opt: OpenJTalkSpawnOptions,
-    text: string
-  ): Promise<void> {
+    private readonly type: "OO" | "OW",
+    private readonly options:OpenJTalkOptions<VoiceKind>){
+
+  }
+  private async spawn(opt: OpenJTalkSpawnOptions,text:string){
     if (!opt.ow && this.type === "OW") {
       opt = Object.assign({}, opt, {
         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-call
@@ -129,18 +122,11 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
         resolve(undefined);
       })
     );
-    hnd.pathToCreatedFile = pathToCreatedFile;
+    this.pathToCreatedFile = pathToCreatedFile;
   }
-  makeHandle(): Handle {
-    return {};
-  }
-  async prepareVoice(
-    hnd: OpenJTalkHandle,
-    text: string,
-    options: OpenJTalkOptions<VoiceKind>
-  ): Promise<void> {
+  async prepare(text: string): Promise<void> {
+    const options=this.options;
     await this.spawn(
-      hnd,
       {
         x: this.pathToDict,
         m: this.mapOfKind2HtsVoice[options.kind],
@@ -154,21 +140,35 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
       text
     );
   }
-  async loadVoice(handle: OpenJTalkHandle): Promise<Readable | undefined> {
-    if (!handle.pathToCreatedFile) {
+  async load(): Promise<Readable | undefined> {
+    if (!this.pathToCreatedFile) {
       throw new Error("invalid handle state");
     }
     if (
-      !(await fs.promises.stat(handle.pathToCreatedFile).catch(() => false))
+      !(await fs.promises.stat(this.pathToCreatedFile).catch(() => false))
     ) {
       return undefined;
     }
-    return fs.createReadStream(handle.pathToCreatedFile);
+    return fs.createReadStream(this.pathToCreatedFile);  
   }
-  async closeVoice(handle: OpenJTalkHandle): Promise<void> {
-    if (!handle.pathToCreatedFile) {
+  async close(): Promise<void> {
+    if (!this.pathToCreatedFile) {
       return;
     }
-    return await fs.promises.unlink(handle.pathToCreatedFile);
+    return await fs.promises.unlink(this.pathToCreatedFile);
+  }
+  pathToCreatedFile?: fs.PathLike;
+};
+export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
+  implements Text2SpeechService<OpenJTalkOptions<VoiceKind>, OpenJTalkHandle<VoiceKind>> {
+  constructor(
+    private readonly pathtoOpenJTalk: string,
+    private readonly pathToDict: string,
+    private readonly mapOfKind2HtsVoice: { [k in VoiceKind]: string },
+    private readonly charset: string | undefined,
+    private readonly type: "OO" | "OW"
+  ) {}
+  makeHandle(opt:OpenJTalkOptions<VoiceKind>):OpenJTalkHandle<VoiceKind>{
+    return new OpenJTalkHandle(this.pathtoOpenJTalk,this.pathToDict,this.mapOfKind2HtsVoice,this.charset,this.type,opt);
   }
 }

@@ -1,18 +1,15 @@
 import { VoiceConnection } from "discord.js";
 import {
   OpenJTalkOptions,
-  OpenJTalkHandle,
   Text2SpeechServiceOpenJtalk,
 } from "usecase_text2speech";
-import {
-  OpenJtalkGRPCHandle,
-  Text2SpeechServiceOpenJtalkGRPC,
-} from "usecase_text2speech-grpc";
+import { Text2SpeechServiceOpenJtalkGRPC } from "usecase_text2speech-grpc";
 import { autoInjectable, inject } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import { Readable } from "stream";
 import { Dictionary } from "domain_configs";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
+import { VoiceHandle } from "domain_text2speech";
 export type VoiceKind =
   | "normal"
   | "angry"
@@ -60,7 +57,7 @@ export type Opt = OpenJTalkOptions<VoiceKind> & {
 export type Service = Text2SpeechServiceOpenJtalk<VoiceKind>;
 export type ServiceGRPC = Text2SpeechServiceOpenJtalkGRPC<VoiceKind>;
 type Data = {
-  hnd: OpenJtalkGRPCHandle | OpenJTalkHandle;
+  hnd: VoiceHandle;
   prepare?: Promise<void>;
   load?: Promise<Readable | undefined>;
 };
@@ -114,14 +111,12 @@ export default class {
     const cid = conn.channel.id;
     const hnd = (
       this.text2SpeechServiceGRPC ?? this.text2SpeechService
-    ).makeHandle();
+    ).makeHandle(opt);
     const queue = this.waitQueue.get(cid) ?? [];
     const entry: Data = { hnd };
     this.waitQueue.set(cid, [...queue, entry]);
 
-    entry.prepare = (
-      this.text2SpeechServiceGRPC ?? this.text2SpeechService
-    ).prepareVoice(hnd, text, opt);
+    entry.prepare = hnd.prepare(text);
     if (queue.length === 0) {
       this.playNext(conn).catch(console.log);
     }
@@ -207,17 +202,12 @@ export default class {
     }
     await queue[0].prepare;
     if (!queue[0].load) {
-      queue[0].load = (
-        this.text2SpeechServiceGRPC ?? this.text2SpeechService
-      ).loadVoice(queue[0].hnd);
+      queue[0].load = queue[0].hnd?.load();
     }
     const stream = await queue[0].load;
     if (queue.length >= 2) {
-      queue[1].load = queue[1].prepare?.then(() =>
-        (this.text2SpeechServiceGRPC ?? this.text2SpeechService).loadVoice(
-          queue[1].hnd
-        )
-      );
+      const t = queue[1];
+      t.load = t.prepare?.then(() => t.hnd.load());
     }
     if (!stream) {
       const queue2 = [...queue];
@@ -226,7 +216,6 @@ export default class {
       this.playNext(conn).catch(console.log);
       return;
     }
-    console.log("VoiceConnection#plat will Call:", stream);
 
     const dispatcher = conn.play(stream, {
       type: this.text2SpeechServiceGRPC
@@ -240,9 +229,7 @@ export default class {
       const sf = queue2.shift();
       if (sf) {
         const hnd = sf.hnd;
-        (this.text2SpeechServiceGRPC ?? this.text2SpeechService)
-          .closeVoice(hnd)
-          .catch(console.log);
+        hnd.close().catch(console.log);
       }
       this.waitQueue.set(cid, queue2);
       this.playNext(conn).catch(console.log);

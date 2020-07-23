@@ -46,7 +46,7 @@ export const config: KlasaClientOptions = {
     },
   },
   language: "ja_JP",
-  prefix: "$",
+  prefix: process.env["GUJ_DEFAULT_PREFIX"] ?? "$",
   partials: ["MESSAGE", "USER", "REACTION"],
   ws: {
     intents:

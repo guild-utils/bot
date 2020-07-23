@@ -2,12 +2,7 @@
 .git
 **/*.env
 **/dist
-**/lib
-
 **/tsconfig.tsbuildinfo
-!packages/util/open-jtalk/**/lib
-!packages/util/jumanpp-2.0.0-rc3/**/lib
-!packages/presentation/klasa-member-gateway/src/lib/**
 *.lib
 *.so
 *.obj

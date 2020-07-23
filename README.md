@@ -74,16 +74,11 @@ docker network create -d bridge guj-net
 docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v $(pwd)/docker/guj/dbdata:/var/lib/postgresql/data postgres:alpine
 docker build -t guj-main .
 docker build -t guj-sub -f Sub.DockerFile .
-docker build -t guj-mixer -f Mixer.DockerFile .
 docker stop guj-main||true
 docker stop guj-sub||true
-docker stop guj-mixer||true
-docker rm guj-main||true
 docker rm guj-sub||true
-docker rm guj-mixer||true
 docker run -d --name guj-main --net guj-net --env-file=.main.env guj-main
 docker run -d --name guj-sub --net guj-net --env-file=.sub.env -v $(pwd)/sub-1:/usr/app/packages/presentation/sub/dist/bwd guj-sub
-docker run -d --name guj-mixer --net guj-net guj-mixer
 ```
 
 power-shell
@@ -94,17 +89,12 @@ docker network create -d bridge guj-net
 docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v ${pwd}/docker/guj/dbdata:/var/lib/postgresql/data postgres:alpine
 docker build -t guj-main .
 docker build -t guj-sub -f Sub.DockerFile .
-docker build -t guj-mixer -f Mixer.DockerFile .
 docker stop guj-main
 docker stop guj-sub
-docker stop guj-mixer
 docker rm guj-main
 docker rm guj-sub
-docker rm guj-mixer
 docker run -d --name guj-main --net guj-net --env-file=.main.env guj-main
 docker run -d --name guj-sub --net guj-net --env-file=.sub-1.env -v ${pwd}/docker/guj/sub-1:/usr/app/packages/presentation/sub/dist/bwd guj-sub
-docker run -d --name guj-mixer --net guj-net guj-mixer
-
 ```
 
 
@@ -190,8 +180,6 @@ GUILD_UTILS_J_RPC_SERVER=guj-main:50051
 ## ロードマップ
 
 ### v1
-- N-APIを用いてHTS Engine APIからOpusをメモリ上に直接出力し、NodeJSからDiscordへ直接送信する。
-- 複数のbotアカウントを用いて一サーバーの複数のVCで読み上げが可能になるようにする。
 - 辞書のインポート、エクスポート。
 - 読み上げ設定インポート、エクスポート。
 - 読み上げ設定ガチャ。
@@ -209,8 +197,6 @@ GUILD_UTILS_J_RPC_SERVER=guj-main:50051
 htsvoice、OpenJTalk、HTS Engine API、Jumanpp、kuromoji-js、klasa-member-gatewayについてはそれぞれのライセンスにしたがいます。  
 その他の他者の著作物についてもそのライセンスに従います。  
 tignear(tig#2552)の制作部分はUnlicenseです。  
-アイコンの利用は許可しません。  
 
 ## 制作
 プログラム: tignear(tig#2552)  
-アイコン: 匿名希望らしいので伏せておきます…

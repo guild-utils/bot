@@ -1,31 +1,14 @@
-import { Text2SpeechService } from "domain_text2speech";
+import { Text2SpeechService, VoiceHandle } from "domain_text2speech";
 import { RequestVoiceMixing, ChunkedData } from "sound-mixing-proto/index_pb";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { Readable, Transform, TransformCallback } from "stream";
 
 import * as grpc from "grpc";
-export type OpenJtalkGRPCHandle = {
-  input?:grpc.ClientReadableStream<ChunkedData>;
-  transformed?:Readable;
-};
-export type OpenJTalkGRPCOptions<VoiceKind extends string> = {
-  kind: VoiceKind;
-  speed: number;
-  tone: number;
-  volume: number;
-  intone:number;
-  threshold:number;
-  allpass?:number|undefined;
-};
-export class Text2SpeechServiceOpenJtalkGRPC<VoiceKind extends string>
-  implements Text2SpeechService<OpenJTalkGRPCOptions<VoiceKind>, OpenJtalkGRPCHandle> {
-  constructor(private readonly client:IMixerClient){
-  }
-  makeHandle(): OpenJtalkGRPCHandle {
-    return {};
-  }
-  prepareVoice(hnd: OpenJtalkGRPCHandle, text: string, options: OpenJTalkGRPCOptions<VoiceKind>): Promise<void> {
+export class OpenJtalkGRPCHandle<VoiceKind extends string> implements VoiceHandle{
+  constructor(private readonly client:IMixerClient,public readonly options:OpenJTalkGRPCOptions<VoiceKind>){}
+  prepare(text: string): Promise<void> {
     const mixreq=new RequestVoiceMixing();
+    const options=this.options;
     mixreq.setAllpass(options.allpass??-1);
     mixreq.setHtsvoice(options.kind);
     mixreq.setIntone(options.intone);
@@ -37,7 +20,7 @@ export class Text2SpeechServiceOpenJtalkGRPC<VoiceKind extends string>
     const stream=this.client.mixing(mixreq,{
       deadline:Infinity
     });
-    hnd.input=stream;
+    this.input=stream;
     const transformer=new Transform({
       writableObjectMode:true,
       readableObjectMode:false,
@@ -45,7 +28,6 @@ export class Text2SpeechServiceOpenJtalkGRPC<VoiceKind extends string>
       readableHighWaterMark:20480,
       autoDestroy:true,
       transform(chunk:ChunkedData|Array<ChunkedData>, encoding, done:TransformCallback) {
-        console.log("transform:",chunk);
         if(Array.isArray(chunk)){
           chunk.forEach(chunk=>{
             this.push(Buffer.from(chunk.getData_asU8()));
@@ -56,19 +38,35 @@ export class Text2SpeechServiceOpenJtalkGRPC<VoiceKind extends string>
         done(undefined,Buffer.from(chunk.getData_asU8()));
       },
     });
-    hnd.transformed=stream.pipe(transformer);
+    this.transformed=stream.pipe(transformer);
 
     return Promise.resolve();
   }
-  loadVoice(handle: OpenJtalkGRPCHandle): Promise<Readable | undefined> {
-
-    console.log("loadVoice");
-    return Promise.resolve(handle.transformed);
+  load(): Promise<Readable | undefined> {
+    return Promise.resolve(this.transformed);
   }
-  closeVoice(handle: OpenJtalkGRPCHandle): Promise<void> {
-    handle.transformed?.destroy();
-    handle.input?.cancel();
-    handle.input?.destroy();
-    return Promise.resolve();
+  close(): Promise<void> {
+    this.transformed?.destroy();
+    this.input?.cancel();
+    this.input?.destroy();
+    return Promise.resolve();  }
+  input?:grpc.ClientReadableStream<ChunkedData>;
+  transformed?:Readable;
+}
+export type OpenJTalkGRPCOptions<VoiceKind extends string> = {
+  kind: VoiceKind;
+  speed: number;
+  tone: number;
+  volume: number;
+  intone:number;
+  threshold:number;
+  allpass?:number|undefined;
+};
+export class Text2SpeechServiceOpenJtalkGRPC<VoiceKind extends string>
+  implements Text2SpeechService<OpenJTalkGRPCOptions<VoiceKind>, OpenJtalkGRPCHandle<VoiceKind>> {
+  constructor(private readonly client:IMixerClient){
+  }
+  makeHandle(options: OpenJTalkGRPCOptions<VoiceKind>): OpenJtalkGRPCHandle<VoiceKind> {
+    return new OpenJtalkGRPCHandle(this.client,options);
   }
 }

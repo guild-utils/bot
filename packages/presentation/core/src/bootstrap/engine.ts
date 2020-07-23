@@ -5,7 +5,7 @@ import Engine from "../text2speech/engine";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 export function initEngineAndKuromoji(
   container: DependencyContainer,
-  mixer: IMixerClient
+  mixer: IMixerClient | undefined
 ): Promise<void> {
   return new Promise((resolve) => {
     kuromoji
