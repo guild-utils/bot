@@ -144,8 +144,7 @@ POSTGRES_USER=postgres
 POSTGRES_MAX=30
 POSTGRES_IDLE_TIMEOUT=1000
 ```
-### Windowsでネイティブに動かしたい。
-頑張ってください。
+
 
 ### docker hubのやつを使う。
 ```
