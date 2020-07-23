@@ -67,7 +67,7 @@ $awa 単語 たんご
 
 ## セルフホスト(ビルド)
 **Git LFSが必要です**  
-**Mixerを使用する場合は#[Mixer](https://github.com/guild-utils/mixer)も参照してください**  
+**Mixerを使用する場合は[Mixer](https://github.com/guild-utils/mixer)も参照してください**  
 shell  
 ```
 git clone --depth 1 https://github.com/guild-utils/bot.git
