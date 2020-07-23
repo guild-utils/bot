@@ -66,9 +66,11 @@ $awa 単語 たんご
 ちゃんと書けばこんなにマシになるんだと思うためにつけました。いまのところそれ以外の意味はありません。
 
 ## セルフホスト(ビルド)
+**Git LFSが必要です** 
+**Mixerを使用する場合は#[Mixer](https://github.com/guild-utils/mixer)も参照してください** 
 shell  
 ```
-git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
+git clone --depth 1 https://github.com/guild-utils/bot.git
 cd guild-utils-j
 docker network create -d bridge guj-net
 docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v $(pwd)/docker/guj/dbdata:/var/lib/postgresql/data postgres:alpine
@@ -83,7 +85,7 @@ docker run -d --name guj-sub --net guj-net --env-file=.sub.env -v $(pwd)/sub-1:/
 
 power-shell
 ```
-git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
+git clone --depth 1 https://github.com/guild-utils/bot.git
 cd guild-utils-j
 docker network create -d bridge guj-net
 docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v ${pwd}/docker/guj/dbdata:/var/lib/postgresql/data postgres:alpine
@@ -119,8 +121,9 @@ GUILD_UTILS_J_PROVIDER=json
 GUILD_UTILS_J_RPC_SERVER=guj-main:50051
 ```
 ### 余計なものいらないので読み上げだけください!
+**Git LFSが必要です** 
 ```
-git clone --depth 1 https://gitlab.com/guild-utils-j/guild-utils-j.git
+git clone --depth 1 https://github.com/guild-utils/bot.git
 cd guild-utils-j
 docker run -d --net guj-net --name guj-db -e POSTGRES_PASSWORD=mysecretpassword -v dbdata:/var/lib/postgresql/data postgres-alpine
 docker build -f WithoutJumanpp.Dockerfile -t guj .
@@ -155,6 +158,7 @@ docker rm guj-main
 docker rm guj-sub
 docker run -d --name guj-main --net guj-net --env-file=.main.env tignear/guj-main
 docker run -d --name guj-sub --net guj-net --env-file=.sub.env -v ${pwd}/docker/guj/sub-1:/usr/app/packages/presentation/sub/dist/bwd tignear/guj-sub
+docker run -d --name guj-mixer --net guj-net tignear/guj-mixer
 ```
 
 .main.env  
@@ -177,6 +181,7 @@ GUILD_UTILS_J_SUB_DISCORD_TOKEN=
 GUILD_UTILS_J_PROVIDER=json
 GUILD_UTILS_J_RPC_SERVER=guj-main:50051
 ```
+
 ## ロードマップ
 
 ### v1
