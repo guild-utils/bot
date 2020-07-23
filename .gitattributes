@@ -16,9 +16,9 @@
 *.win1 filter=lfs diff=lfs merge=lfs -text
 *.win2 filter=lfs diff=lfs merge=lfs -text
 *.win3 filter=lfs diff=lfs merge=lfs -text
-*htsvoice filter=lfs diff=lfs merge=lfs -text
 *.def filter=lfs diff=lfs merge=lfs -text
 naist-jdic.csv filter=lfs diff=lfs merge=lfs -text
 unidic-csj.csv filter=lfs diff=lfs merge=lfs -text
 *.jppmdl filter=lfs diff=lfs merge=lfs -text
 *.dic filter=lfs diff=lfs merge=lfs -text
+*.htsvoice filter=lfs diff=lfs merge=lfs -text
