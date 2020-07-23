@@ -207,12 +207,13 @@ export default class extends Language {
     COMMAND_INVITE: () => [
       `サーバーに${this.client.user!.username}を追加するには:`,
       `${this.client.invite}`,
-      "バグを見つけたら https://gitlab.com/guild-utils-j/guild-utils-j/-/issues へお願いします。",
+      "バグを見つけたら https://discord.gg/xxkzCHU へお願いします。",
     ],
     COMMAND_INVITE_DESCRIPTION: "ボットの招待リンクを表示します。",
     COMMAND_INFO: [
       "いまのところこのBotは読み上げが可能です。",
-      "詳細はhelpコマンドまたは https://gitlab.com/guild-utils-j/guild-utils-j/-/blob/master/README.md を参照してください。",
+
+      "詳細はhelpコマンドまたは https://github.com/guild-utils/bot , https://discord.gg/xxkzCHU を参照してください。",
       "プログラム:tig#2552 アイコン:匿名希望らしいので伏せます",
     ],
     COMMAND_INFO_DESCRIPTION: "このボットに関するいくつかの情報を提供します。",

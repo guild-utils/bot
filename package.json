@@ -2,7 +2,7 @@
   "name": "guild-utils-j",
   "version": "1.0.0",
   "description": "a discord bot",
-  "repository": "https://gitlab.com/guild-utils-j/guild-utils-j",
+  "repository": "https://github.com/guild-utils/bot",
   "author": "tig<tignear+m@gmail.com>",
   "license": "UNLICENSE",
   "private": true,
