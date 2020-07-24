@@ -25,15 +25,13 @@ export default class extends Command {
       k: string;
       v?: string;
     }[] = msg.guildSettings.get(GUILD_SETTINGS.text2speechDictionaryBefore);
-    const index = arr.findIndex(
-      ({ k }: { k: string; v?: string }) => toFullWidth(word) === k
+    const update = arr.filter(
+      ({ k }: { k: string; v?: string }) => toFullWidth(word) !== k
     );
-    if (index < 0) {
-      return msg.sendLocale(LANG_KEYS.COMMAND_DELETE_WORD_SUCCESS);
-    }
     await msg.guildSettings.update(
-      GUILD_SETTINGS.text2speechDictionary.join("."),
-      { action: "remove", arrayPosition: index }
+      GUILD_SETTINGS.text2speechDictionaryBefore.join("."),
+      update,
+      { action: "overwrite" }
     );
     return msg.sendLocale(LANG_KEYS.COMMAND_DELETE_WORD_SUCCESS);
   }

@@ -29,7 +29,7 @@ export default class extends Command {
       p2?: string;
       p3?: string;
     }[] = msg.guildSettings.get(GUILD_SETTINGS.text2speechDictionary);
-    const index = arr.findIndex(
+    const updated = arr.filter(
       ({
         k,
       }: {
@@ -41,12 +41,11 @@ export default class extends Command {
         p3?: string;
       }) => toFullWidth(word) === k
     );
-    if (index < 0) {
-      return msg.sendLocale(LANG_KEYS.COMMAND_DELETE_WORD_SUCCESS);
-    }
+
     await msg.guildSettings.update(
       GUILD_SETTINGS.text2speechDictionary.join("."),
-      { action: "remove", arrayPosition: index }
+      updated,
+      { action: "overwrite" }
     );
     return msg.sendLocale(LANG_KEYS.COMMAND_DELETE_WORD_SUCCESS);
   }
