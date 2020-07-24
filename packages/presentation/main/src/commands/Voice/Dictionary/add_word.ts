@@ -42,12 +42,19 @@ export default class extends Command {
     if (index < 0) {
       await msg.guildSettings.update(
         GUILD_SETTINGS.text2speechDictionary.join("."),
-        { k: toFullWidth(word), v: to, p, p1, p2, p3 },
+        { k: toFullWidth(word), v: to ? toFullWidth(to) : to, p, p1, p2, p3 },
         { action: "add" }
       );
       return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
     }
-    arr[index] = { k: toFullWidth(word), v: to, p, p1, p2, p3 };
+    arr[index] = {
+      k: toFullWidth(word),
+      v: to ? toFullWidth(to) : to,
+      p,
+      p1,
+      p2,
+      p3,
+    };
     await msg.guildSettings.update(
       GUILD_SETTINGS.text2speechDictionary.join("."),
       arr,

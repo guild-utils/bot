@@ -31,12 +31,12 @@ export default class extends Command {
     if (index < 0) {
       await msg.guildSettings.update(
         GUILD_SETTINGS.text2speechDictionaryBefore.join("."),
-        { k: fword, v: to },
+        { k: fword, v: to ? toFullWidth(to) : to },
         { action: "add" }
       );
       return msg.sendLocale(LANG_KEYS.COMMAND_ADD_WORD_SUCCESS);
     }
-    arr[index] = { k: fword, v: to };
+    arr[index] = { k: fword, v: to ? toFullWidth(to) : to };
     await msg.guildSettings.update(
       GUILD_SETTINGS.text2speechDictionaryBefore.join("."),
       arr,

@@ -125,12 +125,12 @@ export default class {
   async queue(conn: VoiceConnection, text: string, opt: Opt): Promise<void> {
     let sentenses = text.split("\n").join("。");
     const vf = this.mapOfKind2HtsVoice[opt.kind].volume_fix ?? 0;
-    if (opt.readName) {
+    if (opt.readName && opt.readName != "") {
       sentenses = opt.readName + "。" + sentenses;
     }
     sentenses = toFullWidth(sentenses);
     for (const e of opt.dictionary.before) {
-      sentenses = sentenses.split(e[0]).join(e[1]);
+      sentenses = sentenses.split(e.from).join(e.to);
     }
     const arr: string[] = [];
     for (const e2 of this.tokenizer.tokenize(sentenses)) {
@@ -185,12 +185,13 @@ export default class {
     }
     sentenses = arr.join("");
     for (const e of opt.dictionary.after) {
-      sentenses = sentenses.split(e[0]).join(e[1]);
+      sentenses = sentenses.split(e.from).join(e.to);
     }
     const copy = { ...opt };
     copy.volume += vf;
     if (sentenses.length > opt.maxReadLimit) {
       sentenses = sentenses.substr(0, opt.maxReadLimit);
+      console.log(sentenses);
     }
     await this.queueRaw(conn, sentenses, copy);
   }

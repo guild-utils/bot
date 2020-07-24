@@ -82,13 +82,13 @@ export default class Usecase implements Domain.Usecase {
         : guild;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const dictionaryBRaw: [string, (string | undefined)?][] = settings.get(
+    const dictionaryBRaw: { k: string; v?: string }[] = settings.get(
       GUILD_CONFIGS.text2speechDictionaryBefore
     );
-    const dictionaryB = dictionaryBRaw.map(([from, to]) => {
+    const dictionaryB = dictionaryBRaw.map((obj: { k: string; v?: string }) => {
       return {
-        from,
-        to: to ?? "",
+        from: obj.k,
+        to: obj.v ?? "",
       };
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -113,13 +113,13 @@ export default class Usecase implements Domain.Usecase {
       });
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const dictionaryARaw: [string, (string | undefined)?][] = settings.get(
+    const dictionaryARaw: { k: string; v?: string }[] = settings.get(
       GUILD_CONFIGS.text2speechDictionaryAfter
     );
-    const dictionaryA = dictionaryARaw.map(([from, to]) => {
+    const dictionaryA = dictionaryARaw.map((obj: { k: string; v?: string }) => {
       return {
-        from,
-        to: to ?? "",
+        from: obj.k,
+        to: obj.v ?? "",
       };
     });
     return { after: dictionaryA, before: dictionaryB, entrys: dictionary };
