@@ -39,6 +39,15 @@ $e
 ```
 $gmconf set speech.readName ねこ
 ```
+サーバー全体で名前の読み上げを無効にする場合は次のコマンドを使用してください。
+```
+$conf set speech.readName false
+```
+個人がサーバー内で名前の読み上げを無効にする場合は次のコマンドを使用してください。
+```
+$memconf set speech.readName ""
+```
+
 その他tone,volume,speed,kindが各ギルドで別個に設定できます。  
 kindの一覧は以下のコマンドでご確認ください。
 ```
