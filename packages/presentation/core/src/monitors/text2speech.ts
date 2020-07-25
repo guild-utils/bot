@@ -58,7 +58,7 @@ export default class extends Monitor {
         if (!member) {
           return m;
         }
-        const r = this.repo.getUserReadName(
+        const r = await this.repo.getUserReadName(
           guild.id,
           member.user.id,
           member.nickname ?? undefined,
