@@ -134,7 +134,7 @@ export default class {
     }
     const arr: string[] = [];
     for (const e2 of this.tokenizer.tokenize(sentenses)) {
-      const e3 = opt.dictionary.entrys.get(e2.surface_form);
+      const e3 = opt.dictionary.main.get(e2.surface_form);
       if (!e3) {
         arr.push(e2.surface_form);
         continue;

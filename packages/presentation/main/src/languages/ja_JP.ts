@@ -27,14 +27,25 @@ export default class extends CoreLanguage {
     COMMAND_UPDATE_DESCRIPTION: "スプレッドシートの更新を適用します。",
 
     COMMAND_ADD_WORD_DESCRIPTION: "単語を辞書に追加します。",
-    COMMAND_ADD_WORD_SUCCESS: "単語を辞書に追加しました。",
+    COMMAND_ADD_WORD_SUCCESS_WITH_CREATE: (from: string, to: string) =>
+      `「${from}」から「${to}」への変換を辞書に追加しました。`,
+    COMMAND_ADD_WORD_SUCCESS_WITH_OVERWRITE: (
+      from: string,
+      old: string,
+      to: string
+    ) => `「${from}」からの変換を「${old}」から「${to}」に変更しました。`,
     COMMAND_DELETE_WORD_DESCRIPTION: "単語を辞書から削除します。",
-    COMMAND_DELETE_WORD_SUCCESS: "単語を辞書から削除しました。",
-
+    COMMAND_DELETE_WORD_SUCCESS_WITH_DELETE: (from: string, to: string) =>
+      `「${from}」から「${to}」への変換を削除しました。`,
+    COMMAND_DELETE_WORD_SUCCESS_WITH_NONE: (from: string) =>
+      `「${from}」が見つかりませんでした`,
     COMMAND_CONF_GUILD_MEMBER_DESCRIPTION:
       "サーバー単位でのユーザーの設定をする。",
     COMMAND_JUMANPP_DESCRIPTION: "jumanppで形態素解析する。",
     COMMAND_KUROMOJI_DESCRIPTION: "kuromojiで形態素解析する。",
+    COMMAND_IMPORT_COMPLETE: "インポートが完了しました。",
+    COMMAND_EXPORT_SUCCESS: "エクスポートが完了しました。",
+    COMMAND_CLEAR_SUCCESS: "辞書をすべて削除しました。",
     ...this.CORE_MESSAGES,
   };
   constructor(

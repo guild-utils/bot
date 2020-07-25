@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "reflect-metadata";
 import MemberGatewayPlugin from "klasa-member-gateway";
-import KlasaUsecase from "presentation_configs-klasa";
+import {
+  Usecase as KlasaUsecase,
+  DictionaryRepository as KlasaDictionaryRepository,
+} from "presentation_configs-klasa";
 import { config as dotenv } from "dotenv";
 const result = dotenv();
 import { KlasaClient, KlasaClientOptions, Settings } from "klasa";
@@ -14,7 +17,7 @@ import * as GUILD_SETINGS from "./guild_settings_keys";
 import initRpcServer from "./bootstrap/grpc";
 import initGameEvent from "./bootstrap/schedule";
 import initText2Speech from "./bootstrap/text2speech";
-import initStartBoard from "./bootstrap/starBoard";
+import initStarBoard from "./bootstrap/starBoard";
 if (result) {
   console.log(result.parsed);
 }
@@ -42,14 +45,18 @@ async function main() {
   initMemberGateway(Client);
   await initText2Speech(container);
   const client = new Client(config);
-  const configRepo = new KlasaUsecase(client.gateways);
+  const dict = new KlasaDictionaryRepository(client.gateways);
+  const configRepo = new KlasaUsecase(client.gateways, dict);
   container.register("ConfigRepository", {
     useValue: configRepo,
+  });
+  container.register("DictionaryRepository", {
+    useValue: dict,
   });
   initChannelsGateway(client.gateways);
 
   initRpcServer(configRepo);
-  initStartBoard();
+  initStarBoard();
   await client.login(token);
 }
 main().catch(console.log);

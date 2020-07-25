@@ -23,7 +23,7 @@ export class ResponseTransformer {
       })
     );
     r.setEntrysList(
-      [...from.entrys].map(([k, v]) => {
+      [...from.main].map(([k, v]) => {
         const a = new GRPC.DictionaryEntryA();
         a.setFrom(k);
         a.setTo(v.to);
