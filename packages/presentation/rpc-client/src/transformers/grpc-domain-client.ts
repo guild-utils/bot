@@ -16,7 +16,7 @@ export class ResponseTransformer {
         .map((e) => {
           return { from: e.getFrom(), to: e.getTo() };
         }),
-      entrys: new Map(
+      main: new Map(
         from.getEntrysList().map((e) => [
           e.getFrom(),
           {

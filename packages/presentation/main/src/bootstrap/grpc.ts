@@ -4,7 +4,7 @@ import {
   ConfigManagerService,
 } from "presentation_rpc-server";
 import { Server, ServerCredentials } from "grpc";
-import Usecase from "presentation_configs-klasa";
+import {Usecase} from "presentation_configs-klasa";
 
 export class GRPCServer {
   constructor(private readonly service: GRPCService) {}
