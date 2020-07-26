@@ -71,9 +71,10 @@ export default class Usecase implements Domain.Usecase {
     nickName: string | undefined,
     userName: string
   ): Promise<string> {
-    const gs = await this.gateways.guilds.get(guild, true).sync();
     const ms = await this.gateways.members.get([guild, user], true).sync();
-    return readName(gs, ms, nickName, userName);
+    const us = await this.gateways.users.get(user, true).sync();
+
+    return readName(ms, us, nickName, userName);
   }
   async dictionary(guild: string | Settings): Promise<Domain.Dictionary> {
     const settings =
