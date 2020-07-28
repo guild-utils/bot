@@ -5,6 +5,7 @@
   "types": "./dist/index.d.ts",
   "license": "MIT",
   "dependencies": {
+    "presentation_klasa-core-command-rewrite": "^1.0.0",
     "string-replace-async": "^2.0.0",
     "usecase_text2speech": "^1.0.0",
     "usecase_text2speech-grpc": "^1.0.0"

@@ -54,6 +54,11 @@ export const config: KlasaClientOptions = {
       Intents.FLAGS.GUILDS |
       Intents.FLAGS.GUILD_VOICE_STATES,
   },
+  pieceDefaults: {
+    commands: {
+      extendedHelp: false as any,
+    },
+  },
   production: process.env.NODE_ENV === "production",
 };
 
