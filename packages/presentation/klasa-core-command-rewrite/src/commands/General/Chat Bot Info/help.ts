@@ -5,14 +5,13 @@ import {
   CategorizedCommands,
   categorizeCommand,
 } from "../../../arguments/category";
-// eslint-disable-next-line @typescript-eslint/unbound-method
 export default class extends Command {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
-      aliases: ["commands"],
+      aliases: ["commands","command","categorys","category"],
       guarded: true,
-      requiredPermissions: ["EMBED_LINKS"],
       description: (language) => language.get("COMMAND_HELP_DESCRIPTION"),
+      extendedHelp: (language) => language.get("COMMAND_HELP_EXTENDED_MESSAGE"),
       usage: "(Command:command|Category:category)",
     });
 
@@ -28,13 +27,15 @@ export default class extends Command {
     msg: KlasaMessage,
     [cmd]: [ReturnType | Command | undefined]
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
+    const me=await msg.guild?.members.fetch(this.client.user!);
+    if(!me!.permissionsIn(msg.channel).has("EMBED_LINKS")){
+      return msg.sendLocale("PLEASE_ALLOW_TO_SEND_EMBED_LINKS");
+    }
     if (!cmd) {
       const embed = new MessageEmbed()
-        .setTitle("Categorys")
-        .setFooter(
-          msg.member?.nickname ?? msg.author.username,
-          msg.author.avatarURL() ?? undefined
-        )
+        .setTitle("Help")
+        .setDescription(msg.language.get("COMMAND_HELP_SIMPLE_EMBED_DESC",msg))
+        .addField("Support",msg.language.get("COMMAND_HELP_SUPPORT_SERVER"))
         .addFields(
           Object.values(this.categorizeCommand()).map((e) => {
             return {
@@ -45,7 +46,8 @@ export default class extends Command {
               ].join(" "),
             };
           })
-        );
+        )
+        .setFooter(msg.language.get("COMMAND_HELP_ALL_FOOTER",msg));
       setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
@@ -65,7 +67,7 @@ export default class extends Command {
             };
           }
         )
-      );
+      ).setFooter(msg.language.get("COMMAND_HELP_SUB_CATEGORY_FOOTER",msg));
       setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
@@ -88,7 +90,8 @@ export default class extends Command {
             value: resolveFunctionOrString(e.description, msg),
           };
         })
-      );
+      )
+      .setFooter(msg.language.get("COMMAND_HELP_CATEGORY_FOOTER",msg));
     setCommonConf(embed, msg);
     return msg.sendEmbed(embed);
   }
@@ -97,10 +100,6 @@ export default class extends Command {
   }
 }
 function setCommonConf(embed: MessageEmbed, msg: KlasaMessage): void {
-  embed.setFooter(
-    msg.member?.nickname ?? msg.author.username,
-    msg.author.avatarURL() ?? undefined
-  );
   embed.setColor(msg.client.options.themeColor);
 }
 function resolveFunctionOrString(
@@ -124,19 +123,19 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
     embed.setDescription(resolveFunctionOrString(cmd.description, msg));
   }
   if (cmd.usage) {
-    embed.addField("usage", cmd.usage.fullUsage(msg));
+    embed.addField("Usage", cmd.usage.fullUsage(msg));
   }
   if (cmd.extendedHelp) {
-    embed.addField("more info", resolveFunctionOrString(cmd.extendedHelp, msg));
+    embed.addField("More Info", resolveFunctionOrString(cmd.extendedHelp, msg));
   }
   if (cmd.category) {
-    embed.addField("category", cmd.category, true);
+    embed.addField("Category", cmd.category, true);
   }
   if (cmd.subCategory) {
-    embed.addField("sub category", cmd.subCategory, true);
+    embed.addField("Sub Category", cmd.subCategory, true);
   }
   if (cmd.cooldown) {
-    embed.addField("cooldown", cmd.cooldown, true);
+    embed.addField("Cooldown", cmd.cooldown, true);
   }
 
   return embed;

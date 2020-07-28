@@ -9,7 +9,7 @@ declare module "klasa" {
 }
 async function loadFrom<K, V extends Piece, VConstructor>(
   store: Store<K, V, VConstructor>,
-  directory
+  directory: string
 ) {
   const files = await fs
     .scan(directory, {

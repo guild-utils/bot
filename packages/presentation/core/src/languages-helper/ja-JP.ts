@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { Language, util } from "klasa";
+import { Language, util, KlasaMessage } from "klasa";
 import { GUJ_CORE_LANG_TYPE } from "../lang_keys";
 export default class extends Language {
   protected KLASA_MESSAGES = {
@@ -279,6 +279,19 @@ export default class extends Language {
     COMMAND_STATS_DESCRIPTION: "ボットの詳細と、統計情報を表示します。",
     MESSAGE_PROMPT_TIMEOUT: "プロンプトがタイムアウトしました。",
     TEXT_PROMPT_ABORT_OPTIONS: ["中断", "停止", "取り消し"],
+    PLEASE_ALLOW_TO_SEND_EMBED_LINKS:"ボットに埋め込みリンクを送信する権限を与えてください。\nサポートサーバー: https://discord.gg/xxkzCHU",
+    COMMAND_HELP_SIMPLE_EMBED_DESC:(msg: KlasaMessage)=>[
+      `${msg.guildSettings.get("prefix")}help helpでhelpコマンドのより詳細な使い方が確認できます。`,
+      `質問や意見、バグ見つけた!、動かない!などあれば[サポートサーバー]([https://discord.gg/xxkzCHU)まで。`,
+    ].join("\n"),
+    COMMAND_HELP_EXTENDED_MESSAGE:[
+      "「help command」でコマンドについての情報が確認できます。(例: help help)",
+      "「help category」でカテゴリに所属しているサブカテゴリとコマンドについて確認できます。(例: help general)",
+      "「help category/subcategory」でサブカテゴリに所属しているコマンドについて確認できます。(例: help general/chat bot info)",
+    ].join("\n"),
+    COMMAND_HELP_ALL_FOOTER: (msg: KlasaMessage)=>`${msg.guildSettings.get("prefix")}help caregoryでカテゴリの情報が確認できます。`,
+    COMMAND_HELP_CATEGORY_FOOTER:(msg: KlasaMessage)=>`${msg.guildSettings.get("prefix")}help caregory/subcategoryでサブカテゴリの情報が確認できます。`,
+    COMMAND_HELP_SUB_CATEGORY_FOOTER:(msg: KlasaMessage)=>`${msg.guildSettings.get("prefix")}help commandでコマンドの情報が確認できます。`,
   };
   protected CORE_MESSAGES: GUJ_CORE_LANG_TYPE = {
     COMMAND_END_SUCCESS: "読み上げを終了しました。",
