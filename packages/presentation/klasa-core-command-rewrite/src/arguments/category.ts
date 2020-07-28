@@ -69,7 +69,11 @@ export default class extends Argument {
     return categorized[arg.toLowerCase()];
   }
 }
+let cacheedCategorizeCommand:CategorizedCommands|undefined;
 export function categorizeCommand(commands: CommandStore): CategorizedCommands {
+  if(cacheedCategorizeCommand){
+    return cacheedCategorizeCommand;
+  }
   const r: CategorizedCommands = {};
   commands.forEach((e) => {
     const categoryL = e.category.toLowerCase();
@@ -94,5 +98,6 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
       r[categoryL].direct.push(e);
     }
   });
+  cacheedCategorizeCommand=r;
   return r;
 }

@@ -8,7 +8,7 @@ import {
 export default class extends Command {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
-      aliases: ["commands","command","categorys","category"],
+      aliases: ["h","commands","command","categorys","category"],
       guarded: true,
       description: (language) => language.get("COMMAND_HELP_DESCRIPTION"),
       extendedHelp: (language) => language.get("COMMAND_HELP_EXTENDED_MESSAGE"),
@@ -31,11 +31,16 @@ export default class extends Command {
     if(!me!.permissionsIn(msg.channel).has("EMBED_LINKS")){
       return msg.sendLocale("PLEASE_ALLOW_TO_SEND_EMBED_LINKS");
     }
+    if(!me!.permissionsIn(msg.channel).has("ADD_REACTIONS")){
+      msg.sendLocale("PLEASE_ALLOW_TO_ADD_REACTIONS");
+    }
+    if(!me!.permissionsIn(msg.channel).has("READ_MESSAGE_HISTORY")){
+      msg.sendLocale("PLEASE_ALLOW_TO_READ_MESSAGE_HISTORY");
+    }
     if (!cmd) {
       const embed = new MessageEmbed()
         .setTitle("Help")
         .setDescription(msg.language.get("COMMAND_HELP_SIMPLE_EMBED_DESC",msg))
-        .addField("Support",msg.language.get("COMMAND_HELP_SUPPORT_SERVER"))
         .addFields(
           Object.values(this.categorizeCommand()).map((e) => {
             return {
@@ -48,12 +53,12 @@ export default class extends Command {
           })
         )
         .setFooter(msg.language.get("COMMAND_HELP_ALL_FOOTER",msg));
-      setCommonConf(embed, msg);
+      await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
     if (cmd instanceof Command) {
       const embed = buildEmbedWithCmd(cmd, msg);
-      setCommonConf(embed, msg);
+      await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
     if (!cmd.hasOwnProperty("subCategory")) {
@@ -68,7 +73,7 @@ export default class extends Command {
           }
         )
       ).setFooter(msg.language.get("COMMAND_HELP_SUB_CATEGORY_FOOTER",msg));
-      setCommonConf(embed, msg);
+      await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
     const embed = new MessageEmbed()
@@ -92,16 +97,17 @@ export default class extends Command {
         })
       )
       .setFooter(msg.language.get("COMMAND_HELP_CATEGORY_FOOTER",msg));
-    setCommonConf(embed, msg);
+    await setCommonConf(embed, msg);
     return msg.sendEmbed(embed);
   }
   categorizeCommand(): CategorizedCommands {
     return categorizeCommand(this.client.commands);
   }
 }
-function setCommonConf(embed: MessageEmbed, msg: KlasaMessage): void {
+async function setCommonConf(embed: MessageEmbed, msg: KlasaMessage): Promise<void> {
   embed.setColor(msg.client.options.themeColor);
 }
+
 function resolveFunctionOrString(
   x: ((lang: Language) => string) | string,
   msg: KlasaMessage
@@ -113,8 +119,6 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
   const embed = new MessageEmbed();
   if (cmd.name) {
     embed.setTitle(
-      (cmd.category ? `${cmd.category}/` : "") +
-        (cmd.subCategory ? `${cmd.subCategory}/` : "") +
         cmd.name +
         (cmd.aliases.length ? `(${cmd.aliases.join(",")})` : "")
     );
@@ -139,4 +143,9 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
   }
 
   return embed;
+}
+async function* series<T extends {[Symbol.iterator]()}>(arr:T){
+  for(let x of arr){
+    yield await x;
+  }
 }
