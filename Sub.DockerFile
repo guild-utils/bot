@@ -41,6 +41,7 @@ COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
 COPY packages/presentation/shared-config ./packages/presentation/shared-config
 COPY packages/presentation/protos ./packages/presentation/protos
 COPY packages/presentation/rpc-client ./packages/presentation/rpc-client
+COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/sub ./packages/presentation/sub
 
