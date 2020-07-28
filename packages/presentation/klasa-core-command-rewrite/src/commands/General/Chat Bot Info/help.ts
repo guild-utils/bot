@@ -36,13 +36,13 @@ export default class extends Command {
           msg.author.avatarURL() ?? undefined
         )
         .addFields(
-          Object.entries(this.categorizeCommand()).map((e) => {
+          Object.values(this.categorizeCommand()).map((e) => {
             return {
-              name: e[0],
+              name: e.name,
               value: [
-                ...Object.keys(e[1].subCategory),
-                ...e[1].direct.map((e) => e.name),
-              ],
+                ...Object.values(e.subCategory).map(e=>`__\`\`${e.name}\`\`__`),
+                ...e.direct.map((e) => e.name).map(e=>`\`\`${e}\`\``),
+              ].join(" "),
             };
           })
         );
@@ -55,8 +55,9 @@ export default class extends Command {
       return msg.sendEmbed(embed);
     }
     if (!cmd.hasOwnProperty("subCategory")) {
-      const embed = new MessageEmbed().setTitle(msg.args[0]).addFields(
-        (cmd as CategorizedCommands[string]["subCategory"][string]).command.map(
+      const cmd_  =(cmd as CategorizedCommands[string]["subCategory"][string]);
+      const embed = new MessageEmbed().setTitle(cmd_.categoryName+"/"+cmd_.name).addFields(
+        cmd_.command.map(
           (e) => {
             return {
               name: e.name,
@@ -69,13 +70,13 @@ export default class extends Command {
       return msg.sendEmbed(embed);
     }
     const embed = new MessageEmbed()
-      .setTitle(msg.args[0])
+      .setTitle((cmd as CategorizedCommands[string]).name)
       .addFields(
         Object.values((cmd as CategorizedCommands[string]).subCategory).map(
           (v) => {
             return {
               name: v.name,
-              value: v.command.map((e) => e.name).join(","),
+              value: v.command.map((e) => e.name).map(e=>`\`\`${e}\`\``).join(" "),
             };
           }
         )

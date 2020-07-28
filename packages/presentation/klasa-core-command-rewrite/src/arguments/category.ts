@@ -1,6 +1,7 @@
 import { Argument, Possible, KlasaMessage, Command, CommandStore } from "klasa";
 export type CategorizedCommandsEntry = {
   [subCategory in string]: {
+    categoryName: string;
     name: string;
     command: Command[];
   };
@@ -83,6 +84,7 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
       const subCategoryL = e.subCategory.toLowerCase();
       if (!r[categoryL].subCategory[subCategoryL]) {
         r[categoryL].subCategory[subCategoryL] = {
+          categoryName: e.category,
           name: e.subCategory,
           command: [],
         };
