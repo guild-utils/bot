@@ -31,12 +31,6 @@ export default class extends Command {
     if(!me!.permissionsIn(msg.channel).has("EMBED_LINKS")){
       return msg.sendLocale("PLEASE_ALLOW_TO_SEND_EMBED_LINKS");
     }
-    if(!me!.permissionsIn(msg.channel).has("ADD_REACTIONS")){
-      msg.sendLocale("PLEASE_ALLOW_TO_ADD_REACTIONS");
-    }
-    if(!me!.permissionsIn(msg.channel).has("READ_MESSAGE_HISTORY")){
-      msg.sendLocale("PLEASE_ALLOW_TO_READ_MESSAGE_HISTORY");
-    }
     if (!cmd) {
       const embed = new MessageEmbed()
         .setTitle("Help")
