@@ -67,6 +67,7 @@ COPY packages/presentation/klasa-member-gateway ./packages/presentation/klasa-me
 COPY packages/presentation/configs-klasa ./packages/presentation/configs-klasa
 COPY packages/presentation/protos ./packages/presentation/protos
 COPY packages/presentation/rpc-server ./packages/presentation/rpc-server
+COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/main ./packages/presentation/main
 

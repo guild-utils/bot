@@ -13,9 +13,9 @@ export type OpenJTalkOptions<VoiceKind extends string> = {
   speed: number;
   tone: number;
   volume: number;
-  intone:number;
-  threshold:number;
-  allpass?:number|undefined;
+  intone: number;
+  threshold: number;
+  allpass?: number | undefined;
 };
 /**
  *     -x  dir        : dictionary directory                                    [  N/A]
@@ -53,15 +53,15 @@ type OpenJTalkSpawnOptions = {
   z?: string;
 };
 export class OpenJTalkHandle<VoiceKind extends string> implements VoiceHandle {
-  constructor(    private readonly pathtoOpenJTalk: string,
+  constructor(
+    private readonly pathtoOpenJTalk: string,
     private readonly pathToDict: string,
     private readonly mapOfKind2HtsVoice: { [k in VoiceKind]: string },
     private readonly charset: string | undefined,
     private readonly type: "OO" | "OW",
-    private readonly options:OpenJTalkOptions<VoiceKind>){
-
-  }
-  private async spawn(opt: OpenJTalkSpawnOptions,text:string){
+    private readonly options: OpenJTalkOptions<VoiceKind>
+  ) {}
+  private async spawn(opt: OpenJTalkSpawnOptions, text: string) {
     if (!opt.ow && this.type === "OW") {
       opt = Object.assign({}, opt, {
         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands,@typescript-eslint/no-unsafe-call
@@ -75,24 +75,18 @@ export class OpenJTalkHandle<VoiceKind extends string> implements VoiceHandle {
       });
     }
     const pathToCreatedFile = opt.oo;
-    const args=[
-      ...Object.entries(opt).flatMap(
-        ([k, v]: [string, string | undefined]) => {
-          return v ? [`-${k}`, `${v}`] : [];
-        }
-      ),
+    const args = [
+      ...Object.entries(opt).flatMap(([k, v]: [string, string | undefined]) => {
+        return v ? [`-${k}`, `${v}`] : [];
+      }),
     ];
-    const cp = execFile(
-      this.pathtoOpenJTalk,
-      args,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.log(error);
-        }
-        console.log(stdout);
-        console.log(stderr);
+    const cp = execFile(this.pathtoOpenJTalk, args, (error, stdout, stderr) => {
+      if (error) {
+        console.log(error);
       }
-    );
+      console.log(stdout);
+      console.log(stderr);
+    });
     if (this.charset) {
       const conv = encodeStream(this.charset);
       conv.on("error", (...args) => {
@@ -125,7 +119,7 @@ export class OpenJTalkHandle<VoiceKind extends string> implements VoiceHandle {
     this.pathToCreatedFile = pathToCreatedFile;
   }
   async prepare(text: string): Promise<void> {
-    const options=this.options;
+    const options = this.options;
     await this.spawn(
       {
         x: this.pathToDict,
@@ -134,8 +128,8 @@ export class OpenJTalkHandle<VoiceKind extends string> implements VoiceHandle {
         g: String(options.volume),
         fm: String(options.tone),
         u: String(options.threshold),
-        a: options.allpass?String(options.allpass):undefined ,
-        jf: String(options.intone)
+        a: options.allpass ? String(options.allpass) : undefined,
+        jf: String(options.intone),
       },
       text
     );
@@ -144,12 +138,10 @@ export class OpenJTalkHandle<VoiceKind extends string> implements VoiceHandle {
     if (!this.pathToCreatedFile) {
       throw new Error("invalid handle state");
     }
-    if (
-      !(await fs.promises.stat(this.pathToCreatedFile).catch(() => false))
-    ) {
+    if (!(await fs.promises.stat(this.pathToCreatedFile).catch(() => false))) {
       return undefined;
     }
-    return fs.createReadStream(this.pathToCreatedFile);  
+    return fs.createReadStream(this.pathToCreatedFile);
   }
   async close(): Promise<void> {
     if (!this.pathToCreatedFile) {
@@ -158,9 +150,13 @@ export class OpenJTalkHandle<VoiceKind extends string> implements VoiceHandle {
     return await fs.promises.unlink(this.pathToCreatedFile);
   }
   pathToCreatedFile?: fs.PathLike;
-};
+}
 export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
-  implements Text2SpeechService<OpenJTalkOptions<VoiceKind>, OpenJTalkHandle<VoiceKind>> {
+  implements
+    Text2SpeechService<
+      OpenJTalkOptions<VoiceKind>,
+      OpenJTalkHandle<VoiceKind>
+    > {
   constructor(
     private readonly pathtoOpenJTalk: string,
     private readonly pathToDict: string,
@@ -168,7 +164,14 @@ export class Text2SpeechServiceOpenJtalk<VoiceKind extends string>
     private readonly charset: string | undefined,
     private readonly type: "OO" | "OW"
   ) {}
-  makeHandle(opt:OpenJTalkOptions<VoiceKind>):OpenJTalkHandle<VoiceKind>{
-    return new OpenJTalkHandle(this.pathtoOpenJTalk,this.pathToDict,this.mapOfKind2HtsVoice,this.charset,this.type,opt);
+  makeHandle(opt: OpenJTalkOptions<VoiceKind>): OpenJTalkHandle<VoiceKind> {
+    return new OpenJTalkHandle(
+      this.pathtoOpenJTalk,
+      this.pathToDict,
+      this.mapOfKind2HtsVoice,
+      this.charset,
+      this.type,
+      opt
+    );
   }
 }

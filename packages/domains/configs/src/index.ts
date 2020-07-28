@@ -15,21 +15,31 @@ export type Dictionary = {
   after: DictionaryEntryB[];
 };
 
-export type AppliedVoiceConfig={
-  dictionary:Dictionary
-  kind:string;
-  readName?:string;
-  speed:number;
-  tone:number;
-  volume:number;
-  maxReadLimit:number;
-  allpass:number|undefined;
-  intone:number;
-  threshold:number;
-}
+export type AppliedVoiceConfig = {
+  dictionary: Dictionary;
+  kind: string;
+  readName?: string;
+  speed: number;
+  tone: number;
+  volume: number;
+  maxReadLimit: number;
+  allpass: number | undefined;
+  intone: number;
+  threshold: number;
+};
 export interface Usecase {
-  appliedVoiceConfig(guild:string,user:string,nickname:string|undefined,username:string):Promise<AppliedVoiceConfig>;
-  getUserReadName(guild:string,user:string,nickname:string|undefined,username:string):Promise<string>;
+  appliedVoiceConfig(
+    guild: string,
+    user: string,
+    nickname: string | undefined,
+    username: string
+  ): Promise<AppliedVoiceConfig>;
+  getUserReadName(
+    guild: string,
+    user: string,
+    nickname: string | undefined,
+    username: string
+  ): Promise<string>;
 }
 export interface DictionaryRepository {
   getAll(guild:string): Promise<Dictionary>;

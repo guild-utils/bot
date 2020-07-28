@@ -31,7 +31,9 @@ export default class extends Event {
       }
     }
     // eslint-disable-next-line prettier/prettier,@typescript-eslint/no-non-null-assertion
-    const reaction: MessageReaction = reactionp.partial ? await reactionp.fetch!(): (reactionp as MessageReaction);
+    const reaction: MessageReaction = reactionp.partial
+      ? await reactionp.fetch!()
+      : (reactionp as MessageReaction);
     if (!reactionp.emoji && !targets.includes(reaction.emoji.name)) {
       return;
     }
@@ -57,9 +59,9 @@ export default class extends Event {
     if (!starChannelId) {
       return;
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const starChannelRaw:
       | GuildChannel
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       | undefined = reaction.message.guild!.channels.cache.get(starChannelId);
     if (!starChannelRaw || starChannelRaw.type !== "text") {
       await reaction.message.channel.send(

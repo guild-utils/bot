@@ -7,11 +7,15 @@ import {
 } from "presentation_protos/config_grpc_pb";
 import { credentials, VerifyOptions } from "grpc";
 import { ClientResponseTransformer } from "presentation_rpc-client";
-import { initEngineAndKuromoji } from "presentation_core";
+import {
+  initEngineAndKuromoji,
+  initKlasaCoreCommandRewrite,
+} from "presentation_core";
 import { KlasaClient, KlasaClientOptions } from "klasa";
 import { config, token } from "./config";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { promises as fs } from "fs";
+import { Permissions } from "discord.js";
 function initSchema() {
   KlasaClient.defaultGuildSchema.add("speech", (f) => {
     f.add("targets", "TextChannel", {
@@ -33,8 +37,14 @@ async function makeCredentials(keys: string | undefined) {
       )
     : credentials.createInsecure();
 }
+KlasaClient.basePermissions
+  .add(Permissions.FLAGS.CONNECT)
+  .add(Permissions.FLAGS.SPEAK)
+  .add(Permissions.FLAGS.ATTACH_FILES)
+  .add(Permissions.FLAGS.EMBED_LINKS);
 async function main() {
   const grpcConfigClient: IConfigManagerClient = new ConfigManagerClient(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     process.env["GUILD_UTILS_J_RPC_SERVER"]!,
     credentials.createInsecure()
   );
@@ -57,6 +67,8 @@ async function main() {
   }
   initSchema();
   const discordClient = new Client(config);
+  initKlasaCoreCommandRewrite(discordClient.arguments, discordClient.commands);
+
   await discordClient.login(token);
 }
 main().catch(console.log);
