@@ -36,7 +36,7 @@ export default class extends Command {
         .setTitle("Help")
         .setDescription(msg.language.get("COMMAND_HELP_SIMPLE_EMBED_DESC",msg))
         .addFields(
-          Object.values(this.categorizeCommand()).map((e) => {
+          Object.values(this.categorizeCommand().category).map((e) => {
             return {
               name: e.name,
               value: [
@@ -46,6 +46,12 @@ export default class extends Command {
             };
           })
         )
+        .addFields(this.categorizeCommand().direct.map(e=>{
+          return {
+            name:e.name,
+            value: resolveFunctionOrString(e.description,msg)
+          }
+        }))
         .setFooter(msg.language.get("COMMAND_HELP_ALL_FOOTER",msg));
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
@@ -56,7 +62,7 @@ export default class extends Command {
       return msg.sendEmbed(embed);
     }
     if (!cmd.hasOwnProperty("subCategory")) {
-      const cmd_  =(cmd as CategorizedCommands[string]["subCategory"][string]);
+      const cmd_  =(cmd as CategorizedCommands["category"][string]["subCategory"][string]);
       const embed = new MessageEmbed().setTitle(cmd_.categoryName+"/"+cmd_.name).addFields(
         cmd_.command.map(
           (e) => {
@@ -71,9 +77,9 @@ export default class extends Command {
       return msg.sendEmbed(embed);
     }
     const embed = new MessageEmbed()
-      .setTitle((cmd as CategorizedCommands[string]).name)
+      .setTitle((cmd as CategorizedCommands["category"][string]).name)
       .addFields(
-        Object.values((cmd as CategorizedCommands[string]).subCategory).map(
+        Object.values((cmd as CategorizedCommands["category"][string]).subCategory).map(
           (v) => {
             return {
               name: v.name,
@@ -83,7 +89,7 @@ export default class extends Command {
         )
       )
       .addFields(
-        (cmd as CategorizedCommands[string]).direct.map((e) => {
+        (cmd as CategorizedCommands["category"][string]).direct.map((e) => {
           return {
             name: e.name,
             value: resolveFunctionOrString(e.description, msg),
@@ -137,9 +143,4 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
   }
 
   return embed;
-}
-async function* series<T extends {[Symbol.iterator]()}>(arr:T){
-  for(let x of arr){
-    yield await x;
-  }
 }
