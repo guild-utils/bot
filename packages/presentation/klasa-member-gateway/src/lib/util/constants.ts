@@ -1,5 +1,5 @@
 export const CLIENT = {
-		gateways: {
-			members: {}
-		}
+  gateways: {
+    members: {},
+  },
 };
