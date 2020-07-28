@@ -18,6 +18,8 @@ import initRpcServer from "./bootstrap/grpc";
 import initGameEvent from "./bootstrap/schedule";
 import initText2Speech from "./bootstrap/text2speech";
 import initStarBoard from "./bootstrap/starBoard";
+import { Permissions } from "discord.js";
+import { initKlasaCoreCommandRewrite } from "presentation_core";
 if (result) {
   console.log(result.parsed);
 }
@@ -30,6 +32,11 @@ declare module "discord.js" {
 function initMemberGateway(Client: typeof KlasaClient) {
   Client.use(MemberGatewayPlugin);
 }
+KlasaClient.basePermissions
+  .add(Permissions.FLAGS.CONNECT)
+  .add(Permissions.FLAGS.SPEAK)
+  .add(Permissions.FLAGS.ATTACH_FILES)
+  .add(Permissions.FLAGS.EMBED_LINKS);
 async function main() {
   const gameEventNotificationRepository = new GameEventNotificationRepositoryKlasa(
     taskName,
@@ -47,6 +54,7 @@ async function main() {
   const client = new Client(config);
   const dict = new KlasaDictionaryRepository(client.gateways);
   const configRepo = new KlasaUsecase(client.gateways, dict);
+  initKlasaCoreCommandRewrite(client.arguments, client.commands);
   container.register("ConfigRepository", {
     useValue: configRepo,
   });

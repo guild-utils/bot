@@ -56,7 +56,13 @@ export const config: KlasaClientOptions = {
       Intents.FLAGS.GUILD_VOICE_STATES |
       Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
   },
+  disabledCorePieces: ["commands"],
   production: process.env.NODE_ENV === "production",
+  pieceDefaults: {
+    commands: {
+      extendedHelp: false as any,
+    },
+  },
 };
 const rawtoken = process.env["GUILD_UTILS_J_MAIN_DISCORD_TOKEN"];
 if (!rawtoken) {
