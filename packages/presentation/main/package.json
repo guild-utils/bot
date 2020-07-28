@@ -17,6 +17,7 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
     "pg": "^8.1.0",
+    "presentation_klasa-core-command-rewrite": "^1.0.0",
     "presentation_core": "^1.0.0",
     "presentation_protos": "^1.0.0",
     "presentation_rpc-server": "^1.0.0",

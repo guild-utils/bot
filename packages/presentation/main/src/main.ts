@@ -19,7 +19,7 @@ import initGameEvent from "./bootstrap/schedule";
 import initText2Speech from "./bootstrap/text2speech";
 import initStarBoard from "./bootstrap/starBoard";
 import { Permissions } from "discord.js";
-import { initKlasaCoreCommandRewrite } from "presentation_core";
+import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
 if (result) {
   console.log(result.parsed);
 }

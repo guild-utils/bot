@@ -1,6 +1,7 @@
 import { Argument, Possible, KlasaMessage, Command, CommandStore } from "klasa";
 export type CategorizedCommandsEntry = {
   [subCategory in string]: {
+    categoryName: string;
     name: string;
     command: Command[];
   };
@@ -30,6 +31,9 @@ export default class extends Argument {
     const categorized = categorizeCommand(this.client.commands);
     if (split.length == 2) {
       const category = categorized[split[0].toLowerCase()];
+      if (!category) {
+        return undefined;
+      }
       return (
         category.subCategory[split[1].toLowerCase()] ??
         category.direct.find(
@@ -38,13 +42,38 @@ export default class extends Argument {
             cmd.aliases
               .map((e) => e.toLowerCase())
               .includes(split[1].toLowerCase())
-        )
+        ) ??
+        category
+      );
+    }
+    if (split.length === 3) {
+      const categorized = categorizeCommand(this.client.commands);
+      const category = categorized[split[0].toLowerCase()];
+      if (!category) {
+        return undefined;
+      }
+      const subCategory = category.subCategory[split[1].toLowerCase()];
+      if (!subCategory) {
+        return category;
+      }
+      return (
+        subCategory.command.find(
+          (cmd) =>
+            cmd.name.toLowerCase() === split[2].toLowerCase() ||
+            cmd.aliases
+              .map((e) => e.toLowerCase())
+              .includes(split[2].toLowerCase())
+        ) ?? subCategory
       );
     }
     return categorized[arg.toLowerCase()];
   }
 }
+let cacheedCategorizeCommand:CategorizedCommands|undefined;
 export function categorizeCommand(commands: CommandStore): CategorizedCommands {
+  if(cacheedCategorizeCommand){
+    return cacheedCategorizeCommand;
+  }
   const r: CategorizedCommands = {};
   commands.forEach((e) => {
     const categoryL = e.category.toLowerCase();
@@ -59,6 +88,7 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
       const subCategoryL = e.subCategory.toLowerCase();
       if (!r[categoryL].subCategory[subCategoryL]) {
         r[categoryL].subCategory[subCategoryL] = {
+          categoryName: e.category,
           name: e.subCategory,
           command: [],
         };
@@ -68,5 +98,6 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
       r[categoryL].direct.push(e);
     }
   });
+  cacheedCategorizeCommand=r;
   return r;
 }

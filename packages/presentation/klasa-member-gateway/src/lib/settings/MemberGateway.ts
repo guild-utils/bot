@@ -1,5 +1,5 @@
 /* eslint-disable */
-
+/* deepscan-disable */
 import { Gateway, Settings, GatewayDriver, Schema } from "klasa";
 import { Guild } from "discord.js";
 import "../extensions/KlasaMember";
