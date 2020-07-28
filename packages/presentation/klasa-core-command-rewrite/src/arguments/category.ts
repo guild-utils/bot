@@ -58,7 +58,7 @@ export default class extends Argument {
       return (
         subCategory.command.find(
           (cmd) =>
-            cmd.name.toLowerCase() === split[1].toLowerCase() ||
+            cmd.name.toLowerCase() === split[2].toLowerCase() ||
             cmd.aliases
               .map((e) => e.toLowerCase())
               .includes(split[2].toLowerCase())
