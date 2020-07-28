@@ -59,6 +59,7 @@ export const config: KlasaClientOptions = {
       extendedHelp: false as any,
     },
   },
+  themeColor: 0x006c42,
   production: process.env.NODE_ENV === "production",
 };
 

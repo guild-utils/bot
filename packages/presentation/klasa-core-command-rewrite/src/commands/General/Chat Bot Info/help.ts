@@ -46,12 +46,12 @@ export default class extends Command {
             };
           })
         );
-      setFooter(embed, msg);
+      setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
     if (cmd instanceof Command) {
       const embed = buildEmbedWithCmd(cmd, msg);
-      setFooter(embed, msg);
+      setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
     if (!cmd.hasOwnProperty("subCategory")) {
@@ -65,7 +65,7 @@ export default class extends Command {
           }
         )
       );
-      setFooter(embed, msg);
+      setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
     const embed = new MessageEmbed()
@@ -88,18 +88,19 @@ export default class extends Command {
           };
         })
       );
-    setFooter(embed, msg);
+    setCommonConf(embed, msg);
     return msg.sendEmbed(embed);
   }
   categorizeCommand(): CategorizedCommands {
     return categorizeCommand(this.client.commands);
   }
 }
-function setFooter(embed: MessageEmbed, msg: KlasaMessage): void {
+function setCommonConf(embed: MessageEmbed, msg: KlasaMessage): void {
   embed.setFooter(
     msg.member?.nickname ?? msg.author.username,
     msg.author.avatarURL() ?? undefined
   );
+  embed.setColor(msg.client.options.themeColor);
 }
 function resolveFunctionOrString(
   x: ((lang: Language) => string) | string,

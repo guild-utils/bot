@@ -1,6 +1,12 @@
 import { CommandStore, Store, Piece, ArgumentStore } from "klasa";
 import { join, extname, relative, sep } from "path";
 import * as fs from "fs-nextra";
+import { ColorResolvable } from "discord.js";
+declare module "klasa" {
+  interface KlasaClientOptions {
+    themeColor?: ColorResolvable;
+  }
+}
 async function loadFrom<K, V extends Piece, VConstructor>(
   store: Store<K, V, VConstructor>,
   directory

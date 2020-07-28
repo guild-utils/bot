@@ -63,6 +63,7 @@ export const config: KlasaClientOptions = {
       extendedHelp: false as any,
     },
   },
+  themeColor: 0xffd700,
 };
 const rawtoken = process.env["GUILD_UTILS_J_MAIN_DISCORD_TOKEN"];
 if (!rawtoken) {
