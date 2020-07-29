@@ -9,7 +9,7 @@ var proc = spawn("PowerShell.exe", [
   "yarn",
   "--cwd",
   `./packages/presentation/${process.env["GUILD_UTILS_J_ROLE"]}`,
-  "start",
+  process.env.NODE_ENV==="production"?"start":"start:debug",
 ]);
 proc.stderr.pipe(process.stderr);
 proc.stdout.pipe(process.stdout);

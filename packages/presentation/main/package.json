@@ -52,7 +52,7 @@
     "build": "tsc -p .",
     "watch": "tsc -p . -w",
     "start": "node ./dist/main.js",
-    "start:debug": "node --inspect-brk=5858 ./dist/main.js"
+    "start:debug": "node --inspect-brk=0.0.0.0:5858 ./dist/main.js"
   },
   "resolutions": {}
 }

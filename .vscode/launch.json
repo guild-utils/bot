@@ -7,11 +7,8 @@
 
         {
             "type": "node",
-            "request": "launch",
-            "name": "Launch via Yarn",
-            "runtimeExecutable": "yarn",
-            "cwd": "${workspaceFolder}\\packages\\presentation\\klasa",
-            "runtimeArgs": ["start:debug"],
+            "request": "attach",
+            "name": "Docker attach",
             "port": 5858
         }
     ]
