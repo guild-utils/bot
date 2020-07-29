@@ -4,19 +4,22 @@ export type CategorizedCommandsEntry = {
     categoryName: string;
     name: string;
     command: Command[];
-  };
+  }|undefined;
 };
 export type CategorizedCommands = {
-  [category in string]: {
-    name: string;
-    subCategory: CategorizedCommandsEntry;
-    direct: Command[];
-  };
+  category:{
+    [category in string]: {
+      name: string;
+      subCategory: CategorizedCommandsEntry;
+      direct: Command[];
+    }|undefined;
+  },
+  direct:Command[]
 };
 export type ReturnType =
-  | CategorizedCommands[string]
-  | CategorizedCommands[string]["subCategory"][string]
-  | CategorizedCommands[string]["subCategory"][string]["command"][number]
+  | CategorizedCommands["category"][string]
+  | NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]
+  | NonNullable<NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]>["command"][number]
   | undefined;
 export default class extends Argument {
   run(
@@ -30,7 +33,7 @@ export default class extends Argument {
     const split = arg.split("/");
     const categorized = categorizeCommand(this.client.commands);
     if (split.length == 2) {
-      const category = categorized[split[0].toLowerCase()];
+      const category = categorized.category[split[0].toLowerCase()];
       if (!category) {
         return undefined;
       }
@@ -48,7 +51,7 @@ export default class extends Argument {
     }
     if (split.length === 3) {
       const categorized = categorizeCommand(this.client.commands);
-      const category = categorized[split[0].toLowerCase()];
+      const category = categorized.category[split[0].toLowerCase()];
       if (!category) {
         return undefined;
       }
@@ -66,7 +69,7 @@ export default class extends Argument {
         ) ?? subCategory
       );
     }
-    return categorized[arg.toLowerCase()];
+    return categorized.category[arg.toLowerCase()];
   }
 }
 let cacheedCategorizeCommand:CategorizedCommands|undefined;
@@ -74,11 +77,18 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
   if(cacheedCategorizeCommand){
     return cacheedCategorizeCommand;
   }
-  const r: CategorizedCommands = {};
+  const r: CategorizedCommands = {
+    category:{},
+    direct:[]
+  };
   commands.forEach((e) => {
+    if(!e.category){
+      r.direct.push(e);
+      return;
+    }
     const categoryL = e.category.toLowerCase();
-    if (!r[categoryL]) {
-      r[categoryL] = {
+    if (!r.category[categoryL]) {
+      r.category[categoryL] = {
         name: e.category,
         subCategory: {},
         direct: [],
@@ -86,16 +96,16 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
     }
     if (e.subCategory) {
       const subCategoryL = e.subCategory.toLowerCase();
-      if (!r[categoryL].subCategory[subCategoryL]) {
-        r[categoryL].subCategory[subCategoryL] = {
+      if (!r.category[categoryL]!.subCategory[subCategoryL]) {
+        r.category[categoryL]!.subCategory[subCategoryL] = {
           categoryName: e.category,
           name: e.subCategory,
           command: [],
         };
       }
-      r[categoryL].subCategory[subCategoryL].command.push(e);
+      r.category[categoryL]!.subCategory[subCategoryL]!.command.push(e);
     } else {
-      r[categoryL].direct.push(e);
+      r.category[categoryL]!.direct.push(e);
     }
   });
   cacheedCategorizeCommand=r;
