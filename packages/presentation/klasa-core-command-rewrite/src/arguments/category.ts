@@ -4,7 +4,7 @@ export type CategorizedCommandsEntry = {
     categoryName: string;
     name: string;
     command: Command[];
-  };
+  }|undefined;
 };
 export type CategorizedCommands = {
   category:{
@@ -12,14 +12,14 @@ export type CategorizedCommands = {
       name: string;
       subCategory: CategorizedCommandsEntry;
       direct: Command[];
-    };
+    }|undefined;
   },
   direct:Command[]
 };
 export type ReturnType =
   | CategorizedCommands["category"][string]
-  | CategorizedCommands["category"][string]["subCategory"][string]
-  | CategorizedCommands["category"][string]["subCategory"][string]["command"][number]
+  | NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]
+  | NonNullable<NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]>["command"][number]
   | undefined;
 export default class extends Argument {
   run(
@@ -69,7 +69,7 @@ export default class extends Argument {
         ) ?? subCategory
       );
     }
-    return categorized[arg.toLowerCase()];
+    return categorized.category[arg.toLowerCase()];
   }
 }
 let cacheedCategorizeCommand:CategorizedCommands|undefined;
@@ -96,16 +96,16 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
     }
     if (e.subCategory) {
       const subCategoryL = e.subCategory.toLowerCase();
-      if (!r.category[categoryL].subCategory[subCategoryL]) {
-        r.category[categoryL].subCategory[subCategoryL] = {
+      if (!r.category[categoryL]!.subCategory[subCategoryL]) {
+        r.category[categoryL]!.subCategory[subCategoryL] = {
           categoryName: e.category,
           name: e.subCategory,
           command: [],
         };
       }
-      r.category[categoryL].subCategory[subCategoryL].command.push(e);
+      r.category[categoryL]!.subCategory[subCategoryL]!.command.push(e);
     } else {
-      r.category[categoryL].direct.push(e);
+      r.category[categoryL]!.direct.push(e);
     }
   });
   cacheedCategorizeCommand=r;

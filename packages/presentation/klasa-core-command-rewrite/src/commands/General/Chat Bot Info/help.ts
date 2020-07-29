@@ -38,10 +38,10 @@ export default class extends Command {
         .addFields(
           Object.values(this.categorizeCommand().category).map((e) => {
             return {
-              name: e.name,
+              name: e!.name,
               value: [
-                ...Object.values(e.subCategory).map(e=>`__\`\`${e.name}\`\`__`),
-                ...e.direct.map((e) => e.name).map(e=>`\`\`${e}\`\``),
+                ...Object.values(e!.subCategory).map(e=>`__\`\`${e!.name}\`\`__`),
+                ...e!.direct.map((e) => e.name).map(e=>`\`\`${e}\`\``),
               ].join(" "),
             };
           })
@@ -62,7 +62,7 @@ export default class extends Command {
       return msg.sendEmbed(embed);
     }
     if (!cmd.hasOwnProperty("subCategory")) {
-      const cmd_  =(cmd as CategorizedCommands["category"][string]["subCategory"][string]);
+      const cmd_  =(cmd as NonNullable<NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]>);
       const embed = new MessageEmbed().setTitle(cmd_.categoryName+"/"+cmd_.name).addFields(
         cmd_.command.map(
           (e) => {
@@ -77,19 +77,19 @@ export default class extends Command {
       return msg.sendEmbed(embed);
     }
     const embed = new MessageEmbed()
-      .setTitle((cmd as CategorizedCommands["category"][string]).name)
+      .setTitle((cmd as NonNullable<CategorizedCommands["category"][string]>).name)
       .addFields(
-        Object.values((cmd as CategorizedCommands["category"][string]).subCategory).map(
+        Object.values((cmd as NonNullable<CategorizedCommands["category"][string]>).subCategory).map(
           (v) => {
             return {
-              name: v.name,
-              value: v.command.map((e) => e.name).map(e=>`\`\`${e}\`\``).join(" "),
+              name: v!.name,
+              value: v!.command.map((e) => e.name).map(e=>`\`\`${e}\`\``).join(" "),
             };
           }
         )
       )
       .addFields(
-        (cmd as CategorizedCommands["category"][string]).direct.map((e) => {
+        (cmd as NonNullable<CategorizedCommands["category"][string]>).direct.map((e) => {
           return {
             name: e.name,
             value: resolveFunctionOrString(e.description, msg),
