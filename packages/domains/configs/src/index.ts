@@ -42,15 +42,27 @@ export interface Usecase {
   ): Promise<string>;
 }
 export interface DictionaryRepository {
-  getAll(guild:string): Promise<Dictionary>;
-  getBefore(guild:string): Promise<DictionaryEntryB[]>;
-  getMain(guild:string): Promise<Map<string, DictionaryEntryA>>;
-  getAfter(guild:string): Promise<DictionaryEntryB[]>;
-  removeAll(guild:string):Promise<void>;
-  removeBefore(guild:string,key:string): Promise<string | undefined>;
-  removeMain(guild:string,key:string): Promise<DictionaryEntryA | undefined>;
-  removeAfter(guild:string,key:string): Promise<string | undefined>;
-  updateBefore(guild:string,key:string,to:string):Promise<[string | undefined, string]>;
-  updateMain(guild:string,key:string,entry:DictionaryEntryA): Promise<[DictionaryEntryA | undefined, DictionaryEntryA]>;
-  updateAfter(guild:string,key:string,to:string): Promise<[string | undefined, string]>;
+  getAll(guild: string): Promise<Dictionary>;
+  getBefore(guild: string): Promise<DictionaryEntryB[]>;
+  getMain(guild: string): Promise<Map<string, DictionaryEntryA>>;
+  getAfter(guild: string): Promise<DictionaryEntryB[]>;
+  removeAll(guild: string): Promise<void>;
+  removeBefore(guild: string, key: string): Promise<string | undefined>;
+  removeMain(guild: string, key: string): Promise<DictionaryEntryA | undefined>;
+  removeAfter(guild: string, key: string): Promise<string | undefined>;
+  updateBefore(
+    guild: string,
+    key: string,
+    to: string
+  ): Promise<[string | undefined, string]>;
+  updateMain(
+    guild: string,
+    key: string,
+    entry: DictionaryEntryA
+  ): Promise<[DictionaryEntryA | undefined, DictionaryEntryA]>;
+  updateAfter(
+    guild: string,
+    key: string,
+    to: string
+  ): Promise<[string | undefined, string]>;
 }

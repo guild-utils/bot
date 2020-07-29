@@ -1,21 +1,25 @@
 import { Argument, Possible, KlasaMessage, Command, CommandStore } from "klasa";
 export type CategorizedCommandsEntry = {
   [subCategory in string]: {
+    categoryName: string;
     name: string;
     command: Command[];
-  };
+  }|undefined;
 };
 export type CategorizedCommands = {
-  [category in string]: {
-    name: string;
-    subCategory: CategorizedCommandsEntry;
-    direct: Command[];
-  };
+  category:{
+    [category in string]: {
+      name: string;
+      subCategory: CategorizedCommandsEntry;
+      direct: Command[];
+    }|undefined;
+  },
+  direct:Command[]
 };
 export type ReturnType =
-  | CategorizedCommands[string]
-  | CategorizedCommands[string]["subCategory"][string]
-  | CategorizedCommands[string]["subCategory"][string]["command"][number]
+  | CategorizedCommands["category"][string]
+  | NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]
+  | NonNullable<NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]>["command"][number]
   | undefined;
 export default class extends Argument {
   run(
@@ -29,7 +33,10 @@ export default class extends Argument {
     const split = arg.split("/");
     const categorized = categorizeCommand(this.client.commands);
     if (split.length == 2) {
-      const category = categorized[split[0].toLowerCase()];
+      const category = categorized.category[split[0].toLowerCase()];
+      if (!category) {
+        return undefined;
+      }
       return (
         category.subCategory[split[1].toLowerCase()] ??
         category.direct.find(
@@ -38,18 +45,50 @@ export default class extends Argument {
             cmd.aliases
               .map((e) => e.toLowerCase())
               .includes(split[1].toLowerCase())
-        )
+        ) ??
+        category
       );
     }
-    return categorized[arg.toLowerCase()];
+    if (split.length === 3) {
+      const categorized = categorizeCommand(this.client.commands);
+      const category = categorized.category[split[0].toLowerCase()];
+      if (!category) {
+        return undefined;
+      }
+      const subCategory = category.subCategory[split[1].toLowerCase()];
+      if (!subCategory) {
+        return category;
+      }
+      return (
+        subCategory.command.find(
+          (cmd) =>
+            cmd.name.toLowerCase() === split[2].toLowerCase() ||
+            cmd.aliases
+              .map((e) => e.toLowerCase())
+              .includes(split[2].toLowerCase())
+        ) ?? subCategory
+      );
+    }
+    return categorized.category[arg.toLowerCase()];
   }
 }
+let cacheedCategorizeCommand:CategorizedCommands|undefined;
 export function categorizeCommand(commands: CommandStore): CategorizedCommands {
-  const r: CategorizedCommands = {};
+  if(cacheedCategorizeCommand){
+    return cacheedCategorizeCommand;
+  }
+  const r: CategorizedCommands = {
+    category:{},
+    direct:[]
+  };
   commands.forEach((e) => {
+    if(!e.category){
+      r.direct.push(e);
+      return;
+    }
     const categoryL = e.category.toLowerCase();
-    if (!r[categoryL]) {
-      r[categoryL] = {
+    if (!r.category[categoryL]) {
+      r.category[categoryL] = {
         name: e.category,
         subCategory: {},
         direct: [],
@@ -57,16 +96,18 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
     }
     if (e.subCategory) {
       const subCategoryL = e.subCategory.toLowerCase();
-      if (!r[categoryL].subCategory[subCategoryL]) {
-        r[categoryL].subCategory[subCategoryL] = {
+      if (!r.category[categoryL]!.subCategory[subCategoryL]) {
+        r.category[categoryL]!.subCategory[subCategoryL] = {
+          categoryName: e.category,
           name: e.subCategory,
           command: [],
         };
       }
-      r[categoryL].subCategory[subCategoryL].command.push(e);
+      r.category[categoryL]!.subCategory[subCategoryL]!.command.push(e);
     } else {
-      r[categoryL].direct.push(e);
+      r.category[categoryL]!.direct.push(e);
     }
   });
+  cacheedCategorizeCommand=r;
   return r;
 }

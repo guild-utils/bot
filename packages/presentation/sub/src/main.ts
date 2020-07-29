@@ -7,10 +7,8 @@ import {
 } from "presentation_protos/config_grpc_pb";
 import { credentials, VerifyOptions } from "grpc";
 import { ClientResponseTransformer } from "presentation_rpc-client";
-import {
-  initEngineAndKuromoji,
-  initKlasaCoreCommandRewrite,
-} from "presentation_core";
+import { initEngineAndKuromoji } from "presentation_core";
+import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
 import { KlasaClient, KlasaClientOptions } from "klasa";
 import { config, token } from "./config";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
