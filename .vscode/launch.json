@@ -4,12 +4,43 @@
     // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "type": "node",
             "request": "attach",
             "name": "Docker attach",
-            "port": 5858
+            "port": 5858,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/usr/app",
+            "sourceMapPathOverrides": {
+                "/packages/domains/configs/*": "${workspaceFolder}/packages/domains/configs/*",
+                "/packages/domains/game-event/*": "${workspaceFolder}/packages/domains/game-event/*",
+                "/packages/domains/text2speech/*": "${workspaceFolder}/packages/domains/text2speech/*",
+                "/packages/presentation/configs-klasa/*": "${workspaceFolder}/packages/presentation/configs-klasa/*",
+                "/packages/presentation/core/*": "${workspaceFolder}/packages/presentation/core/*",
+                "/packages/presentation/klasa-core-command-rewrite/*": "${workspaceFolder}/packages/presentation/klasa-core-command-rewrite/*",
+                "/packages/presentation/klasa-member-gateway/*": "${workspaceFolder}/packages/presentation/klasa-member-gateway/*",
+                "/packages/presentation/main/*": "${workspaceFolder}/packages/presentation/main/*",
+                "/packages/presentation/protos/*": "${workspaceFolder}/packages/presentation/protos/*",
+                "/packages/presentation/rpc-client/*": "${workspaceFolder}/packages/presentation/rpc-client/*",
+                "/packages/presentation/rpc-server/*": "${workspaceFolder}/packages/presentation/rpc-server/*",
+                "/packages/presentation/shared-config/*": "${workspaceFolder}/packages/presentation/shared-config/*",
+                "/packages/presentation/sub/*": "${workspaceFolder}/packages/presentation/sub/*",
+                "/packages/repository/gss/*": "${workspaceFolder}/packages/repository/gss/*",
+                "/packages/repository/schedule/*": "${workspaceFolder}/packages/repository/schedule/*",
+                "/packages/usecase/game-event/*": "${workspaceFolder}/packages/usecase/game-event/*",
+                "/packages/usecase/text2speech/*": "${workspaceFolder}/packages/usecase/text2speech/*",
+                "/packages/usecase/text2speech-grpc/*": "${workspaceFolder}/packages/usecase/text2speech-grpc/*",
+                "/packages/util/fixed-dsl/*": "${workspaceFolder}/packages/util/fixed-dsl/*",
+                "/packages/util/jumanpp-2.0.0-rc3/*": "${workspaceFolder}/packages/util/jumanpp-2.0.0-rc3/*",
+                "/packages/util/kuromoji-js/*": "${workspaceFolder}/packages/util/kuromoji-js/*",
+                "/packages/util/open-jtalk/*": "${workspaceFolder}/packages/util/open-jtalk/*",
+                "/packages/util/periodical-dsl/*": "${workspaceFolder}/packages/util/periodical-dsl/*",
+                "/packages/util/sound-mixing-proto/*": "${workspaceFolder}/packages/util/sound-mixing-proto/*",
+                "/packages/util/timing-to-notify-dsl/*": "${workspaceFolder}/packages/util/timing-to-notify-dsl/*"
+            },
+            "outFiles": [
+                "${workspaceFolder}/packages/**/dist/**/*.js"
+            ]
         }
     ]
 }
