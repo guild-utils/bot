@@ -8,7 +8,7 @@ import {
 export default class extends Command {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
-      aliases: ["h","commands","command","categorys","category"],
+      aliases: ["h", "commands", "command", "categorys", "category"],
       guarded: true,
       description: (language) => language.get("COMMAND_HELP_DESCRIPTION"),
       extendedHelp: (language) => language.get("COMMAND_HELP_EXTENDED_MESSAGE"),
@@ -27,32 +27,36 @@ export default class extends Command {
     msg: KlasaMessage,
     [cmd]: [ReturnType | Command | undefined]
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
-    const me=await msg.guild?.members.fetch(this.client.user!);
-    if(!me!.permissionsIn(msg.channel).has("EMBED_LINKS")){
+    const me = await msg.guild?.members.fetch(this.client.user!);
+    if (!me!.permissionsIn(msg.channel).has("EMBED_LINKS")) {
       return msg.sendLocale("PLEASE_ALLOW_TO_SEND_EMBED_LINKS");
     }
     if (!cmd) {
       const embed = new MessageEmbed()
         .setTitle("Help")
-        .setDescription(msg.language.get("COMMAND_HELP_SIMPLE_EMBED_DESC",msg))
+        .setDescription(msg.language.get("COMMAND_HELP_SIMPLE_EMBED_DESC", msg))
         .addFields(
           Object.values(this.categorizeCommand().category).map((e) => {
             return {
               name: e!.name,
               value: [
-                ...Object.values(e!.subCategory).map(e=>`__\`\`${e!.name}\`\`__`),
-                ...e!.direct.map((e) => e.name).map(e=>`\`\`${e}\`\``),
+                ...Object.values(e!.subCategory).map(
+                  (e) => `__\`\`${e!.name}\`\`__`
+                ),
+                ...e!.direct.map((e) => e.name).map((e) => `\`\`${e}\`\``),
               ].join(" "),
             };
           })
         )
-        .addFields(this.categorizeCommand().direct.map(e=>{
-          return {
-            name:e.name,
-            value: resolveFunctionOrString(e.description,msg)
-          }
-        }))
-        .setFooter(msg.language.get("COMMAND_HELP_ALL_FOOTER",msg));
+        .addFields(
+          this.categorizeCommand().direct.map((e) => {
+            return {
+              name: e.name,
+              value: resolveFunctionOrString(e.description, msg),
+            };
+          })
+        )
+        .setFooter(msg.language.get("COMMAND_HELP_ALL_FOOTER", msg));
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
@@ -62,41 +66,54 @@ export default class extends Command {
       return msg.sendEmbed(embed);
     }
     if (!cmd.hasOwnProperty("subCategory")) {
-      const cmd_  =(cmd as NonNullable<NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]>);
-      const embed = new MessageEmbed().setTitle(cmd_.categoryName+"/"+cmd_.name).addFields(
-        cmd_.command.map(
-          (e) => {
+      const cmd_ = cmd as NonNullable<
+        NonNullable<
+          CategorizedCommands["category"][string]
+        >["subCategory"][string]
+      >;
+      const embed = new MessageEmbed()
+        .setTitle(cmd_.categoryName + "/" + cmd_.name)
+        .addFields(
+          cmd_.command.map((e) => {
             return {
               name: e.name,
               value: resolveFunctionOrString(e.description, msg),
             };
-          }
+          })
         )
-      ).setFooter(msg.language.get("COMMAND_HELP_SUB_CATEGORY_FOOTER",msg));
+        .setFooter(msg.language.get("COMMAND_HELP_SUB_CATEGORY_FOOTER", msg));
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
     const embed = new MessageEmbed()
-      .setTitle((cmd as NonNullable<CategorizedCommands["category"][string]>).name)
-      .addFields(
-        Object.values((cmd as NonNullable<CategorizedCommands["category"][string]>).subCategory).map(
-          (v) => {
-            return {
-              name: v!.name,
-              value: v!.command.map((e) => e.name).map(e=>`\`\`${e}\`\``).join(" "),
-            };
-          }
-        )
+      .setTitle(
+        (cmd as NonNullable<CategorizedCommands["category"][string]>).name
       )
       .addFields(
-        (cmd as NonNullable<CategorizedCommands["category"][string]>).direct.map((e) => {
+        Object.values(
+          (cmd as NonNullable<CategorizedCommands["category"][string]>)
+            .subCategory
+        ).map((v) => {
+          return {
+            name: v!.name,
+            value: v!.command
+              .map((e) => e.name)
+              .map((e) => `\`\`${e}\`\``)
+              .join(" "),
+          };
+        })
+      )
+      .addFields(
+        (cmd as NonNullable<
+          CategorizedCommands["category"][string]
+        >).direct.map((e) => {
           return {
             name: e.name,
             value: resolveFunctionOrString(e.description, msg),
           };
         })
       )
-      .setFooter(msg.language.get("COMMAND_HELP_CATEGORY_FOOTER",msg));
+      .setFooter(msg.language.get("COMMAND_HELP_CATEGORY_FOOTER", msg));
     await setCommonConf(embed, msg);
     return msg.sendEmbed(embed);
   }
@@ -104,7 +121,10 @@ export default class extends Command {
     return categorizeCommand(this.client.commands);
   }
 }
-async function setCommonConf(embed: MessageEmbed, msg: KlasaMessage): Promise<void> {
+async function setCommonConf(
+  embed: MessageEmbed,
+  msg: KlasaMessage
+): Promise<void> {
   embed.setColor(msg.client.options.themeColor);
 }
 
@@ -119,8 +139,7 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
   const embed = new MessageEmbed();
   if (cmd.name) {
     embed.setTitle(
-        cmd.name +
-        (cmd.aliases.length ? `(${cmd.aliases.join(",")})` : "")
+      cmd.name + (cmd.aliases.length ? `(${cmd.aliases.join(",")})` : "")
     );
   }
   if (cmd.description) {

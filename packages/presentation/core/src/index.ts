@@ -8,7 +8,8 @@ import * as GUILD_SETTINGS from "./guild_settings_keys";
 import Engine, { VoiceKindArray, VoiceKind } from "./text2speech/engine";
 import { initEngineAndKuromoji } from "./bootstrap/engine";
 import GuildMemberUpdateEvent from "./events/guildMemberUpdate";
-import VoiceStateUpdateEvent from "./events/guildMemberUpdate";
+import ResumeConnection from "./events/resumeConnection";
+import VoiceStateUpdateEvent from "./events/voiceStateUpdate";
 export {
   Engine,
   Start,
@@ -22,5 +23,6 @@ export {
   Text2SpeechMonitor,
   VoiceStateUpdateEvent,
   GuildMemberUpdateEvent,
+  ResumeConnection,
   initEngineAndKuromoji,
 };
