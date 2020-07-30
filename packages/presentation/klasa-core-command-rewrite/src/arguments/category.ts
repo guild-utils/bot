@@ -1,25 +1,33 @@
 import { Argument, Possible, KlasaMessage, Command, CommandStore } from "klasa";
 export type CategorizedCommandsEntry = {
-  [subCategory in string]: {
-    categoryName: string;
-    name: string;
-    command: Command[];
-  }|undefined;
+  [subCategory in string]:
+    | {
+        categoryName: string;
+        name: string;
+        command: Command[];
+      }
+    | undefined;
 };
 export type CategorizedCommands = {
-  category:{
-    [category in string]: {
-      name: string;
-      subCategory: CategorizedCommandsEntry;
-      direct: Command[];
-    }|undefined;
-  },
-  direct:Command[]
+  category: {
+    [category in string]:
+      | {
+          name: string;
+          subCategory: CategorizedCommandsEntry;
+          direct: Command[];
+        }
+      | undefined;
+  };
+  direct: Command[];
 };
 export type ReturnType =
   | CategorizedCommands["category"][string]
   | NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]
-  | NonNullable<NonNullable<CategorizedCommands["category"][string]>["subCategory"][string]>["command"][number]
+  | NonNullable<
+      NonNullable<
+        CategorizedCommands["category"][string]
+      >["subCategory"][string]
+    >["command"][number]
   | undefined;
 export default class extends Argument {
   run(
@@ -72,17 +80,17 @@ export default class extends Argument {
     return categorized.category[arg.toLowerCase()];
   }
 }
-let cacheedCategorizeCommand:CategorizedCommands|undefined;
+let cacheedCategorizeCommand: CategorizedCommands | undefined;
 export function categorizeCommand(commands: CommandStore): CategorizedCommands {
-  if(cacheedCategorizeCommand){
+  if (cacheedCategorizeCommand) {
     return cacheedCategorizeCommand;
   }
   const r: CategorizedCommands = {
-    category:{},
-    direct:[]
+    category: {},
+    direct: [],
   };
   commands.forEach((e) => {
-    if(!e.category){
+    if (!e.category) {
       r.direct.push(e);
       return;
     }
@@ -108,6 +116,6 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
       r.category[categoryL]!.direct.push(e);
     }
   });
-  cacheedCategorizeCommand=r;
+  cacheedCategorizeCommand = r;
   return r;
 }
