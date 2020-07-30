@@ -16,9 +16,6 @@ export default class extends Event {
     if (!prefixWithDisplayName) {
       return;
     }
-    await newMember.guild.settings.update(
-      "prefix",
-      prefixWithDisplayName[1]
-    );
+    await newMember.guild.settings.update("prefix", prefixWithDisplayName[1]);
   }
 }
