@@ -1,5 +1,5 @@
 import { Event, EventStore } from "klasa";
-import { VoiceState } from "discord.js";
+import { VoiceState, VoiceChannel } from "discord.js";
 import { inject, autoInjectable } from "tsyringe";
 import Engine from "../text2speech/engine";
 import { text2speechTargetTextChannels } from "../guild_settings_keys";
@@ -17,19 +17,30 @@ export default class extends Event {
     });
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async run(oldState: VoiceState, _newState: VoiceState): Promise<void> {
+  async run(oldState: VoiceState, newState: VoiceState): Promise<void> {
     const oldChannel = oldState.channel;
-    const inHuman = oldChannel?.members.some(
+    if (!oldChannel) {
+      return;
+    }
+    if (newState.channel) {
+      return;
+    }
+    const vc: VoiceChannel | undefined = (await this.client.channels.fetch(
+      oldChannel.id
+    )) as VoiceChannel | undefined;
+    if (!vc) {
+      return;
+    }
+
+    const inHuman = vc.members.some(
       (e) => !e.user.bot && e.user.id !== oldState.member?.user.id
     );
     if (inHuman) {
       return;
     }
-    await this.engine.unregister(oldChannel?.guild!.voice?.connection);
-    oldChannel?.guild!.voice?.connection?.disconnect();
-    await oldChannel?.guild.settings.reset(
-      text2speechTargetTextChannels.join(".")
-    );
-    oldChannel?.leave();
+    await this.engine.unregister(vc.guild.voice?.connection);
+    vc.guild.voice?.connection?.disconnect();
+    await vc.guild.settings.reset(text2speechTargetTextChannels.join("."));
+    vc.leave();
   }
 }
