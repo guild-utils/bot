@@ -61,9 +61,10 @@ async function main() {
     useValue: dict,
   });
   initChannelsGateway(client.gateways);
+
   initRpcServer(configRepo);
   initStarBoard();
   await client.login(token);
-  await initKlasaCoreCommandRewrite(client.arguments, client.commands);
+  initKlasaCoreCommandRewrite(client.arguments, client.commands);
 }
 main().catch(console.log);
