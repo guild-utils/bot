@@ -1,26 +1,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
-  Command,
   util,
   CommandStore,
   KlasaMessage,
   SchemaFolder,
   SettingsUpdateResult,
 } from "klasa";
-import { COMMAND_CONF_GUILD_MEMBER_DESCRIPTION } from "../../../lang_keys";
+import { CommandEx } from "presentation_klasa-core-command-rewrite";
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const { toTitleCase, codeBlock } = util;
-export default class extends Command {
+export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
-      guarded: true,
       subcommands: true,
-      runIn: ["text"],
-      description: (language) =>
-        language.get(COMMAND_CONF_GUILD_MEMBER_DESCRIPTION),
-      usage: "<set|show|remove|reset> (key:key) (value:value) [...]",
-      aliases: ["gmconf"],
-      usageDelim: " ",
     });
 
     this.createCustomResolver("key", (arg, possible, message, [action]) => {

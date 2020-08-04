@@ -10,7 +10,7 @@ import {
   nextNoticeTime,
 } from "domain_game-event";
 import { GameEventUseCase } from "usecase_game-event";
-import { Metadata } from "schedule";
+import { Metadata } from "repository_schedule";
 import {
   noticeChannel,
   googleSpreadSheetId,

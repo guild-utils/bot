@@ -1,6 +1,7 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
+    "jsx": "react",
 		"allowSyntheticDefaultImports": true,
 		"alwaysStrict": true,
 		"declaration": true,

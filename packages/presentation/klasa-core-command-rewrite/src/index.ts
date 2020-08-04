@@ -2,9 +2,12 @@ import { CommandStore, Store, Piece, ArgumentStore } from "klasa";
 import { join, extname, relative, sep } from "path";
 import * as fs from "fs-nextra";
 import { ColorResolvable } from "discord.js";
+import { CommandOptions } from "klasa";
+export { CommandEx } from "./commandEx";
 declare module "klasa" {
   interface KlasaClientOptions {
     themeColor?: ColorResolvable;
+    commandDataCollection: CommandOptionsCollection;
   }
 }
 async function loadFrom<K, V extends Piece, VConstructor>(
@@ -21,9 +24,10 @@ async function loadFrom<K, V extends Piece, VConstructor>(
     });
   if (!files) return [];
   return Promise.all(
-    [...files.keys()].map((file) =>
-      store.load(directory, relative(directory, file).split(sep))
-    )
+    [...files.keys()].map((file) => {
+      const cmd = store.load(directory, relative(directory, file).split(sep));
+      return cmd;
+    })
   );
 }
 export default async function register(
@@ -32,4 +36,7 @@ export default async function register(
 ): Promise<void> {
   await loadFrom(arg, join(__dirname, "arguments"));
   await loadFrom(cmd, join(__dirname, "commands"));
+}
+export interface CommandOptionsCollection {
+  get(name: string): CommandOptions;
 }

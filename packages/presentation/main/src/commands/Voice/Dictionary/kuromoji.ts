@@ -1,5 +1,5 @@
-import { Command, CommandStore, KlasaMessage } from "klasa";
-import * as LANG_KEYS from "../../../lang_keys";
+import { CommandStore, KlasaMessage } from "klasa";
+import { CommandEx } from "presentation_klasa-core-command-rewrite";
 import * as kuromoji from "kuromoji";
 import { autoInjectable, inject } from "tsyringe";
 function toFullWidth(elm: string) {
@@ -8,7 +8,7 @@ function toFullWidth(elm: string) {
   });
 }
 @autoInjectable()
-export default class extends Command {
+export default class extends CommandEx {
   constructor(
     store: CommandStore,
     file: string[],
@@ -16,11 +16,7 @@ export default class extends Command {
     @inject("kuromoji")
     private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
   ) {
-    super(store, file, directory, {
-      usage: "<text:string>",
-      runIn: ["dm", "text"],
-      description: (lang) => lang.get(LANG_KEYS.COMMAND_KUROMOJI_DESCRIPTION),
-    });
+    super(store, file, directory);
   }
   public async run(
     msg: KlasaMessage,

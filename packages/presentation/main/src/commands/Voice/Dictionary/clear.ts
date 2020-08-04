@@ -1,10 +1,11 @@
-import { Command, CommandStore, KlasaMessage } from "klasa";
+import { CommandStore, KlasaMessage } from "klasa";
+import { CommandEx } from "presentation_klasa-core-command-rewrite";
 import { DictionaryRepository } from "domain_configs";
 import { autoInjectable, inject } from "tsyringe";
 import * as LANG_KEYS from "../../../lang_keys";
 
 @autoInjectable()
-export default class extends Command {
+export default class extends CommandEx {
   constructor(
     store: CommandStore,
     file: string[],
@@ -12,11 +13,7 @@ export default class extends Command {
     @inject("DictionaryRepository")
     private readonly dictionary: DictionaryRepository
   ) {
-    super(store, file, directory, {
-      runIn: ["text"],
-      usage: "",
-      permissionLevel: 6,
-    });
+    super(store, file, directory);
   }
   async run(msg: KlasaMessage): Promise<KlasaMessage | KlasaMessage[] | null> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

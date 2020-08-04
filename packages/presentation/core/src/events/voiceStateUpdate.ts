@@ -22,7 +22,7 @@ export default class extends Event {
     if (!oldChannel) {
       return;
     }
-    if (newState.channel) {
+    if (newState.channel && newState.channelID === oldState.channelID) {
       return;
     }
     const vc: VoiceChannel | undefined = (await this.client.channels.fetch(
@@ -32,9 +32,7 @@ export default class extends Event {
       return;
     }
 
-    const inHuman = vc.members.some(
-      (e) => !e.user.bot && e.user.id !== oldState.member?.user.id
-    );
+    const inHuman = vc.members.some((e) => !e.user.bot);
     if (inHuman) {
       return;
     }

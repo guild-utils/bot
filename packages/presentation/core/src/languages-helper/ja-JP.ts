@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { Language, util, KlasaMessage } from "klasa";
+import { Language, util } from "klasa";
 import { GUJ_CORE_LANG_TYPE } from "../lang_keys";
 export default class extends Language {
   protected KLASA_MESSAGES = {
@@ -201,7 +201,6 @@ export default class extends Language {
       )}`,
     COMMAND_LOAD_DESCRIPTION: "ボットからピースを読み込みます。",
     COMMAND_PING: "計測中...",
-    COMMAND_PING_DESCRIPTION: "Discordへの応答速度を計測します。",
     COMMAND_PINGPONG: (diff, ping) =>
       `Pong! (往復所要時間: ${diff}ms、Heartbeat: ${ping}ms)`,
     COMMAND_INVITE: () => [
@@ -209,22 +208,13 @@ export default class extends Language {
       `${this.client.invite}`,
       "バグを見つけたら https://discord.gg/xxkzCHU へお願いします。",
     ],
-    COMMAND_INVITE_DESCRIPTION: "ボットの招待リンクを表示します。",
     COMMAND_INFO: [
       "いまのところこのBotは読み上げが可能です。",
 
       "詳細はhelpコマンドまたは https://github.com/guild-utils/bot , https://discord.gg/xxkzCHU を参照してください。",
       "プログラム:tig#2552 アイコン:匿名希望らしいので伏せます",
     ],
-    COMMAND_INFO_DESCRIPTION: "このボットに関するいくつかの情報を提供します。",
-    COMMAND_HELP_DESCRIPTION: "コマンドリストと説明を表示します。",
-    COMMAND_HELP_NO_EXTENDED: "拡張ヘルプは利用出来ません。",
-    COMMAND_HELP_DM: "📥 | コマンドリストをDMに送信しました。",
-    COMMAND_HELP_NODM:
-      "❌ | あなたは私からのDMを無効にしています。なのでコマンドリストを送信する事が出来ません。",
-    COMMAND_HELP_USAGE: (usage) => `使用法 :: ${usage}`,
     COMMAND_ENABLE: (type, name) => `+ ${type}: ${name} を有効にしました。`,
-    COMMAND_HELP_EXTENDED: "拡張ヘルプ ::",
     COMMAND_ENABLE_DESCRIPTION:
       "command/inhibitor/monitor/finalizerを再度有効にするか、一時的に有効にします。再起動するとデフォルトの状態に戻ります。",
     COMMAND_DISABLE: (type, name) => `+ ${type}: ${name} を無効にしました。`,
@@ -276,41 +266,21 @@ export default class extends Language {
         (this.client.options as any).totalShardCount
       }`,
     ],
-    COMMAND_STATS_DESCRIPTION: "ボットの詳細と、統計情報を表示します。",
     MESSAGE_PROMPT_TIMEOUT: "プロンプトがタイムアウトしました。",
     TEXT_PROMPT_ABORT_OPTIONS: ["中断", "停止", "取り消し"],
     PLEASE_ALLOW_TO_SEND_EMBED_LINKS:
       "ボットに埋め込みリンクを送信する権限を与えてください。\nサポートサーバー: https://discord.gg/xxkzCHU",
-    COMMAND_HELP_SIMPLE_EMBED_DESC: (msg: KlasaMessage) =>
+    COMMAND_HELP_SIMPLE_EMBED_DESC: (prefix: string) =>
       [
-        `${msg.guildSettings.get(
-          "prefix"
-        )}help helpでhelpコマンドのより詳細な使い方が確認できます。`,
+        `${prefix}help helpでhelpコマンドのより詳細な使い方が確認できます。`,
         `質問や意見、バグ見つけた!動かない!などあれば[サポートサーバー](https://discord.gg/xxkzCHU)まで。`,
       ].join("\n"),
-    COMMAND_HELP_EXTENDED_MESSAGE: [
-      "「help command」でコマンドについての情報が確認できます。(例: help help)",
-      "「help category」でカテゴリに所属しているサブカテゴリとコマンドについて確認できます。(例: help general)",
-      "「help category/subcategory」でサブカテゴリに所属しているコマンドについて確認できます。(例: help general/chat bot info)",
-    ].join("\n"),
-    COMMAND_HELP_ALL_FOOTER: (msg: KlasaMessage) =>
-      `${msg.guildSettings.get(
-        "prefix"
-      )}help caregoryでカテゴリの情報が確認できます。(例: ${msg.guildSettings.get(
-        "prefix"
-      )}help General)`,
-    COMMAND_HELP_CATEGORY_FOOTER: (msg: KlasaMessage) =>
-      `${msg.guildSettings.get(
-        "prefix"
-      )}help caregory/subcategoryでサブカテゴリの情報が確認できます。(例: ${msg.guildSettings.get(
-        "prefix"
-      )}help General/Chat Bot Info)`,
-    COMMAND_HELP_SUB_CATEGORY_FOOTER: (msg: KlasaMessage) =>
-      `${msg.guildSettings.get(
-        "prefix"
-      )}help commandでコマンドの情報が確認できます。(例: ${msg.guildSettings.get(
-        "prefix"
-      )}help help)`,
+    COMMAND_HELP_ALL_FOOTER: (prefix: string) =>
+      `${prefix}help caregoryでカテゴリの情報が確認できます。(例: ${prefix}help General)`,
+    COMMAND_HELP_CATEGORY_FOOTER: (prefix: string) =>
+      `${prefix}help caregory/subcategoryでサブカテゴリの情報が確認できます。(例: ${prefix}help General/Chat Bot Info)`,
+    COMMAND_HELP_SUB_CATEGORY_FOOTER: (prefix: string) =>
+      `${prefix}help commandでコマンドの情報が確認できます。(例: ${prefix}help help)`,
   };
   protected CORE_MESSAGES: GUJ_CORE_LANG_TYPE = {
     COMMAND_END_SUCCESS: "読み上げを終了しました。",
