@@ -11,3 +11,5 @@
 **/.vs
 /scripts
 /docker
+**/.next
+**/yarn-error.log
