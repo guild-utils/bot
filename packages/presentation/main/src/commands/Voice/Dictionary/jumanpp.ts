@@ -1,4 +1,5 @@
-import { Command, CommandStore, KlasaMessage } from "klasa";
+import { CommandStore, KlasaMessage } from "klasa";
+import { CommandEx } from "presentation_klasa-core-command-rewrite";
 import * as LANG_KEYS from "../../../lang_keys";
 import { execFile } from "child_process";
 import { encodeStream } from "iconv-lite";
@@ -8,7 +9,7 @@ function toFullWidth(elm: string) {
     return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
   });
 }
-export default class extends Command {
+export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
       usage: "<text:string>",
@@ -21,7 +22,7 @@ export default class extends Command {
     msg: KlasaMessage,
     [text]: [string]
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
-    return msg.send(await this.spawn(text));
+    return msg.send("```" + (await this.spawn(text)) + "```");
   }
   async spawn(text: string): Promise<string> {
     return await new Promise((resolve) => {

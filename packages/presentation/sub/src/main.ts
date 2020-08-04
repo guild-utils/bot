@@ -65,8 +65,11 @@ async function main() {
   }
   initSchema();
   const discordClient = new Client(config);
-  initKlasaCoreCommandRewrite(discordClient.arguments, discordClient.commands);
 
   await discordClient.login(token);
+  await initKlasaCoreCommandRewrite(
+    discordClient.arguments,
+    discordClient.commands
+  );
 }
 main().catch(console.log);

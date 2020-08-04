@@ -1,26 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
-  Command,
   util,
   CommandStore,
   KlasaMessage,
   SchemaFolder,
   SettingsUpdateResult,
 } from "klasa";
-import { COMMAND_CONF_GUILD_MEMBER_DESCRIPTION } from "../../../lang_keys";
+import { CommandEx } from "presentation_klasa-core-command-rewrite";
+
+import { User } from "discord.js";
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const { toTitleCase, codeBlock } = util;
-export default class extends Command {
+export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
-      guarded: true,
       subcommands: true,
-      runIn: ["text"],
-      description: (language) =>
-        language.get(COMMAND_CONF_GUILD_MEMBER_DESCRIPTION),
-      usage: "<set|show|remove|reset> (key:key) (value:value) [...]",
-      aliases: ["gmconf"],
-      usageDelim: " ",
     });
 
     this.createCustomResolver("key", (arg, possible, message, [action]) => {
@@ -32,7 +26,10 @@ export default class extends Command {
     });
   }
 
-  async show(message: KlasaMessage, [key]: string[]): Promise<KlasaMessage> {
+  async show(
+    message: KlasaMessage,
+    [user, key]: [User, string]
+  ): Promise<KlasaMessage> {
     const path = this.client.gateways.members.getPath(key, {
       avoidUnconfigurable: true,
       errors: false,
@@ -40,16 +37,19 @@ export default class extends Command {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
     if (!path) return message.sendLocale("COMMAND_CONF_GET_NOEXT", [key]);
-    await message.member!.settings.sync();
+    const target = await message
+      .guild!.members.fetch(user)
+      .catch(() => undefined);
+    if (!target) {
+      return message.sendLocale("RESOLVER_INVALID_MEMBER", [user]);
+    }
+    await target.settings.sync();
     if (path.piece.type === "Folder") {
       return message.sendLocale("COMMAND_CONF_USER", [
         key ? `: ${key.split(".").map(toTitleCase).join("/")}` : "",
         codeBlock(
           "asciidoc",
-          message.member!.settings.list(
-            message,
-            (path.piece as unknown) as SchemaFolder
-          )
+          target.settings.list(message, (path.piece as unknown) as SchemaFolder)
         ),
       ]);
     }
@@ -61,10 +61,16 @@ export default class extends Command {
 
   async set(
     message: KlasaMessage,
-    [key, ...valueToSet]: string[]
+    [user, key, ...valueToSet]: [User, string]
   ): Promise<KlasaMessage> {
-    await message.member!.settings.sync();
-    const status = await message.member!.settings.update(
+    const target = await message
+      .guild!.members.fetch(user)
+      .catch(() => undefined);
+    if (!target) {
+      return message.sendLocale("RESOLVER_INVALID_MEMBER", [user]);
+    }
+    await target.settings.sync();
+    const status = await target.settings.update(
       key,
       valueToSet.join(" "),
       message,
@@ -74,20 +80,23 @@ export default class extends Command {
       this.check(message, key, status) ||
       message.sendLocale("COMMAND_CONF_UPDATED", [
         key,
-        message.member!.settings.resolveString(
-          message,
-          status.updated[0].piece
-        ),
+        target.settings.resolveString(message, status.updated[0].piece),
       ])
     );
   }
 
   async remove(
     message: KlasaMessage,
-    [key, ...valueToRemove]: string[]
+    [user, key, ...valueToRemove]: [User, string]
   ): Promise<KlasaMessage> {
-    await message.member!.settings.sync();
-    const status = await message.member!.settings.update(
+    const target = await message
+      .guild!.members.fetch(user)
+      .catch(() => undefined);
+    if (!target) {
+      return message.sendLocale("RESOLVER_INVALID_MEMBER", [user]);
+    }
+    await target.settings.sync();
+    const status = await target.settings.update(
       key,
       valueToRemove.join(" "),
       message.guild ?? undefined,
@@ -97,25 +106,28 @@ export default class extends Command {
       this.check(message, key, status) ||
       message.sendLocale("COMMAND_CONF_UPDATED", [
         key,
-        message.member!.settings.resolveString(
-          message,
-          status.updated[0].piece
-        ),
+        target.settings.resolveString(message, status.updated[0].piece),
       ])
     );
   }
 
-  async reset(message: KlasaMessage, [key]: string[]): Promise<KlasaMessage> {
-    await message.member!.settings.sync();
-    const status = await message.member!.settings.reset(key);
+  async reset(
+    message: KlasaMessage,
+    [user, key]: [User, string]
+  ): Promise<KlasaMessage> {
+    const target = await message
+      .guild!.members.fetch(user)
+      .catch(() => undefined);
+    if (!target) {
+      return message.sendLocale("RESOLVER_INVALID_MEMBER", [user]);
+    }
+    await target.settings.sync();
+    const status = await target.settings.reset(key);
     return (
       this.check(message, key, status) ||
       message.sendLocale("COMMAND_CONF_RESET", [
         key,
-        message.member!.settings.resolveString(
-          message,
-          status.updated[0].piece
-        ),
+        target.settings.resolveString(message, status.updated[0].piece),
       ])
     );
   }

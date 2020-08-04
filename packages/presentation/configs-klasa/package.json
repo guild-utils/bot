@@ -17,6 +17,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "klasa-member-gateway": "^1.0.0",
     "domain_configs": "^1.0.0",
     "presentation_shared-config": "^1.0.0"
   },

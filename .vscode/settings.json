@@ -58,5 +58,6 @@
         "xtr1common": "cpp",
         "xtree": "cpp"
     },
-    "deepscan.enable": true
+    "deepscan.enable": true,
+    "files.eol": "\n"
 }
