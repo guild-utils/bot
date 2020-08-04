@@ -5,6 +5,8 @@ export type WWCommandData = {
   runIn: ("text" | "dm" | "news")[];
   usage?: string;
   guarded?: boolean;
+  cooldownLevel?: "guild";
+  cooldown?: number;
   usageDelim?: string;
   permissionLevel?: number;
 };
@@ -169,6 +171,8 @@ export const exportC: WWCommandData = {
 export const importC: WWCommandData = {
   receiver: ["main"],
   permissionLevel: 6,
+  cooldownLevel: "guild",
+  cooldown: 30,
   name: "import",
   runIn: RunInServer,
 };

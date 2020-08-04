@@ -42,13 +42,7 @@ export default class extends CommandEx {
     @inject("DictionaryRepository")
     private readonly dictionary: DictionaryRepository
   ) {
-    super(store, file, directory, {
-      runIn: ["text"],
-      usage: "",
-      permissionLevel: 6,
-      cooldownLevel: "guild",
-      cooldown: 30,
-    });
+    super(store, file, directory);
   }
 
   async run(msg: KlasaMessage): Promise<KlasaMessage | KlasaMessage[] | null> {
