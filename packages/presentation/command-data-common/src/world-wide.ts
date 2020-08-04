@@ -116,6 +116,9 @@ export const add_word: WWCommandData = {
   receiver: ["main"],
   name: "add_word",
   runIn: RunInServer,
+  usage:
+    "<word:string> [to:string] [pos:string] [pos_detail_1:string] [pos_detail_2:string] [pos_detail_3:string]",
+  usageDelim: " ",
   aliases: ["aw"],
 };
 
@@ -123,6 +126,8 @@ export const add_word_after: WWCommandData = {
   receiver: ["main"],
   name: "add_word_after",
   runIn: RunInServer,
+  usage: "<word:string> [to:string]",
+  usageDelim: " ",
   aliases: ["awa"],
 };
 
@@ -130,6 +135,8 @@ export const add_word_before: WWCommandData = {
   receiver: ["main"],
   name: "add_word_before",
   runIn: RunInServer,
+  usage: "<word:string> [to:string]",
+  usageDelim: " ",
   aliases: ["awb"],
 };
 
@@ -144,6 +151,7 @@ export const delete_word: WWCommandData = {
   receiver: ["main"],
   name: "delete_word",
   runIn: RunInServer,
+  usage: "<word:string>",
   aliases: ["dw"],
 };
 
@@ -151,6 +159,7 @@ export const delete_word_after: WWCommandData = {
   receiver: ["main"],
   name: "delete_word_after",
   runIn: RunInServer,
+  usage: "<word:string>",
   aliases: ["dwa"],
 };
 
@@ -158,6 +167,7 @@ export const delete_word_before: WWCommandData = {
   receiver: ["main"],
   name: "delete_word_before",
   runIn: RunInServer,
+  usage: "<word:string>",
   aliases: ["dwb"],
 };
 
@@ -180,12 +190,14 @@ export const importC: WWCommandData = {
 export const jumanpp: WWCommandData = {
   receiver: ["main"],
   name: "jumanpp",
+  usage: "<text:string>",
   runIn: RunInServer,
 };
 
 export const kuromoji: WWCommandData = {
   receiver: ["main"],
   name: "kuromoji",
+  usage: "<text:string>",
   runIn: RunInServer,
 };
 export const VoiceDictionary = [
