@@ -1,5 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { KlasaClientOptions } from "klasa";
 import { Intents } from "discord.js";
+import {
+  CommandDataCollectionProviderObject,
+  CommandDataCollectionObject,
+  ww,
+  ja_JP,
+} from "presentation_command-data-common";
+import { CommandDataCollectionProxy } from "presentation_command-data-discord";
 import * as ENV from "./bootstrap/env";
 export const config: KlasaClientOptions = {
   gateways: {},
@@ -63,6 +71,24 @@ export const config: KlasaClientOptions = {
       extendedHelp: false as any,
     },
   },
+  commandDataCollection: new CommandDataCollectionProxy(
+    new CommandDataCollectionProviderObject({
+      ww: new CommandDataCollectionObject([
+        ...ww.Core,
+        ...ww.MemberSettings,
+        ww.userconf,
+        ...ww.VoiceBasic,
+        ...ww.VoiceDictionary,
+      ]),
+      ja_JP: new CommandDataCollectionObject([
+        ...ja_JP.Core,
+        ...ja_JP.MemberSettings,
+        ja_JP.userconf,
+        ...ja_JP.VoiceBasic,
+        ...ja_JP.VoiceDictionary,
+      ]),
+    })
+  ),
   themeColor: 0xffd700,
 };
 const rawtoken = process.env["GUILD_UTILS_J_MAIN_DISCORD_TOKEN"];

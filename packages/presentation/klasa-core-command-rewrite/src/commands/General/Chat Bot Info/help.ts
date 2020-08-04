@@ -1,19 +1,15 @@
-import { Command, CommandStore, KlasaMessage, Language } from "klasa";
+import { CommandStore, KlasaMessage, Language } from "klasa";
+import { CommandEx } from "../../../commandEx";
 import { MessageEmbed } from "discord.js";
 import {
   ReturnType,
   CategorizedCommands,
   categorizeCommand,
 } from "../../../arguments/category";
-export default class extends Command {
+import { Command } from "klasa";
+export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
-    super(store, file, directory, {
-      aliases: ["h", "commands", "command", "categorys", "category"],
-      guarded: true,
-      description: (language) => language.get("COMMAND_HELP_DESCRIPTION"),
-      extendedHelp: (language) => language.get("COMMAND_HELP_EXTENDED_MESSAGE"),
-      usage: "(Command:command|Category:category)",
-    });
+    super(store, file, directory);
 
     this.createCustomResolver("command", (arg, possible, message) => {
       if (!arg) return undefined;
@@ -27,14 +23,21 @@ export default class extends Command {
     msg: KlasaMessage,
     [cmd]: [ReturnType | Command | undefined]
   ): Promise<KlasaMessage | KlasaMessage[] | null> {
-    const me = await msg.guild?.members.fetch(this.client.user!);
-    if (!me!.permissionsIn(msg.channel).has("EMBED_LINKS")) {
+    if (
+      msg.guild &&
+      !msg.guild.me?.permissionsIn(msg.channel).has("EMBED_LINKS")
+    ) {
       return msg.sendLocale("PLEASE_ALLOW_TO_SEND_EMBED_LINKS");
     }
     if (!cmd) {
       const embed = new MessageEmbed()
         .setTitle("Help")
-        .setDescription(msg.language.get("COMMAND_HELP_SIMPLE_EMBED_DESC", msg))
+        .setDescription(
+          msg.language.get(
+            "COMMAND_HELP_SIMPLE_EMBED_DESC",
+            msg.guild?.settings.get("prefix") ?? this.client.options.prefix
+          )
+        )
         .addFields(
           Object.values(this.categorizeCommand().category).map((e) => {
             return {
@@ -56,7 +59,12 @@ export default class extends Command {
             };
           })
         )
-        .setFooter(msg.language.get("COMMAND_HELP_ALL_FOOTER", msg));
+        .setFooter(
+          msg.language.get(
+            "COMMAND_HELP_ALL_FOOTER",
+            msg.guild?.settings.get("prefix") ?? this.client.options.prefix
+          )
+        );
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
@@ -65,6 +73,7 @@ export default class extends Command {
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
+    // eslint-disable-next-line no-prototype-builtins
     if (!cmd.hasOwnProperty("subCategory")) {
       const cmd_ = cmd as NonNullable<
         NonNullable<
@@ -81,7 +90,12 @@ export default class extends Command {
             };
           })
         )
-        .setFooter(msg.language.get("COMMAND_HELP_SUB_CATEGORY_FOOTER", msg));
+        .setFooter(
+          msg.language.get(
+            "COMMAND_HELP_SUB_CATEGORY_FOOTER",
+            msg.guildSettings?.get("prefix") ?? this.client.options.prefix
+          )
+        );
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
@@ -113,7 +127,12 @@ export default class extends Command {
           };
         })
       )
-      .setFooter(msg.language.get("COMMAND_HELP_CATEGORY_FOOTER", msg));
+      .setFooter(
+        msg.language.get(
+          "COMMAND_HELP_CATEGORY_FOOTER",
+          msg.guildSettings.get("prefix") ?? this.client.options.prefix
+        )
+      );
     await setCommonConf(embed, msg);
     return msg.sendEmbed(embed);
   }
@@ -121,11 +140,9 @@ export default class extends Command {
     return categorizeCommand(this.client.commands);
   }
 }
-async function setCommonConf(
-  embed: MessageEmbed,
-  msg: KlasaMessage
-): Promise<void> {
+function setCommonConf(embed: MessageEmbed, msg: KlasaMessage): Promise<void> {
   embed.setColor(msg.client.options.themeColor);
+  return Promise.resolve();
 }
 
 function resolveFunctionOrString(
@@ -143,13 +160,19 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
     );
   }
   if (cmd.description) {
-    embed.setDescription(resolveFunctionOrString(cmd.description, msg));
+    const resolved = resolveFunctionOrString(cmd.description, msg);
+    if (resolved) {
+      embed.setDescription(resolved);
+    }
   }
   if (cmd.usage) {
     embed.addField("Usage", cmd.usage.fullUsage(msg));
   }
   if (cmd.extendedHelp) {
-    embed.addField("More Info", resolveFunctionOrString(cmd.extendedHelp, msg));
+    const resolved = resolveFunctionOrString(cmd.extendedHelp, msg);
+    if (resolved) {
+      embed.addField("More Info", resolved);
+    }
   }
   if (cmd.category) {
     embed.addField("Category", cmd.category, true);

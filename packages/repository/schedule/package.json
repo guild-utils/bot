@@ -1,5 +1,5 @@
 {
-    "name": "schedule",
+    "name": "repository_schedule",
     "main": "./dist/index.js",
     "version": "1.0.0",
     "license": "MIT",
@@ -16,13 +16,13 @@
         "eslint": "^7.3.1",
         "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-prettier": "^3.1.4",
-        "klasa": "dirigeants/klasa#v0.5.0",
+        "klasa": "^0.5.0",
         "prettier": "^2.0.5",
         "typescript": "^3.8.3"
     },
     "peerDependencies": {
         "discord.js": "discordjs/discord.js",
-        "klasa": "dirigeants/klasa"
+        "klasa": "^0.5.0"
     },
     "scripts": {
         "lint": "eslint --ext ts src --fix",

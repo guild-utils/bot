@@ -10,6 +10,10 @@
     "packages/**"
   ],
   "scripts": {
-    "fmt": "prettier --write *.js"
+    "fmt": "prettier --write *.js",
+    "graph": "lerna-dependency-graph -o graph.svg -f svg"
+  },
+  "devDependencies": {
+    "lerna-dependency-graph": "^1.0.2"
   }
 }
