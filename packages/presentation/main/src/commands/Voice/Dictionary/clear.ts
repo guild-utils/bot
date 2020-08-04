@@ -13,11 +13,7 @@ export default class extends CommandEx {
     @inject("DictionaryRepository")
     private readonly dictionary: DictionaryRepository
   ) {
-    super(store, file, directory, {
-      runIn: ["text"],
-      usage: "",
-      permissionLevel: 6,
-    });
+    super(store, file, directory);
   }
   async run(msg: KlasaMessage): Promise<KlasaMessage | KlasaMessage[] | null> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

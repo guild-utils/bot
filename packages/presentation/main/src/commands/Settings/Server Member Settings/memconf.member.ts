@@ -7,7 +7,6 @@ import {
   SettingsUpdateResult,
 } from "klasa";
 import { CommandEx } from "presentation_klasa-core-command-rewrite";
-
 import { User } from "discord.js";
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const { toTitleCase, codeBlock } = util;

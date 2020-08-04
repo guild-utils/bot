@@ -13,14 +13,7 @@ export default class extends CommandEx {
     @inject("DictionaryRepository")
     private readonly dictionary: DictionaryRepository
   ) {
-    super(store, file, directory, {
-      usage: "<word:string>",
-      runIn: ["text"],
-      aliases: ["dwb"],
-      description: (lang) =>
-        lang.get(LANG_KEYS.COMMAND_DELETE_WORD_DESCRIPTION),
-      usageDelim: " ",
-    });
+    super(store, file, directory);
   }
   public async run(
     msg: KlasaMessage,

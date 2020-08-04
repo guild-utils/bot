@@ -36,8 +36,11 @@ COPY yarn.lock ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
+COPY packages/domains/command-data ./packages/domains/command-data
 COPY packages/usecase/text2speech ./packages/usecase/text2speech
 COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
+COPY packages/presentation/command-data-common ./packages/presentation/command-data-common
+COPY packages/presentation/command-data-discord ./packages/presentation/command-data-discord
 COPY packages/presentation/shared-config ./packages/presentation/shared-config
 COPY packages/presentation/protos ./packages/presentation/protos
 COPY packages/presentation/rpc-client ./packages/presentation/rpc-client
