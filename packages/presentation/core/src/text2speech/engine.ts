@@ -191,7 +191,6 @@ export default class {
     copy.volume += vf;
     if (sentenses.length > opt.maxReadLimit) {
       sentenses = sentenses.substr(0, opt.maxReadLimit);
-      console.log(sentenses);
     }
     await this.queueRaw(conn, sentenses, copy);
   }

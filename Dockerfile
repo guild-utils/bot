@@ -53,6 +53,7 @@ COPY yarn.lock ./
 COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
+COPY packages/domains/command-data ./packages/domains/command-data
 COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
 COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
 COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
@@ -62,6 +63,8 @@ COPY packages/usecase/text2speech ./packages/usecase/text2speech
 COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
 COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
+COPY packages/presentation/command-data-common ./packages/presentation/command-data-common
+COPY packages/presentation/command-data-discord ./packages/presentation/command-data-discord
 COPY packages/presentation/shared-config ./packages/presentation/shared-config
 COPY packages/presentation/klasa-member-gateway ./packages/presentation/klasa-member-gateway
 COPY packages/presentation/configs-klasa ./packages/presentation/configs-klasa

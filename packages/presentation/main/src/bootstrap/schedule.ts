@@ -3,10 +3,10 @@ import {
   GssGameEventRepository,
   GssCollectionGroupIdT,
   HKTGssCollectionName,
-} from "gss/game-event";
+} from "repository_gss/game-event";
 import { DependencyContainer } from "tsyringe";
 import { GameEventUseCaseImpl } from "usecase_game-event";
-import { GameEventNotificationRepositoryKlasa } from "schedule";
+import { GameEventNotificationRepositoryKlasa } from "repository_schedule";
 import * as ENV from "./env";
 
 export default function initGameEvent(

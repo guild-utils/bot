@@ -9,7 +9,7 @@ import { config as dotenv } from "dotenv";
 const result = dotenv();
 import { KlasaClient, KlasaClientOptions, Settings } from "klasa";
 import { container } from "tsyringe";
-import { GameEventNotificationRepositoryKlasa } from "schedule";
+import { GameEventNotificationRepositoryKlasa } from "repository_schedule";
 import { config, token } from "./config";
 import { initChannelsGateway } from "./channelSettings";
 import { taskName } from "./tasks/event-notice";
@@ -54,7 +54,6 @@ async function main() {
   const client = new Client(config);
   const dict = new KlasaDictionaryRepository(client.gateways);
   const configRepo = new KlasaUsecase(client.gateways, dict);
-  initKlasaCoreCommandRewrite(client.arguments, client.commands);
   container.register("ConfigRepository", {
     useValue: configRepo,
   });
@@ -62,9 +61,9 @@ async function main() {
     useValue: dict,
   });
   initChannelsGateway(client.gateways);
-
   initRpcServer(configRepo);
   initStarBoard();
   await client.login(token);
+  await initKlasaCoreCommandRewrite(client.arguments, client.commands);
 }
 main().catch(console.log);

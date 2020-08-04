@@ -1,5 +1,12 @@
 import { KlasaClientOptions } from "klasa";
 import { Intents } from "discord.js";
+import {
+  CommandDataCollectionProviderObject,
+  CommandDataCollectionObject,
+  ww,
+  ja_JP,
+} from "presentation_command-data-common";
+import { CommandDataCollectionProxy } from "presentation_command-data-discord";
 import * as ENV from "./bootstrap/env";
 export const config: KlasaClientOptions = {
   gateways: {},
@@ -56,9 +63,28 @@ export const config: KlasaClientOptions = {
   },
   pieceDefaults: {
     commands: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       extendedHelp: false as any,
     },
   },
+  commandDataCollection: new CommandDataCollectionProxy(
+    new CommandDataCollectionProviderObject({
+      ww: new CommandDataCollectionObject([
+        ...ww.Core,
+        ...ww.MemberSettings,
+        ww.userconf,
+        ...ww.VoiceBasic,
+        ...ww.VoiceDictionary,
+      ]),
+      ja_JP: new CommandDataCollectionObject([
+        ...ja_JP.Core,
+        ...ja_JP.MemberSettings,
+        ja_JP.userconf,
+        ...ja_JP.VoiceBasic,
+        ...ja_JP.VoiceDictionary,
+      ]),
+    })
+  ),
   disabledCorePieces: ["commands"],
   themeColor: 0x006c42,
   production: process.env.NODE_ENV === "production",
