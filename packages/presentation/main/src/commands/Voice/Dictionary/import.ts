@@ -91,7 +91,7 @@ export default class extends Command {
         })
       );
       const after = Promise.all(
-        (obj.before ?? []).flatMap((entry) => {
+        (obj.after ?? []).flatMap((entry) => {
           if (
             typeof entry?.from !== "string" ||
             typeof entry?.to !== "string"
