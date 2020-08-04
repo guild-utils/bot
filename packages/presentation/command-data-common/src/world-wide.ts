@@ -134,7 +134,7 @@ export const add_word_before: WWCommandData = {
 export const clear: WWCommandData = {
   receiver: ["main"],
   permissionLevel: 6,
-  name: "add_word_before",
+  name: "clear",
   runIn: RunInServer,
 };
 
