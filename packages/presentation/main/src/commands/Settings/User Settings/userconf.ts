@@ -1,11 +1,11 @@
-import { Command } from "klasa";
+import { CommandEx } from "presentation_klasa-core-command-rewrite";
 import { CommandStore } from "klasa";
 import { KlasaMessage } from "klasa";
 import { util } from "klasa";
 import { SchemaFolder } from "klasa";
 import { SettingsUpdateResult } from "klasa";
 
-module.exports = class extends Command {
+module.exports = class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory, {
       subcommands: true,
