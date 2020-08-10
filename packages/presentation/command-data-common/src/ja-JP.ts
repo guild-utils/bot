@@ -61,30 +61,10 @@ export const skip: CommandData = {
   description: "現在読み上げているテキストをスキップします。",
   ...WW.skip,
 };
-const VoiceKindArray: string[] = [
-  "normal",
-  "angry",
-  "happy",
-  "neutral",
-  "sad",
-  "mei_angry",
-  "mei_bashful",
-  "mei_happy",
-  "mei_normal",
-  "mei_sad",
-  "takumi_angry",
-  "takumi_happy",
-  "takumi_normal",
-  "takumi_sad",
-  "alpha",
-  "beta",
-  "gamma",
-  "delta",
-];
 export const start: CommandData = {
   description: "読み上げを開始します。",
   more: [
-    `声の種類はmemconf/userconf set speech.kind で変更できます。現在kindに設定できる値は以下のとおりです。\n${VoiceKindArray.join(
+    `声の種類はmemconf/userconf set speech.kind で変更できます。現在kindに設定できる値は以下のとおりです。\n${WW.VoiceKindArray.join(
       ","
     )}`,
     "基本的に設定はmemconf→userconfの順番で見に行きます。ただし、名前についてはmemconf→nickname→userconfの順番に見に行きます。",
@@ -161,4 +141,11 @@ export const VoiceDictionary = [
   importC,
   jumanpp,
   kuromoji,
+];
+export const All = [
+  ...Core,
+  ...MemberSettings,
+  userconf,
+  ...VoiceBasic,
+  ...VoiceDictionary,
 ];

@@ -16,7 +16,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "domain_command-data":"^1.0.0"
+    "domain_command-data": "^1.0.0"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",

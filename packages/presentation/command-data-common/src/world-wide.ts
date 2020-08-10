@@ -1,8 +1,10 @@
 export type WWCommandData = {
   receiver: ("main" | "sub")[];
   name: string;
-  aliases?: string[];
   runIn: ("text" | "dm" | "news")[];
+  category: string;
+  subCategory: string;
+  aliases?: string[];
   usage?: string;
   guarded?: boolean;
   cooldownLevel?: "guild";
@@ -14,15 +16,58 @@ export type LSCommandData = {
   description?: string;
   more?: string;
 };
+export type VoiceKind =
+  | "normal"
+  | "angry"
+  | "happy"
+  | "neutral"
+  | "sad"
+  | "mei_angry"
+  | "mei_bashful"
+  | "mei_happy"
+  | "mei_normal"
+  | "mei_sad"
+  | "takumi_angry"
+  | "takumi_happy"
+  | "takumi_normal"
+  | "takumi_sad"
+  | "alpha"
+  | "beta"
+  | "gamma"
+  | "delta";
+export const VoiceKindArray: VoiceKind[] = [
+  "normal",
+  "angry",
+  "happy",
+  "neutral",
+  "sad",
+  "mei_angry",
+  "mei_bashful",
+  "mei_happy",
+  "mei_normal",
+  "mei_sad",
+  "takumi_angry",
+  "takumi_happy",
+  "takumi_normal",
+  "takumi_sad",
+  "alpha",
+  "beta",
+  "gamma",
+  "delta",
+];
 const CoreCommandReceiver: ["main", "sub"] = ["main", "sub"];
 const CoreCommandBase: {
   guarded: true;
   runIn: ["text", "dm", "news"];
   receiver: ["main", "sub"];
+  category: "General";
+  subCategory: "Chat Bot Info";
 } = {
   runIn: ["text", "dm", "news"],
   guarded: true,
   receiver: CoreCommandReceiver,
+  category: "General",
+  subCategory: "Chat Bot Info",
 };
 
 export const help: WWCommandData = {
@@ -57,6 +102,8 @@ export const conf: WWCommandData = {
   guarded: true,
   runIn: RunInServer,
   receiver: ["main", "sub"],
+  category: "Settings",
+  subCategory: "Server Settings",
 };
 export const Core = [help, info, invite, ping, stats, conf];
 export const memconf: WWCommandData = {
@@ -67,6 +114,8 @@ export const memconf: WWCommandData = {
   usage: "<set|show|remove|reset> (key:key) (value:value) [...]",
   aliases: ["gmconf"],
   usageDelim: " ",
+  category: "Settings",
+  subCategory: "Server Member Settings",
 };
 export const memconf_member: WWCommandData = {
   name: "memconf.member",
@@ -77,6 +126,8 @@ export const memconf_member: WWCommandData = {
   usage: "<set|show|remove|reset> <user:user> (key:key) (value:value) [...]",
   aliases: ["memconf.m", "gmconf.m"],
   usageDelim: " ",
+  category: "Settings",
+  subCategory: "Server Member Settings",
 };
 export const MemberSettings = [memconf, memconf_member];
 export const userconf: WWCommandData = {
@@ -86,12 +137,23 @@ export const userconf: WWCommandData = {
   guarded: true,
   usage: "<set|show|remove|reset> (key:key) (value:value) [...]",
   usageDelim: " ",
+  category: "Settings",
+  subCategory: "User Settings",
+};
+const VoiceBasicCategory = {
+  category: "Voice",
+  subCategory: "Basic",
+};
+const VoiceDictionaryCategory = {
+  category: "Voice",
+  subCategory: "Dictionary",
 };
 export const end: WWCommandData = {
   receiver: CoreCommandReceiver,
   name: "end",
   runIn: RunInServer,
   aliases: ["e"],
+  ...VoiceBasicCategory,
 };
 
 export const end_channel: WWCommandData = {
@@ -99,17 +161,20 @@ export const end_channel: WWCommandData = {
   name: "end_channel",
   runIn: RunInServer,
   aliases: ["ec"],
+  ...VoiceBasicCategory,
 };
 export const skip: WWCommandData = {
   receiver: CoreCommandReceiver,
   name: "skip",
   runIn: RunInServer,
+  ...VoiceBasicCategory,
 };
 export const start: WWCommandData = {
   receiver: CoreCommandReceiver,
   name: "start",
   runIn: RunInServer,
   aliases: ["s"],
+  ...VoiceBasicCategory,
 };
 export const VoiceBasic = [end, end_channel, skip, start];
 export const add_word: WWCommandData = {
@@ -120,6 +185,7 @@ export const add_word: WWCommandData = {
     "<word:string> [to:string] [pos:string] [pos_detail_1:string] [pos_detail_2:string] [pos_detail_3:string]",
   usageDelim: " ",
   aliases: ["aw"],
+  ...VoiceDictionaryCategory,
 };
 
 export const add_word_after: WWCommandData = {
@@ -129,6 +195,7 @@ export const add_word_after: WWCommandData = {
   usage: "<word:string> [to:string]",
   usageDelim: " ",
   aliases: ["awa"],
+  ...VoiceDictionaryCategory,
 };
 
 export const add_word_before: WWCommandData = {
@@ -138,6 +205,7 @@ export const add_word_before: WWCommandData = {
   usage: "<word:string> [to:string]",
   usageDelim: " ",
   aliases: ["awb"],
+  ...VoiceDictionaryCategory,
 };
 
 export const clear: WWCommandData = {
@@ -145,6 +213,7 @@ export const clear: WWCommandData = {
   permissionLevel: 6,
   name: "clear",
   runIn: RunInServer,
+  ...VoiceDictionaryCategory,
 };
 
 export const delete_word: WWCommandData = {
@@ -153,6 +222,7 @@ export const delete_word: WWCommandData = {
   runIn: RunInServer,
   usage: "<word:string>",
   aliases: ["dw"],
+  ...VoiceDictionaryCategory,
 };
 
 export const delete_word_after: WWCommandData = {
@@ -161,6 +231,7 @@ export const delete_word_after: WWCommandData = {
   runIn: RunInServer,
   usage: "<word:string>",
   aliases: ["dwa"],
+  ...VoiceDictionaryCategory,
 };
 
 export const delete_word_before: WWCommandData = {
@@ -169,6 +240,7 @@ export const delete_word_before: WWCommandData = {
   runIn: RunInServer,
   usage: "<word:string>",
   aliases: ["dwb"],
+  ...VoiceDictionaryCategory,
 };
 
 export const exportC: WWCommandData = {
@@ -176,6 +248,7 @@ export const exportC: WWCommandData = {
   permissionLevel: 6,
   name: "export",
   runIn: RunInServer,
+  ...VoiceDictionaryCategory,
 };
 
 export const importC: WWCommandData = {
@@ -185,6 +258,7 @@ export const importC: WWCommandData = {
   cooldown: 30,
   name: "import",
   runIn: RunInServer,
+  ...VoiceDictionaryCategory,
 };
 
 export const jumanpp: WWCommandData = {
@@ -192,6 +266,7 @@ export const jumanpp: WWCommandData = {
   name: "jumanpp",
   usage: "<text:string>",
   runIn: RunInServer,
+  ...VoiceDictionaryCategory,
 };
 
 export const kuromoji: WWCommandData = {
@@ -199,6 +274,7 @@ export const kuromoji: WWCommandData = {
   name: "kuromoji",
   usage: "<text:string>",
   runIn: RunInServer,
+  ...VoiceDictionaryCategory,
 };
 export const VoiceDictionary = [
   add_word,
@@ -213,3 +289,11 @@ export const VoiceDictionary = [
   jumanpp,
   kuromoji,
 ];
+export const All = [
+  ...Core,
+  ...MemberSettings,
+  userconf,
+  ...VoiceBasic,
+  ...VoiceDictionary,
+];
+

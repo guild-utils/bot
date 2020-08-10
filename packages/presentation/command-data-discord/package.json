@@ -12,16 +12,16 @@
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "klasa": "^0.5.0",
     "prettier": "^2.0.5",
-    "typescript": "^3.8.3",
-    "klasa":"^0.5.0"
+    "typescript": "^3.8.3"
   },
   "dependencies": {
-    "presentation_command-data-common":"^1.0.0",
-    "presentation_klasa-core-command-rewrite":"^1.0.0"
+    "presentation_command-data-common": "^1.0.0",
+    "presentation_klasa-core-command-rewrite": "^1.0.0"
   },
   "peerDependencies": {
-    "klasa":"^0.5.0"
+    "klasa": "^0.5.0"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",
