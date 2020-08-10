@@ -1,0 +1,31 @@
+{
+  "name": "presentation_web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "fmt": "prettier --write **/*.ts **/*.tsx",
+    "dev": "next dev",
+    "build": "next build && next export",
+    "start": "next start"
+  },
+  "dependencies": {
+    "lodash.clone": "^4.5.0",
+    "next": "9.5.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^2.3.0",
+    "@types/react": "^16.9.44",
+    "@types/styled-components": "^5.1.2",
+    "babel-plugin-macros": "^2.8.0",
+    "babel-plugin-styled-components": "^1.11.1",
+    "postcss-import": "^12.0.1",
+    "presentation_command-data-common": "^1.0.0",
+    "styled-components": "^5.1.1",
+    "tailwind.macro": "^1.0.0-alpha.10",
+    "tailwindcss": "^1.6.0"
+  }
+}

@@ -1,34 +1,8 @@
-FROM alpine:3.12 AS build-ojt
-
-WORKDIR /usr/builder
-RUN apk add --no-cache libopusenc-dev build-base automake autoconf m4 perl
-
-COPY packages/util/open-jtalk/soft/hts_engine_API-1.10 ./hts_engine_API-1.10
-
-RUN cd hts_engine_API-1.10 \
-    && find ./ -type f -print | xargs chmod 777 \
-    && autoreconf -f -i \
-    && ./configure --with-charset=UTF-8 \
-    && make \
-    && make install 
-COPY packages/util/open-jtalk/soft/open_jtalk-1.11 ./open_jtalk-1.11
-
-RUN cd open_jtalk-1.11 \
-    && find ./ -type f -print | xargs chmod 777 \
-    && autoreconf -f -i \
-    && ./configure --with-charset=UTF-8 \
-    && make \
-    && make install 
-
 FROM node:14-alpine AS runtime
 
 WORKDIR /usr/app
 
 RUN yarn global add pm2
-
-ENV OPEN_JTALK_BIN /usr/local/bin/open_jtalk
-ENV OPEN_JTALK_DIC /usr/local/dic
-ENV OPEN_JTALK_OUTPUT OO
 
 ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
 ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
@@ -51,9 +25,6 @@ ENV HTS_VOICE_DELTA /usr/app/packages/util/open-jtalk/htsvoice/VoiceDelta.htsvoi
 
 ENV KUROMOJI_DIC_PATH /usr/app/packages/util/kuromoji-js/dict
 
-COPY --from=build-ojt /usr/local/bin/open_jtalk /usr/local/bin/open_jtalk
-COPY --from=build-ojt /usr/local/dic /usr/local/dic
-
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
 COPY packages/util/kuromoji-js/dict /usr/app/packages/util/kuromoji-js/dict
 COPY kick.js ./
@@ -65,18 +36,24 @@ COPY yarn.lock ./
 COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
+COPY packages/domains/command-data ./packages/domains/command-data
 COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
 COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
 COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
+COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/usecase/game-event ./packages/usecase/game-event
 COPY packages/usecase/text2speech ./packages/usecase/text2speech
+COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
 COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
+COPY packages/presentation/command-data-common ./packages/presentation/command-data-common
+COPY packages/presentation/command-data-discord ./packages/presentation/command-data-discord
 COPY packages/presentation/shared-config ./packages/presentation/shared-config
 COPY packages/presentation/klasa-member-gateway ./packages/presentation/klasa-member-gateway
 COPY packages/presentation/configs-klasa ./packages/presentation/configs-klasa
 COPY packages/presentation/protos ./packages/presentation/protos
 COPY packages/presentation/rpc-server ./packages/presentation/rpc-server
+COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/main ./packages/presentation/main
 

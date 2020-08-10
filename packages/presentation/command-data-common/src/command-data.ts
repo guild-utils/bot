@@ -3,16 +3,18 @@ import { CommandDataCollection } from "domain_command-data";
 export type CommandData = {
   receiver?: ("main" | "sub")[];
   name: string;
+  guarded?: boolean;
   aliases?: string[];
   runIn?: ("text" | "dm" | "news")[];
   usage?: string;
   usageDelim?: string;
-  guarded?: boolean;
   description?: string;
+  more?: string;
   cooldown?: number;
   cooldownLevel?: "author" | "channel" | "guild";
   permissionLevel?: number;
-  more?: string;
+  category: string;
+  subCategory: string;
 };
 export class CommandDataCollectionObject
   implements CommandDataCollection<CommandData> {
