@@ -38,7 +38,7 @@ jobs:
           echo /tsconfig.json > .git/info/sparse-checkout
           git pull origin master 
           git lfs pull -I packages/presentation/web/public/main-icon.png,packages/presentation/web/public/sub1-icon.png
-          tree
+          pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
       - name: setup nodejs
         uses: actions/setup-node@v1
         with: 
