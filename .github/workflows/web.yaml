@@ -29,14 +29,9 @@ jobs:
           git config core.sparseCheckout true
           git config filter.lfs.smudge "git-lfs smudge --skip %f"
           # Add here contents of sparse-checkout line by line
-          git sparse-checkout add /package.json
-          git sparse-checkout add /lerna.json
-          git sparse-checkout add /tsconfig.json
-          git sparse-checkout add /yarn.lock
-          git sparse-checkout add /packages/domains/command-data
-          git sparse-checkout add /packages/presentation/command-data-common
-          git sparse-checkout add /packages/presentation/web
-
+          echo /packages/domains/command-data > .git/info/sparse-checkout
+          echo /packages/presentation/command-data-common > .git/info/sparse-checkout
+          echo /packages/presentation/web > .git/info/sparse-checkout
           git pull origin master 
           git lfs pull -I packages/presentation/web/public/main-icon.png,packages/presentation/web/public/sub1-icon.png
       - name: setup nodejs
