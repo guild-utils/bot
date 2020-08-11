@@ -67,12 +67,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: static website
-      - name: deploy static website
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }} # Required
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #Optional 
-          VERCEL_ARGS: '--prod' #Optional
-          VERCEL_ORG-ID: ${{ secrets.ORG_ID}}  #Required
-          VERCEL_PROJECT-ID: ${{ secrets.PROJECT_ID}} #Required 
-          WORKING_DIRECTORY: static-website
-        uses: amondnet/vercel-action@v19
+      - uses: amondnet/vercel-action@v19
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
+          vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
+          working-directory: static-website
