@@ -5,13 +5,36 @@ on:
       - master
     types: [closed]
 jobs:
-  deploy:
+  build: 
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:
-      - name: Sparse checkout
+      - name: sparse checkout
         shell: bash
         run: ./sparse-checkout.sh
+      - name: setup nodejs
+        uses: actions/setup-node@v1
+        with: 
+          node-version: '14'
+      - name: build static website
+        run: |
+          yarn global add lerna
+          lerna run build
+      - name: prepare upload
+        run: |
+          mv packages/presentation/web/out static-website
+      - name: upload static website
+        uses: actions/upload-artifact@v2
+        with:
+          name: static website
+          path: static-website
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download static website
+        uses: actions/download-artifact@v2
+        with:
+          name: static website
       - uses: amondnet/vercel-action@v19
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -19,4 +42,4 @@ jobs:
           vercel-args: '--prod' #Optional
           vercel-org-id: ${{ secrets.ORG_ID}}  #Required
           vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
-          working-directory: ./packages/presentation/web/out
+          working-directory: static-website
