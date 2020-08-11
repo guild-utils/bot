@@ -30,12 +30,12 @@ jobs:
           git config filter.lfs.smudge "git-lfs smudge --skip %f"
           # Add here contents of sparse-checkout line by line
           echo /packages/domains/command-data > .git/info/sparse-checkout
-          echo /packages/presentation/command-data-common > .git/info/sparse-checkout
-          echo /packages/presentation/web > .git/info/sparse-checkout
-          echo /package.json > .git/info/sparse-checkout
-          echo /yarn.lock > .git/info/sparse-checkout
-          echo /lerna.json > .git/info/sparse-checkout
-          echo /tsconfig.json > .git/info/sparse-checkout
+          echo /packages/presentation/command-data-common >> .git/info/sparse-checkout
+          echo /packages/presentation/web >> .git/info/sparse-checkout
+          echo /package.json >> .git/info/sparse-checkout
+          echo /yarn.lock >> .git/info/sparse-checkout
+          echo /lerna.json >> .git/info/sparse-checkout
+          echo /tsconfig.json >> .git/info/sparse-checkout
           git pull origin master 
           git lfs pull -I packages/presentation/web/public/main-icon.png,packages/presentation/web/public/sub1-icon.png
           pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
