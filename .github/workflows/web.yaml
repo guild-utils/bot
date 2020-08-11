@@ -1,13 +1,11 @@
-name: deploy website
-on:
+name: website
+on: 
   pull_request:
-    branches:
-      - master
-    types: [closed]
+    types: [opened,edited,synchronize,reopened]
+  push: 
 jobs:
   build: 
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
       - name: sparse checkout
         shell: bash
@@ -51,34 +49,57 @@ jobs:
         run: |
           lerna bootstrap
           lerna run build
-      - name: prepare upload
-        run: |
-          mv packages/presentation/web/out static-website
       - name: upload static website
         uses: actions/upload-artifact@v2
         with:
           name: static website
-          path: static-website
-  deploy:
+          path: packages/presentation/web/out
+  deploy-stg:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ( github.event_name == 'pull_request' && github.base_ref == 'production-web' ) || ( github.event_name == 'push' && github.ref != 'production-web' )
     env:
       WEB_DEPLOY_TOKEN: ${{ secrets.WEB_DEPLOY_TOKEN }}
     steps:
+      - name: create virtual logs
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          git init $GITHUB_WORKSPACE
+          git commit --allow-empty -m  "virtual"
       - name: download static website
         uses: actions/download-artifact@v2
         with:
           name: static website
-      - name: setup nodejs
-        uses: actions/setup-node@v1
-        with: 
-          node-version: '14'
-      - name: install vercel cli
+      - name: deploy-stg
+        uses: amondnet/vercel-action@v19
+        with:
+          github-comment: false
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
+          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.PROJECT_ID}} #Re
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if:  ( github.event_name == 'push' && github.ref == 'production-web' )
+    steps:
+      - name: create virtual logs
         run: |
-          yarn global add vercel
-          echo "::add-path::$(yarn global bin)"
-      - name: deploy website
-        shell: bash
-        run: |
-          echo ${WEB_DEPLOY_TOKEN:?"WEB_DEPLOY_TOKEN-undefined"}|sha256sum
-          vercel --prod --token ${WEB_DEPLOY_TOKEN} --scope tig
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          git init $GITHUB_WORKSPACE
+          git commit --allow-empty -m  "virtual"
+      - name: download static website
+        uses: actions/download-artifact@v2
+        with:
+          name: static website
+      - name: deploy-production
+        uses: amondnet/vercel-action@v19
+        with:
+          github-comment: false
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
+          vercel-args: '--prod' #Optional
+          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
+          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
