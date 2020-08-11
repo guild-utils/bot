@@ -63,6 +63,8 @@ jobs:
     steps:
       - name: create virtual logs
         run: |
+          REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          BRANCH="${GITHUB_REF/#refs\/heads\//}"
           git init $GITHUB_WORKSPACE
           git commit --allow-empty -m "virtual"
       - name: download static website
@@ -84,6 +86,8 @@ jobs:
     steps:
       - name: create virtual logs
         run: |
+          REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          BRANCH="${GITHUB_REF/#refs\/heads\//}"
           git init $GITHUB_WORKSPACE
           git commit --allow-empty -m  "virtual"
       - name: download static website
