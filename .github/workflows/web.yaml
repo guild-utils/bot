@@ -1,10 +1,17 @@
 name: deploy website
-on: [deployment]
+on:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v2
+      - name: Sparse checkout
+        shell: bash
+        run: ./sparse-checkout.sh
       - uses: amondnet/vercel-action@v19
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -12,4 +19,4 @@ jobs:
           vercel-args: '--prod' #Optional
           vercel-org-id: ${{ secrets.ORG_ID}}  #Required
           vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
-          working-directory: ./packages
+          working-directory: ./packages/presentation/web/out
