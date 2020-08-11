@@ -67,11 +67,16 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: static website
-      - uses: amondnet/vercel-action@v19
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
-          vercel-args: '--prod' #Optional
-          vercel-org-id: ${{ secrets.ORG_ID}}  #Required
-          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
-          working-directory: static-website
+      - name: setup nodejs
+        uses: actions/setup-node@v1
+        with: 
+          node-version: '14'
+      - name: install vercel cli
+        run: |
+          yarn global add vercel
+          echo "::add-path::$(yarn global bin)"
+      - name: deploy website
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel --prod --token "$VERCEL_TOKEN"
