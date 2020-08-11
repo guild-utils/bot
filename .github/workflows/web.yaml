@@ -62,7 +62,7 @@ jobs:
       WEB_DEPLOY_TOKEN: ${{ secrets.WEB_DEPLOY_TOKEN }}
     steps:
       - name: create virtual logs
-        runs: |
+        run: |
           git init
           git commit -m --allow-empty "virtual"
       - name: download static website
@@ -83,7 +83,7 @@ jobs:
     if:  ( github.event_name == 'push' && github.ref == 'production-web' )
     steps:
       - name: create virtual logs
-        runs: |
+        run: |
           git init
           git commit -m --allow-empty "virtual"
       - name: download static website
