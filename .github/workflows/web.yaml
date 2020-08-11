@@ -80,5 +80,5 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          cd "$GITHUB_WORKSPACE/static-website"
+          ls
           vercel --prod --token $VERCEL_TOKEN --scope tig
