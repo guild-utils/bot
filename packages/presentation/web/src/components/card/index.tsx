@@ -9,7 +9,7 @@ type Props = {
   children: React.ReactNode;
 };
 const Wrapper = styled.div`
-  ${tw`lg:flex lg:flex-col bg-gray-700 max-w-sm rounded overflow-hidden shadow-lg p-2 m-2`}
+  ${tw`lg:flex lg:flex-col lg:justify-between bg-gray-700 max-w-sm rounded overflow-hidden shadow-lg p-2 m-2`}
 `;
 const IconWrapper = styled.div`
   ${tw`mr-2`}
@@ -26,16 +26,19 @@ const InviteButton = styled.button`
 const InviteButtonWrapper = styled.div`
   ${tw`flex justify-end`}
 `;
+const ContentWrapper = styled.div``;
 const Component: React.FC<Props> = ({ src, children, title }) => {
   return (
     <Wrapper>
-      <Title>
-        <IconWrapper>
-          <Icon src={src} width="46"></Icon>
-        </IconWrapper>
-        {title}
-      </Title>
-      <Entry>{children}</Entry>
+      <ContentWrapper>
+        <Title>
+          <IconWrapper>
+            <Icon src={src} width="46"></Icon>
+          </IconWrapper>
+          {title}
+        </Title>
+        <Entry>{children}</Entry>
+      </ContentWrapper>
       <InviteButtonWrapper>
         <InviteButton>追加</InviteButton>
       </InviteButtonWrapper>
