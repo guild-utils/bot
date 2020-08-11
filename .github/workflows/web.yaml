@@ -64,7 +64,7 @@ jobs:
       - name: create virtual logs
         run: |
           git init
-          git commit -m --allow-empty "virtual"
+          git commit --allow-empty -m "virtual"
       - name: download static website
         uses: actions/download-artifact@v2
         with:
@@ -85,7 +85,7 @@ jobs:
       - name: create virtual logs
         run: |
           git init
-          git commit -m --allow-empty "virtual"
+          git commit --allow-empty -m  "virtual"
       - name: download static website
         uses: actions/download-artifact@v2
         with:
