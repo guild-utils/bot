@@ -63,10 +63,10 @@ jobs:
     steps:
       - name: create virtual logs
         run: |
-          REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          BRANCH="${GITHUB_REF/#refs\/heads\//}"
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
           git init $GITHUB_WORKSPACE
-          git commit --allow-empty -m "virtual"
+          git commit --allow-empty -m  "virtual"
       - name: download static website
         uses: actions/download-artifact@v2
         with:
@@ -86,8 +86,8 @@ jobs:
     steps:
       - name: create virtual logs
         run: |
-          REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          BRANCH="${GITHUB_REF/#refs\/heads\//}"
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
           git init $GITHUB_WORKSPACE
           git commit --allow-empty -m  "virtual"
       - name: download static website
