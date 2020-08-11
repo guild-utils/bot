@@ -78,7 +78,7 @@ jobs:
       - name: deploy website
         shell: bash
         env:
-          VERCEL_TOKEN: ${{ secrets.VercelToken }}
+          VERCEL_TOKEN: ${{ secrets.VERCELTOKEN }}
         run: |
           echo ${VERCEL_TOKEN:?"VERCEL_TOKEN-undefined"}|sha256sum
           vercel --prod --token ${VERCEL_TOKEN} --scope tig
