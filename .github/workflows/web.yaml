@@ -1,13 +1,11 @@
-name: deploy website
-on:
+name: website
+on: 
   pull_request:
-    branches:
-      - master
-    types: [closed]
+    types: [opened,edited,closed,reopened]
+  push: 
 jobs:
   build: 
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
       - name: sparse checkout
         shell: bash
@@ -59,9 +57,34 @@ jobs:
         with:
           name: static website
           path: static-website
-  deploy:
+  deploy-stg:
     runs-on: ubuntu-latest
     needs: [build]
+    if: ( github.event == "pull_request" && github.event.pull_request.merged != true && github.base_ref != "production-web" ) || ( github.event == "push" && github.ref != "production-web" )
+    env:
+      WEB_DEPLOY_TOKEN: ${{ secrets.WEB_DEPLOY_TOKEN }}
+    steps:
+      - name: download static website
+        uses: actions/download-artifact@v2
+        with:
+          name: static website
+      - name: setup nodejs
+        uses: actions/setup-node@v1
+        with: 
+          node-version: '14'
+      - name: install vercel cli
+        run: |
+          yarn global add vercel
+          echo "::add-path::$(yarn global bin)"
+      - name: deploy website
+        shell: bash
+        run: |
+          echo ${WEB_DEPLOY_TOKEN:?"WEB_DEPLOY_TOKEN-undefined"}|sha256sum
+          vercel --token ${WEB_DEPLOY_TOKEN} --scope tig
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: ( github.event == "pull_request" && github.event.pull_request.merged == true && github.base_ref == "production-web" ) || ( github.event == "push" && github.ref == "production-web" )
     env:
       WEB_DEPLOY_TOKEN: ${{ secrets.WEB_DEPLOY_TOKEN }}
     steps:
