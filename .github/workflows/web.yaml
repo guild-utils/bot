@@ -80,5 +80,5 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          ls
+          echo $VERCEL_TOKEN|sha256sum
           vercel --prod --token "$VERCEL_TOKEN" --scope tig
