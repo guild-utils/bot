@@ -49,14 +49,11 @@ jobs:
         run: |
           lerna bootstrap
           lerna run build
-      - name: prepare upload
-        run: |
-          mv packages/presentation/web/out static-website
       - name: upload static website
         uses: actions/upload-artifact@v2
         with:
           name: static website
-          path: static-website
+          path: packages/presentation/web/out
   deploy-stg:
     runs-on: ubuntu-latest
     needs: [build]
@@ -64,6 +61,10 @@ jobs:
     env:
       WEB_DEPLOY_TOKEN: ${{ secrets.WEB_DEPLOY_TOKEN }}
     steps:
+      - name: create virtual logs
+        runs: |
+          git init
+          git commit -m --allow-empty "virtual"
       - name: download static website
         uses: actions/download-artifact@v2
         with:
@@ -81,6 +82,10 @@ jobs:
     needs: [build]
     if:  ( github.event_name == 'push' && github.ref == 'production-web' )
     steps:
+      - name: create virtual logs
+        runs: |
+          git init
+          git commit -m --allow-empty "virtual"
       - name: download static website
         uses: actions/download-artifact@v2
         with:
