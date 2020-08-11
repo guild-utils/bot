@@ -1,0 +1,15 @@
+{
+  "name": "guj-web",
+  "version": 2,
+  "scope": "amond",
+  "public": false,
+  "github": {
+    "enabled": false
+  },
+  "builds": [
+    {
+      "src": "./**",
+      "use": "@now/static"
+    }
+  ]
+}
