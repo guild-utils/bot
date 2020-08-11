@@ -32,8 +32,13 @@ jobs:
           echo /packages/domains/command-data > .git/info/sparse-checkout
           echo /packages/presentation/command-data-common > .git/info/sparse-checkout
           echo /packages/presentation/web > .git/info/sparse-checkout
+          echo /package.json > .git/info/sparse-checkout
+          echo /yarn.lock > .git/info/sparse-checkout
+          echo /lerna.json > .git/info/sparse-checkout
+          echo /tsconfig.json > .git/info/sparse-checkout
           git pull origin master 
           git lfs pull -I packages/presentation/web/public/main-icon.png,packages/presentation/web/public/sub1-icon.png
+          tree
       - name: setup nodejs
         uses: actions/setup-node@v1
         with: 
