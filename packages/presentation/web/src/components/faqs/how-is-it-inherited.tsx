@@ -14,7 +14,7 @@ const HowIsItInherited: React.FC = () => {
       <PriorityList>
         <PriorityListEntry>memconf</PriorityListEntry>
         <PriorityListEntry>ニックネーム(readNameのみ)</PriorityListEntry>
-        <PriorityListEntry>conf</PriorityListEntry>
+        <PriorityListEntry>userconf</PriorityListEntry>
         <PriorityListEntry>ユーザー名(readNameのみ)</PriorityListEntry>
         <PriorityListEntry>デフォルト値</PriorityListEntry>
       </PriorityList>
