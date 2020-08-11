@@ -71,6 +71,7 @@ jobs:
       - name: deploy-stg
         uses: amondnet/vercel-action@v19
         with:
+          github-comment: false
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
           github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
           vercel-org-id: ${{ secrets.ORG_ID}}  #Required
@@ -87,6 +88,7 @@ jobs:
       - name: deploy-production
         uses: amondnet/vercel-action@v19
         with:
+          github-comment: false
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
           github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
           vercel-args: '--prod' #Optional
