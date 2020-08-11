@@ -38,9 +38,13 @@ jobs:
         uses: actions/setup-node@v1
         with: 
           node-version: '14'
-      - name: build static website
+      - name: install lerna
         run: |
           yarn global add lerna
+          echo "::add-path::$(yarn global bin)"
+      - name: build static website
+        run: |
+          lerna bootstrap
           lerna run build
       - name: prepare upload
         run: |
