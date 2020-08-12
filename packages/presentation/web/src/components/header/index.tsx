@@ -23,18 +23,44 @@ const Svg = styled.svg`
   ${tw`fill-current h-3 w-3`}
   transform:scale(2.0);
 `;
+const Menu = () => (
+  <EntryWrapper>
+    <Link href="/commands" passHref>
+      <HeaderEntry>コマンド</HeaderEntry>
+    </Link>
+    <Link href="/faqs" passHref>
+      <HeaderEntry>よくある質問</HeaderEntry>
+    </Link>
+    <Link href="/invites" passHref>
+      <HeaderEntry>サーバーに追加</HeaderEntry>
+    </Link>
+    <HeaderEntry href="https://discord.gg/xxkzCHU">
+      サポートサーバー
+    </HeaderEntry>
+  </EntryWrapper>
+);
+type ToggleButtonProps = {
+  onClick: () => void;
+};
+const ToggleButton: React.FC<ToggleButtonProps> = (props) => (
+  <Button onClick={props.onClick}>
+    <Svg className="" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <title>Menu</title>
+      <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+    </Svg>
+  </Button>
+);
 const mediaQuery = "(min-width: 768px)";
-
-const Component: React.FC = () => {
+function useMenuVisibility(): [{ button: boolean; menu: boolean }, () => void] {
   const [user, setUser] = useState(false);
-  const [lg, setLg] = useState(false);
+  const [media, setMedia] = useState(false);
   useEffect(() => {
     const mql = window.matchMedia(mediaQuery);
     function set(e: boolean) {
       if (e) {
         setUser(false);
       }
-      setLg(e);
+      setMedia(e);
     }
     set(mql.matches);
     if (!mql.addListener) {
@@ -44,31 +70,19 @@ const Component: React.FC = () => {
       set(e.matches);
     });
   }, []);
-
-  const entrys =
-    lg || user ? (
-      <EntryWrapper>
-        <Link href="/commands" passHref>
-          <HeaderEntry>コマンド</HeaderEntry>
-        </Link>
-        <Link href="/faqs" passHref>
-          <HeaderEntry>よくある質問</HeaderEntry>
-        </Link>
-        <Link href="/invites" passHref>
-          <HeaderEntry>サーバーに追加</HeaderEntry>
-        </Link>
-        <HeaderEntry href="https://discord.gg/xxkzCHU">
-          サポートサーバー
-        </HeaderEntry>
-      </EntryWrapper>
-    ) : undefined;
-  const button = lg ? undefined : (
-    <Button onClick={() => setUser((old) => !old)}>
-      <Svg className="" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <title>Menu</title>
-        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-      </Svg>
-    </Button>
+  const button = media;
+  const menu = media || user;
+  const toggleVisibility = () => setUser((old) => !old);
+  return [{ button, menu }, toggleVisibility];
+}
+const Component: React.FC = () => {
+  const [
+    { button: buttonVisibility, menu: menuVisibility },
+    toggleVisibility,
+  ] = useMenuVisibility();
+  const menu = menuVisibility ? <Menu></Menu> : undefined;
+  const button = buttonVisibility ? undefined : (
+    <ToggleButton onClick={toggleVisibility}></ToggleButton>
   );
   return (
     <Header>
@@ -76,7 +90,7 @@ const Component: React.FC = () => {
         <Title></Title>
         {button}
       </Wrapper>
-      {entrys}
+      {menu}
     </Header>
   );
 };
