@@ -34,6 +34,7 @@ jobs:
           echo /yarn.lock >> .git/info/sparse-checkout
           echo /lerna.json >> .git/info/sparse-checkout
           echo /tsconfig.json >> .git/info/sparse-checkout
+          echo /.eslintrc.json >> .git/info/sparse-checkout
           git pull --depth=1 origin master 
           git lfs pull -I packages/presentation/web/public/main-icon.png,packages/presentation/web/public/sub1-icon.png
           pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
