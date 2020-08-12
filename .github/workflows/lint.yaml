@@ -1,0 +1,21 @@
+name: website
+on: 
+  pull_request:
+    types: [opened,edited,synchronize,reopened]
+  push: 
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: setup nodejs
+        uses: actions/setup-node@v1
+        with: 
+          node-version: '14'
+      - name: install lerna
+        run: |
+          yarn global add lerna
+          echo "::add-path::$(yarn global bin)"
+      - name: lint
+        uses: lerna run test:lint

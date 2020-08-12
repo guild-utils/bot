@@ -21,8 +21,7 @@
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",
-    "build": "tsc -p .",
-    "fmt": "prettier --write **/*.ts"
+    "build": "tsc -p ."
   },
   "files": [
     "dist",

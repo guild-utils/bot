@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext ts src --fix",
-    "test:lint": "eslint --ext ts src",
-    "fmt": "prettier --write **/*.ts **/*.tsx",
+    "lint": "eslint --ext ts,tsx src --fix",
+    "test:lint": "eslint --ext ts,tsx src",
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start"
   },
   "dependencies": {
+    "eslint-plugin-react": "^7.20.5",
     "lodash.clone": "^4.5.0",
     "next": "9.5.1",
     "react": "16.13.1",

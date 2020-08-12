@@ -13,7 +13,6 @@
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",
-    "fmt": "prettier --write **/*.ts",
     "watch": "tsc -p . -w",
     "build": "tsc -p ."
   }

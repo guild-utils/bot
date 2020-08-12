@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CommandStore } from "klasa";
 import { KlasaMessage } from "klasa";
 import { util } from "klasa";
@@ -23,7 +24,7 @@ export default class extends CommandEx {
     const path = this.client.gateways.guilds.getPath(key, {
       avoidUnconfigurable: true,
       errors: false,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-explicit-any
       piece: null as any,
     });
     if (!path) return message.sendLocale("COMMAND_CONF_GET_NOEXT", [key]);
@@ -95,6 +96,7 @@ export default class extends CommandEx {
     const status = await message.guild!.settings.reset(
       key,
       message.guild!,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       true as any
     );
     return (
