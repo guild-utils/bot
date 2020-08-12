@@ -1,8 +1,8 @@
 FROM node:14-alpine AS runtime-sub
 
 WORKDIR /usr/app
-
-RUN yarn global add pm2
+RUN apk add --no-cache --virtual .ojt git
+RUN yarn global add pm2 lerna
 
 ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
 ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
@@ -27,12 +27,31 @@ ENV KUROMOJI_DIC_PATH /usr/app/packages/util/kuromoji-js/dict
 
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
 COPY packages/util/kuromoji-js/dict /usr/app/packages/util/kuromoji-js/dict
-COPY kick.js ./
+
 COPY lerna.json ./
 COPY tsconfig.json ./
 COPY package.json ./
 COPY yarn.lock ./
 
+COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
+COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
+COPY packages/domains/configs/package.json ./packages/domains/configs/package.json
+COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
+COPY packages/usecase/text2speech/package.json ./packages/usecase/text2speech/package.json
+COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2speech-grpc/package.json
+COPY packages/presentation/command-data-common/package.json ./packages/presentation/command-data-common/package.json
+COPY packages/presentation/command-data-discord/package.json ./packages/presentation/command-data-discord/package.json
+COPY packages/presentation/shared-config/package.json ./packages/presentation/shared-config/package.json
+COPY packages/presentation/protos/package.json ./packages/presentation/protos/package.json
+COPY packages/presentation/rpc-client/package.json ./packages/presentation/rpc-client/package.json
+COPY packages/presentation/klasa-core-command-rewrite/package.json ./packages/presentation/klasa-core-command-rewrite/package.json
+COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
+COPY packages/presentation/sub/package.json ./packages/presentation/sub/package.json
+
+RUN lerna bootstrap
+
+COPY kick.js ./
+COPY .eslintrc.json ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
@@ -47,11 +66,8 @@ COPY packages/presentation/rpc-client ./packages/presentation/rpc-client
 COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/sub ./packages/presentation/sub
-
-RUN apk add --no-cache --virtual .ojt git \
-    && yarn global add lerna\
-    && lerna bootstrap \
-    && lerna run build \
+RUN lerna run build \
+    && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean \
     && apk del .ojt

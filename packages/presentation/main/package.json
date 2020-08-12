@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
-    "discord.js": "discordjs/discord.js",
+    "discord.js": "^12.2.0",
     "domain_configs": "^1.0.0",
     "domain_game-event": "^1.0.0",
     "dotenv": "^8.2.0",
@@ -14,7 +14,7 @@
     "klasa-member-gateway": "^1.0.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
-    "pg": "^8.1.0",
+    "pg": "8.1.0",
     "presentation_command-data-common": "^1.0.0",
     "presentation_command-data-discord": "^1.0.0",
     "presentation_core": "^1.0.0",
@@ -49,7 +49,6 @@
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",
-    "fmt": "prettier --write **/*.ts",
     "build": "tsc -p .",
     "watch": "tsc -p . -w",
     "start": "node ./dist/main.js",

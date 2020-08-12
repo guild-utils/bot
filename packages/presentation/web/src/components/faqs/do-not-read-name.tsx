@@ -10,7 +10,7 @@ const DoNotReadName: React.FC = () => {
       <br />
       自分の名前を読まれなくしたい場合は
       <br />
-      $memconf set speech.readName "" <br />
+      $memconf set speech.readName &quot;&quot; <br />
       を実行してください。
     </FAQ>
   );

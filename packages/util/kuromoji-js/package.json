@@ -61,7 +61,6 @@
     "coverage": "gulp coverage",
     "deploy": "gulp deploy",
     "jsdoc": "gulp jsdoc",
-    "lint": "gulp lint",
     "release": "gulp release",
     "test": "gulp test",
     "version": "gulp version",

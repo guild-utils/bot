@@ -34,7 +34,8 @@ jobs:
           echo /yarn.lock >> .git/info/sparse-checkout
           echo /lerna.json >> .git/info/sparse-checkout
           echo /tsconfig.json >> .git/info/sparse-checkout
-          git pull origin master 
+          echo /.eslintrc.json >> .git/info/sparse-checkout
+          git pull --depth=1 origin master 
           git lfs pull -I packages/presentation/web/public/main-icon.png,packages/presentation/web/public/sub1-icon.png
           pwd;find . | sort | sed '1d;s/^\.//;s/\/\([^/]*\)$/|--\1/;s/\/[^/|]*/|  /g'
       - name: setup nodejs
@@ -45,15 +46,22 @@ jobs:
         run: |
           yarn global add lerna
           echo "::add-path::$(yarn global bin)"
+      - name: bootstrap
+        run: lerna bootstrap
       - name: build static website
-        run: |
-          lerna bootstrap
-          lerna run build
+        run: lerna run build
+      - name: lint
+        run: lerna run test:lint     
       - name: upload static website
         uses: actions/upload-artifact@v2
         with:
           name: static website
           path: packages/presentation/web/out
+      - name: upload git context
+        uses: actions/upload-artifact@v2
+        with:
+          name: git context
+          path: .git
   deploy-stg:
     runs-on: ubuntu-latest
     needs: [build]
@@ -61,12 +69,11 @@ jobs:
     env:
       WEB_DEPLOY_TOKEN: ${{ secrets.WEB_DEPLOY_TOKEN }}
     steps:
-      - name: create virtual logs
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
-          git init $GITHUB_WORKSPACE
-          git commit --allow-empty -m  "virtual"
+      - name: download git context
+        uses: actions/download-artifact@v2
+        with:
+          name: git context
+          path: .git
       - name: download static website
         uses: actions/download-artifact@v2
         with:
@@ -74,7 +81,7 @@ jobs:
       - name: deploy-stg
         uses: amondnet/vercel-action@v19
         with:
-          github-comment: false
+          github-comment: true
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
           github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
           vercel-org-id: ${{ secrets.ORG_ID}}  #Required
@@ -84,12 +91,11 @@ jobs:
     needs: [build]
     if:  ( github.event_name == 'push' && github.ref == 'refs/heads/production-web' )
     steps:
-      - name: create virtual logs
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
-          git init $GITHUB_WORKSPACE
-          git commit --allow-empty -m  "virtual"
+      - name: download git context
+        uses: actions/download-artifact@v2
+        with:
+          name: git context
+          path: .git
       - name: download static website
         uses: actions/download-artifact@v2
         with:
@@ -97,7 +103,7 @@ jobs:
       - name: deploy-production
         uses: amondnet/vercel-action@v19
         with:
-          github-comment: false
+          github-comment: true
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
           github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
           vercel-args: '--prod' #Optional

@@ -15,8 +15,9 @@ RUN find ./ -type f -print | xargs chmod 777 \
 FROM node:14-alpine AS runtime
 
 WORKDIR /usr/app
+RUN apk add --no-cache --virtual .ojt git
+RUN yarn global add pm2 lerna
 
-RUN yarn global add pm2
 
 ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
 ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
@@ -44,12 +45,39 @@ COPY --from=build-jumanpp /usr/local/bin/jumanpp /usr/local/bin/jumanpp
 COPY --from=build-jumanpp /usr/local/libexec/jumanpp /usr/local/libexec/jumanpp
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
 COPY packages/util/kuromoji-js/dict /usr/app/packages/util/kuromoji-js/dict
-COPY kick.js ./
 COPY lerna.json ./
 COPY tsconfig.json ./
 COPY package.json ./
 COPY yarn.lock ./
 
+COPY packages/domains/game-event/package.json ./packages/domains/game-event/package.json
+COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
+COPY packages/domains/configs/package.json ./packages/domains/configs/package.json
+COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
+COPY packages/util/fixed-dsl/package.json ./packages/util/fixed-dsl/package.json
+COPY packages/util/periodical-dsl/package.json ./packages/util/periodical-dsl/package.json
+COPY packages/util/timing-to-notify-dsl/package.json ./packages/util/timing-to-notify-dsl/package.json
+COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
+COPY packages/usecase/game-event/package.json ./packages/usecase/game-event/package.json
+COPY packages/usecase/text2speech/package.json ./packages/usecase/text2speech/package.json
+COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2speech-grpc/package.json
+COPY packages/repository/gss/package.json ./packages/repository/gss/package.json
+COPY packages/repository/schedule/package.json ./packages/repository/schedule/package.json
+COPY packages/presentation/command-data-common/package.json ./packages/presentation/command-data-common/package.json
+COPY packages/presentation/command-data-discord/package.json ./packages/presentation/command-data-discord/package.json
+COPY packages/presentation/shared-config/package.json ./packages/presentation/shared-config/package.json
+COPY packages/presentation/klasa-member-gateway/package.json ./packages/presentation/klasa-member-gateway/package.json
+COPY packages/presentation/configs-klasa/package.json ./packages/presentation/configs-klasa/package.json
+COPY packages/presentation/protos/package.json ./packages/presentation/protos/package.json
+COPY packages/presentation/rpc-server/package.json ./packages/presentation/rpc-server/package.json
+COPY packages/presentation/klasa-core-command-rewrite/package.json ./packages/presentation/klasa-core-command-rewrite/package.json
+COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
+COPY packages/presentation/main/package.json ./packages/presentation/main/package.json
+
+RUN  lerna bootstrap 
+
+COPY kick.js ./
+COPY .eslintrc.json ./
 COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
@@ -74,13 +102,12 @@ COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/kl
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/main ./packages/presentation/main
 
-RUN apk add --no-cache --virtual .ojt git \
-    && yarn global add lerna\
-    && lerna bootstrap \
-    && lerna run build \
+RUN lerna run build \
+    && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean \
     && apk del .ojt
+
 ENV GUILD_UTILS_J_ROLE main
 
 CMD [ "pm2","--no-daemon","start","kick.js","--name","guild-utils-j"]

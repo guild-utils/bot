@@ -13,6 +13,7 @@ export default class extends Event {
         .filter((e): e is VoiceChannel => {
           return (
             e.type === "voice" &&
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             (e as VoiceChannel).members.has(this.client.user!.id)
           );
         })

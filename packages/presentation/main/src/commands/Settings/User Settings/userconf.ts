@@ -23,7 +23,7 @@ module.exports = class extends CommandEx {
     const path = this.client.gateways.users.getPath(key, {
       avoidUnconfigurable: true,
       errors: false,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-explicit-any
       piece: null as any,
     });
     if (!path) return message.sendLocale("COMMAND_CONF_GET_NOEXT", [key]);
@@ -54,6 +54,7 @@ module.exports = class extends CommandEx {
     const status = await message.author.settings.update(
       key,
       valueToSet.join(" "),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message.guild as any,
       { avoidUnconfigurable: true, action: "add" }
     );
@@ -70,6 +71,7 @@ module.exports = class extends CommandEx {
     const status = await message.author.settings.update(
       key,
       valueToRemove.join(" "),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       message.guild as any,
       { avoidUnconfigurable: true, action: "remove" }
     );
@@ -83,6 +85,7 @@ module.exports = class extends CommandEx {
   }
 
   async reset(message: KlasaMessage, [key]) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const status = await message.author.settings.reset(key, true as any);
     return (
       this.check(message, key, status) ||
