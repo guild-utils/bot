@@ -17,7 +17,6 @@
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",
-    "fmt": "prettier --write **/*.ts",
     "docs": "npx dg --source src --custom guides/.docconfig.json --output dist/docs.json --logging",
     "build": "tsc -p ."
   },

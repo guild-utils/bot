@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Argument, Possible, KlasaMessage, Command, CommandStore } from "klasa";
 export type CategorizedCommandsEntry = {
   [subCategory in string]:
@@ -32,8 +33,10 @@ export type ReturnType =
 export default class extends Argument {
   run(
     arg: string | undefined,
-    possible: Possible,
-    message: KlasaMessage
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _possible: Possible,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _message: KlasaMessage
   ): ReturnType {
     if (!arg) {
       return undefined;

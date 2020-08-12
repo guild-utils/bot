@@ -31,9 +31,7 @@ export default class extends Event {
       }
     }
     // eslint-disable-next-line prettier/prettier,@typescript-eslint/no-non-null-assertion
-    const reaction: MessageReaction = reactionp.partial
-      ? await reactionp.fetch!()
-      : (reactionp as MessageReaction);
+    const reaction: MessageReaction = reactionp.partial? await reactionp.fetch!(): (reactionp as MessageReaction);
     if (!reactionp.emoji && !targets.includes(reaction.emoji.name)) {
       return;
     }

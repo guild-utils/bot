@@ -63,7 +63,7 @@ export const config: KlasaClientOptions = {
   },
   pieceDefaults: {
     commands: {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-assignment
       extendedHelp: false as any,
     },
   },

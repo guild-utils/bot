@@ -68,6 +68,7 @@ export const config: KlasaClientOptions = {
   production: process.env.NODE_ENV === "production",
   pieceDefaults: {
     commands: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       extendedHelp: false as any,
     },
   },

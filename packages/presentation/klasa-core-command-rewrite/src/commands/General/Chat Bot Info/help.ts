@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CommandStore, KlasaMessage, Language } from "klasa";
 import { CommandEx } from "../../../commandEx";
 import { MessageEmbed } from "discord.js";
