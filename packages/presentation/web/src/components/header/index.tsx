@@ -2,8 +2,9 @@ import styled from "styled-components";
 import tw from "tailwind.macro";
 import Link from "next/link";
 import Title from "./title";
-import { useState } from "react";
+import { useReducer } from "react";
 import { useMedia } from "../../hooks/media";
+import { useCallback } from "react";
 const Wrapper = styled.div`
   ${tw`flex m-0 justify-between`}
 `;
@@ -52,26 +53,47 @@ const ToggleButton: React.FC<ToggleButtonProps> = (props) => (
   </Button>
 );
 const mediaQuery = "(min-width: 768px)";
-
-const Component: React.FC = () => {
-  const [userControl, setUserControl] = useState(false);
-  const media = useMedia(mediaQuery);
-  if (media && userControl) {
-    setUserControl(false);
+type StateType = {
+  button: boolean;
+  menu: boolean;
+};
+type ActionType = "to-wide" | "to-narrow" | "toggle-menu";
+function reducer(state: StateType, action: ActionType): StateType {
+  switch (action) {
+    case "to-wide":
+      return { ...state, button: false, menu: true };
+    case "to-narrow":
+      return { ...state, button: true, menu: false };
+    case "toggle-menu":
+      return { ...state, button: true, menu: !state.menu };
+    default:
+      throw new Error();
   }
-  const buttonVisibility = media;
-  const menuVisibility = userControl || media;
-  const toggleVisibility = () =>
-    setUserControl((old) => {
-      if (media) {
-        return true;
+}
+const Component: React.FC = () => {
+  const [visibility, dispatch] = useReducer(reducer, {
+    button: false,
+    menu: false,
+  });
+
+  useMedia(
+    mediaQuery,
+    useCallback((updateTo) => {
+      if (updateTo) {
+        dispatch("to-wide");
+      } else {
+        dispatch("to-narrow");
       }
-      return !old;
-    });
-  const menu = menuVisibility ? <Menu></Menu> : undefined;
-  const button = buttonVisibility ? undefined : (
-    <ToggleButton onClick={toggleVisibility}></ToggleButton>
+    }, [])
   );
+
+  const toggleVisibility = useCallback(() => {
+    dispatch("toggle-menu");
+  }, []);
+  const menu = visibility.menu ? <Menu></Menu> : undefined;
+  const button = visibility.button ? (
+    <ToggleButton onClick={toggleVisibility}></ToggleButton>
+  ) : undefined;
   return (
     <Header>
       <Wrapper>
