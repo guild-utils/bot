@@ -17,6 +17,8 @@ jobs:
         run: |
           yarn global add lerna
           echo "::add-path::$(yarn global bin)"
+      - name: bootstrap
+        run: lerna run bootstrap
       - name: build
         run: lerna run build
   lint: 
@@ -32,5 +34,7 @@ jobs:
         run: |
           yarn global add lerna
           echo "::add-path::$(yarn global bin)"
+      - name: bootstrap
+        run: lerna run bootstrap
       - name: lint
         run: lerna run test:lint
