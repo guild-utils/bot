@@ -23,21 +23,25 @@ const Svg = styled.svg`
   ${tw`fill-current h-3 w-3`}
   transform:scale(2.0);
 `;
-const lgQuery = "(min-width: 768px)";
+const mediaQuery = "(min-width: 768px)";
 
 const Component: React.FC = () => {
   const [user, setUser] = useState(false);
   const [lg, setLg] = useState(false);
   useEffect(() => {
-    const mql = window.matchMedia(lgQuery);
+    const mql = window.matchMedia(mediaQuery);
+    function set(e: boolean) {
+      if (e) {
+        setUser(false);
+      }
+      setLg(e);
+    }
+    set(mql.matches);
     if (!mql.addListener) {
       return;
     }
     mql.addListener((e: MediaQueryListEvent) => {
-      if (e.matches) {
-        setUser(false);
-      }
-      setLg(e.matches);
+      set(e.matches);
     });
   }, []);
 
