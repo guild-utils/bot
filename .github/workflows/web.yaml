@@ -45,10 +45,12 @@ jobs:
         run: |
           yarn global add lerna
           echo "::add-path::$(yarn global bin)"
+      - name: bootstrap
+        run: lerna bootstrap
       - name: build static website
-        run: |
-          lerna bootstrap
-          lerna run build
+        run: lerna run build
+      - name: lint
+        run: lerna run test:lint     
       - name: upload static website
         uses: actions/upload-artifact@v2
         with:

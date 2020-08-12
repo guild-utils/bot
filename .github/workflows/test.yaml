@@ -21,20 +21,5 @@ jobs:
         run: lerna bootstrap
       - name: build
         run: lerna run build
-  lint: 
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: setup nodejs
-        uses: actions/setup-node@v1
-        with: 
-          node-version: '14'
-      - name: install lerna
-        run: |
-          yarn global add lerna
-          echo "::add-path::$(yarn global bin)"
-      - name: bootstrap
-        run: lerna bootstrap
       - name: lint
         run: lerna run test:lint

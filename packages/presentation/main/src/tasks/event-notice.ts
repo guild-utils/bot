@@ -41,7 +41,7 @@ export default class extends Task {
     promises.push(guild.settings.update(nextTaskId.join("."), null));
     const g = this.client.guilds.resolve(meta.guildId);
     if (!g) {
-      this.client.emit("wtf", "guild is falty");
+      this.client.emit("warn", "guild is falty");
       return;
     }
     promises.push(this.notice(g.settings, meta));
