@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 
 export function useMedia(
   query: string,
   effect: (matches: boolean) => void
 ): void {
-  useLayoutEffect(() => {
+  useEffect(() => {
     const mql = window.matchMedia(query);
     effect(mql.matches);
     if (!mql.addListener) {
