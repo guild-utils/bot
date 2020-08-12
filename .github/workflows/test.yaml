@@ -18,7 +18,7 @@ jobs:
           yarn global add lerna
           echo "::add-path::$(yarn global bin)"
       - name: build
-        uses: lerna run build
+        run: lerna run build
   lint: 
     runs-on: ubuntu-latest
     steps:
@@ -33,4 +33,4 @@ jobs:
           yarn global add lerna
           echo "::add-path::$(yarn global bin)"
       - name: lint
-        uses: lerna run test:lint
+        run: lerna run test:lint
