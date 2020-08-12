@@ -2,7 +2,8 @@ import styled from "styled-components";
 import tw from "tailwind.macro";
 import Link from "next/link";
 import Title from "./title";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useMedia } from "../../hooks/media";
 const Wrapper = styled.div`
   ${tw`flex m-0 justify-between`}
 `;
@@ -51,35 +52,22 @@ const ToggleButton: React.FC<ToggleButtonProps> = (props) => (
   </Button>
 );
 const mediaQuery = "(min-width: 768px)";
-function useMenuVisibility(): [{ button: boolean; menu: boolean }, () => void] {
-  const [user, setUser] = useState(false);
-  const [media, setMedia] = useState(false);
-  useEffect(() => {
-    const mql = window.matchMedia(mediaQuery);
-    function set(e: boolean) {
-      if (e) {
-        setUser(false);
-      }
-      setMedia(e);
-    }
-    set(mql.matches);
-    if (!mql.addListener) {
-      return;
-    }
-    mql.addListener((e: MediaQueryListEvent) => {
-      set(e.matches);
-    });
-  }, []);
-  const button = media;
-  const menu = media || user;
-  const toggleVisibility = () => setUser((old) => !old);
-  return [{ button, menu }, toggleVisibility];
-}
+
 const Component: React.FC = () => {
-  const [
-    { button: buttonVisibility, menu: menuVisibility },
-    toggleVisibility,
-  ] = useMenuVisibility();
+  const [userControl, setUserControl] = useState(false);
+  const media = useMedia(mediaQuery);
+  if (media && userControl) {
+    setUserControl(false);
+  }
+  const buttonVisibility = media;
+  const menuVisibility = userControl || media;
+  const toggleVisibility = () =>
+    setUserControl((old) => {
+      if (media) {
+        return true;
+      }
+      return !old;
+    });
   const menu = menuVisibility ? <Menu></Menu> : undefined;
   const button = buttonVisibility ? undefined : (
     <ToggleButton onClick={toggleVisibility}></ToggleButton>
