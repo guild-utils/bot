@@ -12,7 +12,7 @@
   "dependencies": {
     "eslint-plugin-react": "^7.20.5",
     "lodash.clone": "^4.5.0",
-    "next": "9.5.1",
+    "next": "9.5.2",
     "react": "16.13.1",
     "react-dom": "16.13.1"
   },
