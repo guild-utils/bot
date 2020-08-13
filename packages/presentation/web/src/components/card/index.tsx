@@ -1,6 +1,7 @@
 import Icon from "../icon";
 import styled from "styled-components";
 import tw from "tailwind.macro";
+import Link from "next/link";
 
 type Props = {
   src: string;
@@ -20,14 +21,14 @@ const Entry = styled.div`
 const Title = styled.div`
   ${tw`flex text-xl`}
 `;
-const InviteButton = styled.button`
+const InviteButton = styled.a`
   ${tw`bg-transparent hover:bg-yellow-700 text-yellow-600 font-semibold hover:text-gray-400 py-2 px-4 border border-yellow-600 hover:border-transparent rounded`}
 `;
 const InviteButtonWrapper = styled.div`
   ${tw`flex justify-end`}
 `;
 const ContentWrapper = styled.div``;
-const Component: React.FC<Props> = ({ src, children, title }) => {
+const Component: React.FC<Props> = ({ src, children, title, inviteURL }) => {
   return (
     <Wrapper>
       <ContentWrapper>
@@ -40,7 +41,7 @@ const Component: React.FC<Props> = ({ src, children, title }) => {
         <Entry>{children}</Entry>
       </ContentWrapper>
       <InviteButtonWrapper>
-        <InviteButton>追加</InviteButton>
+        <InviteButton href={inviteURL}>追加</InviteButton>
       </InviteButtonWrapper>
     </Wrapper>
   );
