@@ -6,7 +6,7 @@
     "domain_game-event": "^1.0.0",
     "fixed-dsl": "^1.0.0",
     "google-spreadsheet": "git+https://github.com/the-vampiire/node-google-spreadsheet.git#v4-typings",
-    "googleapis": "56.0.0",
+    "googleapis": "59.0.0",
     "periodical-dsl": "^1.0.0",
     "timing-to-notify-dsl": "^1.0.0",
     "tsyringe": "^4.1.0"
