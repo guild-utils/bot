@@ -74,52 +74,70 @@ export const start: CommandData = {
 
 export const VoiceBasic = [end, end_channel, skip, start];
 export const add_word: CommandData = {
-  description: "単語をメインの辞書へ追加します。",
+  description:
+    "このコマンドは削除されました。代わりにmdic addを使用してください。",
   ...WW.add_word,
 };
 
 export const add_word_after: CommandData = {
   description:
-    "単語をメインの辞書での処理が終わった後に処理される辞書へ追加します。",
+    "このコマンドは削除されました。代わりにadic addを使用してください。",
   ...WW.add_word_after,
 };
 
 export const add_word_before: CommandData = {
-  description: "単語をメインの辞書での処理の前に処理される辞書へ追加します。",
+  description:
+    "このコマンドは削除されました。代わりにbdic addを使用してください。",
   ...WW.add_word_before,
 };
 
 export const clear: CommandData = {
-  description: "辞書を削除します。",
+  description:
+    "このコマンドは削除されました。代わりにdict clearを使用してください。",
   ...WW.clear,
 };
 
 export const delete_word: CommandData = {
-  description: "単語をメインの辞書から削除します。",
+  description:
+    "このコマンドは削除されました。代わりにmdic removeを使用してください。",
   ...WW.delete_word,
 };
 
 export const delete_word_after: CommandData = {
   description:
-    "単語をメインの辞書での処理が終わった後に処理される辞書から削除します。",
+    "このコマンドは削除されました。代わりにadic removeを使用してください。",
   ...WW.delete_word_after,
 };
 
 export const delete_word_before: CommandData = {
-  description: "単語をメインの辞書での処理の前に処理される辞書から削除します。",
+  description:
+    "このコマンドは削除されました。代わりにbdic removeを使用してください。",
   ...WW.delete_word_before,
 };
 
 export const exportC: CommandData = {
-  description: "辞書をエクスポートします。",
+  description:
+    "このコマンドは削除されました。代わりにdict exportを使用してください。",
   ...WW.exportC,
 };
 
 export const importC: CommandData = {
-  description: "辞書をインポートします。",
+  description:
+    "このコマンドは削除されました。代わりにdict importを使用してください。",
   ...WW.importC,
 };
 
+export const VoiceDictionaryOld = [
+  add_word,
+  add_word_after,
+  add_word_before,
+  clear,
+  delete_word,
+  delete_word_after,
+  delete_word_before,
+  exportC,
+  importC,
+];
 export const jumanpp: CommandData = {
   description: "jumanppで形態素解析を行う。",
   ...WW.jumanpp,
@@ -148,4 +166,5 @@ export const All = [
   userconf,
   ...VoiceBasic,
   ...VoiceDictionary,
+  ...VoiceDictionaryOld,
 ];
