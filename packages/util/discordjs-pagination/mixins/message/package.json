@@ -1,0 +1,9 @@
+{
+  "name": "discordjs-pagination_mixins_message",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "tignear",
+  "main": "../../dist/mixins/message.js",
+  "private": "true",
+  "dependencies": {}
+}

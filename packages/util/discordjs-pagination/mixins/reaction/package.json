@@ -1,0 +1,9 @@
+{
+  "name": "discordjs-pagination_mixins_reaction",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "tignear",
+  "main": "../../dist/mixins/reaction.js",
+  "private": "true",
+  "dependencies": {}
+}

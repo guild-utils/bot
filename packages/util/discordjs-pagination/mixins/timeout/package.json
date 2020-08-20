@@ -1,0 +1,9 @@
+{
+  "name": "discordjs-pagination_mixins_timeout",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "tignear",
+  "main": "../../dist/mixins/timeout.js",
+  "private": "true",
+  "dependencies": {}
+}

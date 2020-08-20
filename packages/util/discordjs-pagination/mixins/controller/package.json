@@ -1,0 +1,9 @@
+{
+  "name": "discordjs-pagination_mixins_controller",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "tignear",
+  "main": "../../dist/mixins/controller.js",
+  "private": "true",
+  "dependencies": {}
+}

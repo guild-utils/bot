@@ -1,0 +1,9 @@
+{
+  "name": "discordjs-pagination_plugins_timeout",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "tignear",
+  "main": "../../dist/plugins/timeout.js",
+  "private": "true",
+  "dependencies": {}
+}
