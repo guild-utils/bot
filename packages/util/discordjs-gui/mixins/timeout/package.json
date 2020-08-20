@@ -1,9 +1,9 @@
 {
-  "name": "discordjs-pagination_plugins_filter",
+  "name": "discordjs-gui_mixins_timeout",
   "version": "0.0.1",
   "license": "MIT",
   "author": "tignear",
-  "main": "../../dist/plugins/filter.js",
+  "main": "../../dist/mixins/timeout.js",
   "private": "true",
   "dependencies": {}
 }

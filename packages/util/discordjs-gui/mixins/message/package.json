@@ -1,9 +1,9 @@
 {
-  "name": "discordjs-pagination_plugins_timeout",
+  "name": "discordjs-gui_mixins_message",
   "version": "0.0.1",
   "license": "MIT",
   "author": "tignear",
-  "main": "../../dist/plugins/timeout.js",
+  "main": "../../dist/mixins/message.js",
   "private": "true",
   "dependencies": {}
 }
