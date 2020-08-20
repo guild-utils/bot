@@ -1,14 +1,14 @@
 import "./lib/extensions/KlasaGuild";
 import "./lib/extensions/KlasaMember";
-import { Settings, KlasaClient } from "klasa";
+import { KlasaClient, Settings } from "klasa";
 import MemberGateway from "./lib/settings/MemberGateway";
 declare module "discord.js" {
-  interface GuildMember {
+  export interface GuildMember {
     settings: Settings;
   }
 }
 declare module "klasa" {
-  interface GatewayDriver {
+  export interface GatewayDriver {
     members: MemberGateway;
   }
 }

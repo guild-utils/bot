@@ -3,6 +3,11 @@
     "compilerOptions": {
         "types": ["node", "klasa","discord.js"],
         "outDir": "./dist",
-        "allowJs": true
-    }
+        "rootDir": "./src",
+        "baseUrl": "./src",
+        
+    },
+    "include": [
+        "./src/**/*"
+    ]
 }

@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 import { KlasaClient, Schema, util } from "klasa";
 const { mergeDefault } = util;
 import { CLIENT } from "./util/constants";
