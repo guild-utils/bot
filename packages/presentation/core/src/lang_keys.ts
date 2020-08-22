@@ -9,6 +9,7 @@ export type GUJ_CORE_LANG_TYPE = {
   COMMAND_END_DESCRIPTION: string;
   COMMAND_SKIP_DESCRIPTION: string;
   COMMAND_START_EXTENDED_HELP: (kinds: typeof VoiceKindArray) => string;
+  META_COMMAND_DELETED: string;
 };
 
 export const COMMAND_START_DESCRIPTION = "COMMAND_START_DESCRIPTION";

@@ -10,6 +10,7 @@ import { initEngineAndKuromoji } from "./bootstrap/engine";
 import GuildMemberUpdateEvent from "./events/guildMemberUpdate";
 import ResumeConnection from "./events/resumeConnection";
 import VoiceStateUpdateEvent from "./events/voiceStateUpdate";
+import { DeletedCommand } from "./deleted-command";
 export {
   Engine,
   Start,
@@ -24,5 +25,6 @@ export {
   VoiceStateUpdateEvent,
   GuildMemberUpdateEvent,
   ResumeConnection,
+  DeletedCommand,
   initEngineAndKuromoji,
 };
