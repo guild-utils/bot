@@ -286,8 +286,53 @@ export const VoiceDictionaryOld = [
   delete_word_before,
   exportC,
   importC,
+];
+export const dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "dictionary",
+  usage: "<export|import|clear>",
+  permissionLevel: 6,
+  aliases: ["dic", "dict"],
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+
+const ABUsage =
+  "<add|remove|update|list> [index:number|entey:simple-dict-entry] [entry:simple-dict-entry|to:string]";
+export const after_dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "after-dictionary",
+  aliases: ["adic"],
+  usage: ABUsage,
+  usageDelim: " ",
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+export const before_dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "before-dictionary",
+  aliases: ["bdic"],
+  usage: ABUsage,
+  usageDelim: " ",
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+export const main_dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "main-dictionary",
+  aliases: ["mdic"],
+  usage: "<add|remove|update|list> [key:string] [entry:main-dict-entry]",
+  usageDelim: " ",
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+export const VoiceDictionary = [
   jumanpp,
   kuromoji,
+  dictionary,
+  after_dictionary,
+  main_dictionary,
+  before_dictionary,
 ];
 export const All = [
   ...Core,

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "reflect-metadata";
+import "abort-controller/polyfill";
 import MemberGatewayPlugin from "klasa-member-gateway";
 import {
   Usecase as KlasaUsecase,
-  DictionaryRepository as KlasaDictionaryRepository,
+  //  DictionaryRepository as KlasaDictionaryRepository,
 } from "presentation_configs-klasa";
+import { MongoDictionaryRepository } from "repository_mongodb-dictionary";
 import { config as dotenv } from "dotenv";
 const result = dotenv();
 import { KlasaClient, KlasaClientOptions, Settings } from "klasa";
@@ -18,8 +20,13 @@ import initRpcServer from "./bootstrap/grpc";
 import initGameEvent from "./bootstrap/schedule";
 import initText2Speech from "./bootstrap/text2speech";
 import initStarBoard from "./bootstrap/starBoard";
+import { initMongo } from "./bootstrap/mongo";
 import { Permissions } from "discord.js";
 import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
+import {
+  initMainDictionaryGui,
+  initBADictionaryGui,
+} from "./bootstrap/dictionary-gui";
 if (result) {
   console.log(result.parsed);
 }
@@ -29,6 +36,7 @@ declare module "discord.js" {
     settings: Settings;
   }
 }
+
 function initMemberGateway(Client: typeof KlasaClient) {
   Client.use(MemberGatewayPlugin);
 }
@@ -62,6 +70,14 @@ async function main() {
   });
   container.register("DictionaryRepository", {
     useValue: dict,
+  });
+  const emptyMessageObj = {
+    emptyMessage: "現在辞書にはなにも登録されていません。",
+  };
+  const mainDictionaryGui = initMainDictionaryGui(container, emptyMessageObj);
+  const baDictionaryGuis = initBADictionaryGui(container, emptyMessageObj);
+  container.register("GuiControllers", {
+    useValue: [mainDictionaryGui, ...baDictionaryGuis],
   });
   initChannelsGateway(client.gateways);
   initRpcServer(configRepo);
