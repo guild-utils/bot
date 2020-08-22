@@ -36,6 +36,17 @@ export const config: KlasaClientOptions = {
             },
           }
         : undefined,
+    mongodb:
+      ENV.GUILD_UTILS_J_PROVIDER === "mongodb"
+        ? {
+            connectionString: ENV.MONGO_CONNECTION,
+            host: ENV.MONGO_HOST,
+            port: ENV.MONGO_PORT,
+            db: ENV.MONGO_DB,
+            user: ENV.MONGO_USER,
+            password: ENV.MONGO_PASSWORD,
+          }
+        : undefined,
   },
   /**
    * Console Options
@@ -74,20 +85,8 @@ export const config: KlasaClientOptions = {
   },
   commandDataCollection: new CommandDataCollectionProxy(
     new CommandDataCollectionProviderObject({
-      ww: new CommandDataCollectionObject([
-        ...ww.Core,
-        ...ww.MemberSettings,
-        ww.userconf,
-        ...ww.VoiceBasic,
-        ...ww.VoiceDictionary,
-      ]),
-      ja_JP: new CommandDataCollectionObject([
-        ...ja_JP.Core,
-        ...ja_JP.MemberSettings,
-        ja_JP.userconf,
-        ...ja_JP.VoiceBasic,
-        ...ja_JP.VoiceDictionary,
-      ]),
+      ww: new CommandDataCollectionObject(ww.All),
+      ja_JP: new CommandDataCollectionObject(ja_JP.All),
     })
   ),
   themeColor: 0xffd700,
