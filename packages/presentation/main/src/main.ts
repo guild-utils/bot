@@ -52,7 +52,10 @@ async function main() {
   initMemberGateway(Client);
   await initText2Speech(container);
   const client = new Client(config);
-  const dict = new KlasaDictionaryRepository(client.gateways);
+  await initMongo(client);
+  const dict = new MongoDictionaryRepository(
+    client.mongodb.collection("guilds")
+  );
   const configRepo = new KlasaUsecase(client.gateways, dict);
   container.register("ConfigRepository", {
     useValue: configRepo,
