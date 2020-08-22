@@ -1,4 +1,4 @@
-import { AnythingHandler, Pagination, Constructor, ActionType } from "../base";
+import { AnythingHandler, GuiBase, Constructor, ActionType } from "../base";
 import { Message } from "discord.js";
 const TimeoutEventType = "Timeout";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,7 +17,7 @@ export interface TimeoutMixin<EventMap extends TimeoutEventMixinMap> {
 }
 export function mixinTimeout<
   EventMap extends TimeoutEventMixinMap,
-  TBase extends Constructor<Pagination<EventMap>>
+  TBase extends Constructor<GuiBase<EventMap>>
 >(Base: TBase): TBase {
   return class extends Base {
     emitTimeout(ev: EventMap["Timeout"]): void {

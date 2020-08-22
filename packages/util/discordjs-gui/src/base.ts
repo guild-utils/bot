@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-types,@typescript-eslint/no-explicit-any
 export type Constructor<T = {}> = new (...a: any[]) => T;
-export type PaginationConstructor<
-  T extends Pagination<EventMap>,
+export type GuiBaseConstructor<
+  T extends GuiBase<EventMap>,
   EventMap extends {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [k in string]: any;
+    [k in string | symbol | number]: any;
   }
 > = new (
   handlers?: {
@@ -12,13 +12,13 @@ export type PaginationConstructor<
   }
 ) => T;
 
-export interface EventBase<T> {
+export interface EventBase<T extends string | symbol | number> {
   type: T;
 }
 export type ActionType<
   EventMap extends {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [k in string]: any;
+    [k in string | symbol | number]: any;
   }
 > = { next: NextFunction; emit: EmitFunction<EventMap> };
 
@@ -27,7 +27,7 @@ export interface HandlerBase<
   K extends keyof EventMap,
   EventMap extends {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [k in string]: any;
+    [k in string | symbol]: any;
   }
 > {
   (arg: EventMap[K] & EventBase<K>, action: ActionType<EventMap>): void;
@@ -38,7 +38,7 @@ export interface NextFunction {
 export interface EmitFunction<
   EventMap extends {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [k in string]: any;
+    [k in string | symbol]: any;
   }
 > {
   <K extends keyof EventMap>(k: K, ev: EventMap[K]): void;
@@ -47,24 +47,24 @@ export interface EmitFunction<
 export interface AnythingHandler<
   EventMap extends {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [k in string]: any;
+    [k in string | symbol]: any;
   }
 > {
   (
-    arg: EventBase<unknown>,
+    arg: EventBase<string | number | symbol>,
     action: { next: NextFunction; emit: EmitFunction<EventMap> }
   ): void;
 }
 
-export class Pagination<
+export class GuiBase<
   EventMap extends {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [k in string]: any;
+    [k in string | symbol]: any;
   }
 > {
   constructor(
     public handlers: {
-      [k in keyof EventMap]?: HandlerBase<EventMap[k], EventMap>[];
+      [k in keyof EventMap]?: HandlerBase<k, EventMap>[];
     } = {}
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,7 +76,7 @@ export class Pagination<
   use<K extends keyof EventMap>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     arg1: AnythingHandler<EventMap> | K,
-    arg2?: HandlerBase<EventMap[K], EventMap>
+    arg2?: HandlerBase<K, EventMap>
   ): void {
     if (arg2) {
       let collection = this.handlers[arg1 as K];
@@ -93,7 +93,10 @@ export class Pagination<
       });
     }
   }
-  handle<K extends keyof EventMap>(ev: EventMap[K], idx = 0): void {
+  handle<K extends keyof EventMap>(
+    ev: EventMap[K] & EventBase<K>,
+    idx = 0
+  ): void {
     const collection = this.handlers[ev.type as K];
     if (!collection) {
       return;
@@ -124,7 +127,7 @@ export class Pagination<
       throw new Error("Invalid Event Emitted");
     } else {
       const type = k;
-      const ev2 = { ...ev, type } as EventMap[K] & { type: K };
+      const ev2 = { ...ev, type } as EventMap[K] & EventBase<K>;
       this.handle<K>(ev2, 0);
     }
   }

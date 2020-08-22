@@ -33,10 +33,8 @@ export function createMessageFilter(): MessageFilterController {
       if (!v) {
         v = new Set();
         watchingMessageIdWithChannelId.set(message.channel.id, v);
-        return;
       }
       v.add(message.id);
-      return;
     },
   };
   return controller;

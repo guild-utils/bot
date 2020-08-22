@@ -1,4 +1,4 @@
-import { Pagination, AnythingHandler, Constructor, ActionType } from "../base";
+import { GuiBase, AnythingHandler, Constructor, ActionType } from "../base";
 import { Message } from "discord.js";
 
 export const MessageEventType = "Message";
@@ -23,7 +23,7 @@ export interface MessageMixin<EventMap extends MessageEventMixinMap> {
 }
 export function mixinMessage<
   EventMap extends MessageEventMixinMap,
-  TBase extends Constructor<Pagination<EventMap>>
+  TBase extends Constructor<GuiBase<EventMap>>
 >(Base: TBase): TBase {
   return class extends Base {
     emitMessage(message: Message): void {

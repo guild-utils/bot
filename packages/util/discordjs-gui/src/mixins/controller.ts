@@ -1,4 +1,4 @@
-import { Pagination, Constructor, EventBase } from "../base";
+import { GuiBase, Constructor, EventBase } from "../base";
 import { Message } from "discord.js";
 
 export interface MessageFilterController {
@@ -11,7 +11,7 @@ export function mixinMessageFilterController<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [k in string]: EventBase<k>;
   },
-  TBase extends Constructor<Pagination<EventMap>>
+  TBase extends Constructor<GuiBase<EventMap>>
 >(Base: TBase, controllers: MessageFilterController[]): TBase {
   return class extends Base {
     watchMessage(message: Message): void {

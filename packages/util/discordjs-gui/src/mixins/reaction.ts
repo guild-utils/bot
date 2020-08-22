@@ -1,4 +1,4 @@
-import { Pagination, AnythingHandler, Constructor, ActionType } from "../base";
+import { GuiBase, AnythingHandler, Constructor, ActionType } from "../base";
 import { MessageReaction, User } from "discord.js";
 
 export const ReactionEventType = "Reaction";
@@ -22,7 +22,7 @@ export interface ReactionMixin<EventMap extends ReactionEventMixinMap> {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function mixinReaction<
   EventMap extends ReactionEventMixinMap,
-  TBase extends Constructor<Pagination<EventMap>>
+  TBase extends Constructor<GuiBase<EventMap>>
 >(Base: TBase) {
   return class extends Base {
     emitReaction(reaction: MessageReaction, user: User): void {
