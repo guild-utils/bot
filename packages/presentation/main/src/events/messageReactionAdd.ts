@@ -75,10 +75,7 @@ export default class extends Event {
     }
     const sourceChannel = msg.channel as TextChannel;
     embed
-      .setAuthor(
-        member.displayName,
-        member.user.avatarURL({ format: "jpg", dynamic: true }) ?? undefined
-      )
+      .setAuthor(member.displayName, member.user.avatarURL() ?? undefined)
       .setColor(0xffd700)
       .setTimestamp(msg.createdTimestamp)
       .setDescription(msg.content)
