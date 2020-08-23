@@ -19,6 +19,7 @@ export const config: KlasaClientOptions = {
     warn: true,
     wtf: true,
   },
+  restTimeOffset: 50,
   providers: {
     default: ENV.GUILD_UTILS_J_PROVIDER,
     postgresql:

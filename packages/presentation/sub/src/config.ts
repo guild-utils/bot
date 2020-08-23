@@ -65,6 +65,7 @@ export const config: KlasaClientOptions = {
   },
   language: "ja_JP",
   prefix: process.env["GUJ_DEFAULT_PREFIX"] ?? "$.",
+  restTimeOffset: 50,
   ws: {
     intents:
       Intents.FLAGS.DIRECT_MESSAGES |
