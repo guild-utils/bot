@@ -13,6 +13,7 @@ const Component: React.FC = () => {
       <FlexConteiner>
         <Cards.Main></Cards.Main>
         <Cards.Sub1></Cards.Sub1>
+        <Cards.Sub2></Cards.Sub2>
       </FlexConteiner>
     </Layout>
   );
