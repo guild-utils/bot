@@ -158,6 +158,8 @@ spec:
           value: $,
         - name: GUJ_MIXER_RPC_SERVER
           value: guj-mixer:50051
+        - name: GUJ_THEME_COLOR
+          value: "0xFF420E"
         - name: GUJ_MIXER_KEYS
           value: /keys
         - name: NODE_ENV

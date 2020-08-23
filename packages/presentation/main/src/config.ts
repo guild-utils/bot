@@ -89,7 +89,7 @@ export const config: KlasaClientOptions = {
       ja_JP: new CommandDataCollectionObject(ja_JP.All),
     })
   ),
-  themeColor: 0xffd700,
+  themeColor: ENV.GUJ_THEME_COLOR,
 };
 const rawtoken = process.env["GUILD_UTILS_J_MAIN_DISCORD_TOKEN"];
 if (!rawtoken) {

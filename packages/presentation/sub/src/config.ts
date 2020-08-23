@@ -97,7 +97,7 @@ export const config: KlasaClientOptions = {
     })
   ),
   disabledCorePieces: ["commands"],
-  themeColor: 0x006c42,
+  themeColor: ENV.GUJ_THEME_COLOR,
   production: process.env.NODE_ENV === "production",
 };
 

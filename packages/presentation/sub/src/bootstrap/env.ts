@@ -14,3 +14,6 @@ export const MONGO_PORT = process.env["MONGO_PORT"];
 export const MONGO_DB = process.env["MONGO_DB"];
 export const MONGO_USER = process.env["MONGO_USER"];
 export const MONGO_PASSWORD = process.env["MONGO_PASSWORD"];
+export const GUJ_THEME_COLOR = process.env["GUJ_THEME_COLOR"]
+  ? Number(process.env["GUJ_THEME_COLOR"])
+  : 0x006c42;

@@ -41,6 +41,8 @@ function initMemberGateway(Client: typeof KlasaClient) {
   Client.use(MemberGatewayPlugin);
 }
 KlasaClient.basePermissions
+  .add(Permissions.FLAGS.ADD_REACTIONS)
+  .add(Permissions.FLAGS.MANAGE_MESSAGES)
   .add(Permissions.FLAGS.CONNECT)
   .add(Permissions.FLAGS.SPEAK)
   .add(Permissions.FLAGS.ATTACH_FILES)
