@@ -19,13 +19,14 @@ spec:
       containers:
       - name: guj-main
         image: tignear/guj-main
-        imagePullPolicy: IfNotPresent
         env:
         - name: GUILD_UTILS_J_MAIN_DISCORD_TOKEN
           valueFrom:
             secretKeyRef:
               name: discord-token
               key: main
+        - name: MONGO_DB
+          value: main
         - name: GUILD_UTILS_J_PROVIDER
           value: mongodb
         - name: MONGO_CONNECTION
@@ -36,7 +37,7 @@ spec:
         - name: GUJ_MIXER_RPC_SERVER
           value: guj-mixer:50051
         - name: GUJ_DEFAULT_PREFIX
-          value: /
+          value: $
         - name: GUJ_MIXER_KEYS
           value: /keys
         - name: NODE_ENV
@@ -66,49 +67,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: guj-db
-spec:
-  selector:
-    matchLabels:
-      app: guj-db
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: guj-db
-    spec:
-      containers:
-      - image: mongo
-        name: guj-db
-        ports:
-        - containerPort: 27017
-          name: mongo
-        volumeMounts:
-        - name: mongo-persistent-storage
-          mountPath: /data/db
-      volumes:
-      - name: mongo-persistent-storage
-        persistentVolumeClaim:
-          claimName: mongo-pv-claim
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: guj-db
-spec:
-  selector:
-    app: guj-db
-  clusterIP: None
-  ports:
-  - name: guj-db
-    protocol: TCP
-    port: 27017
-    targetPort: 27017
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: guj-sub-1
 spec:
   replicas: 1
@@ -127,7 +85,6 @@ spec:
       containers:
       - name: guj-sub
         image: tignear/guj-sub
-        imagePullPolicy: IfNotPresent
         env:
         - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
           valueFrom:
@@ -141,6 +98,8 @@ spec:
             secretKeyRef:
               name: mongo-connection
               key: sub-1
+        - name: MONGO_DB
+          value: sub1
         - name: GUILD_UTILS_J_RPC_SERVER
           value: guj-main:50051
         - name: GUJ_MIXER_RPC_SERVER
@@ -160,46 +119,53 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: guj-mixer
+  name: guj-sub-2
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: guj-mixer
+      app: guj-sub-2
   strategy:
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:
-        app: guj-mixer
+        app: guj-sub-2
     spec:
       containers:
-      - name: guj-mixer
-        image: tignear/guj-mixer
-        imagePullPolicy: IfNotPresent
+      - name: guj-sub
+        image: tignear/guj-sub
         env:
+        - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: sub-2
+        - name: GUILD_UTILS_J_PROVIDER
+          value: mongodb
+        - name: MONGO_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              name: mongo-connection
+              key: sub-2
+        - name: MONGO_DB
+          value: sub2
+        - name: GUILD_UTILS_J_RPC_SERVER
+          value: guj-main:50051
+        - name: GUJ_DEFAULT_PREFIX
+          value: $,
+        - name: GUJ_MIXER_RPC_SERVER
+          value: guj-mixer:50051
         - name: GUJ_MIXER_KEYS
           value: /keys
+        - name: NODE_ENV
+          value: production
         volumeMounts:
         - name: keys
           mountPath: /keys
       volumes:
       - name: keys
         configMap:
-          name: server-keys
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: guj-mixer
-spec:
-  selector:
-    app: guj-mixer
-  clusterIP: None
-  ports:
-  - name: guj-mixer
-    protocol: TCP
-    port: 50051
-    targetPort: 50051
+          name: client-keys
