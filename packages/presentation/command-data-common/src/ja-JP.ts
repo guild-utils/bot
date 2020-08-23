@@ -156,35 +156,38 @@ export const dictionary: CommandData = {
   ...WW.dictionary,
 };
 export const after_dictionary: CommandData = {
-  description: "add,remove,updateの3つのサブコマンドを持っています。",
+  description: "add,remove,update,listの4つのサブコマンドを持っています。",
   more: [
     "このコマンドはmdicコマンドで設定できる辞書での処理の後に処理される辞書の設定です。",
     "単純置換を行います。(順序が結果に影響する場合があります)",
     "add:辞書に単語を追加する。(例:adic add 2 にゃん:にゃーん)",
     "remove:辞書から単語を削除する。(例:adic remove 2)",
     "update:辞書を上書きする。(例:adic update 2 にゃ)",
+    "list:現在の設定内容を確認する。(使い方:adic list)",
   ].join("\n"),
   ...WW.after_dictionary,
 };
 export const before_dictionary: CommandData = {
-  description: "add,remove,updateの3つのサブコマンドを持っています。",
+  description: "add,remove,update,listの4つのサブコマンドを持っています。",
   more: [
     "このコマンドはmdicコマンドで設定できる辞書での処理の前に処理される辞書の設定です。",
     "単純置換を行います。(順序が結果に影響する場合があります)",
     "add:辞書に単語を追加する。(例:bdic add 2 にゃん:にゃーん)",
     "remove:辞書から単語を削除する。(例:bdic remove 2)",
     "update:辞書を上書きする。(例:bdic update 2 にゃ)",
+    "list:現在の設定内容を確認する。(使い方:bdic list)",
   ].join("\n"),
   ...WW.before_dictionary,
 };
 export const main_dictionary: CommandData = {
-  description: "add,remove,updateの3つのサブコマンドを持っています。",
+  description: "add,remove,update,listの4つのサブコマンドを持っています。",
   more: [
     "このコマンドはメインの辞書を設定するコマンドです。",
     "kuromoji.jsによる形態素解析の結果をもとに辞書を参照して置換が行われます。",
     "add:辞書に単語を追加する。(例mdic add にゃん にゃーん)",
-    "remove:辞書から単語を削除する。(例:adic remove にゃん)",
-    "update:辞書を上書きする。(例:adic update にゃん にゃ)",
+    "remove:辞書から単語を削除する。(例:mdic remove にゃん)",
+    "update:辞書を上書きする。(例:mdic update にゃん にゃ)",
+    "list:現在の設定内容を確認する。(使い方:mdic list)",
   ].join("\n"),
   ...WW.main_dictionary,
 };
