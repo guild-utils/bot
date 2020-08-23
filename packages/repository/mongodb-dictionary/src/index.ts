@@ -5,6 +5,9 @@ function recurseObject<R>(obj: any): R {
   if (obj === null) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-explicit-any
     return undefined as any;
+  } else if (typeof obj === "string") {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-explicit-any
+    return toFullWidth(obj) as any;
   } else if (typeof obj !== "object") {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-explicit-any,@typescript-eslint/no-unnecessary-type-assertion
     return obj as any;
@@ -436,8 +439,8 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
     throw new Error("appendBefore failed");
   }
 }
-/*function toFullWidth(elm: string) {
+function toFullWidth(elm: string) {
   return elm.replace(/[A-Za-z0-9!-~]/g, function (s) {
     return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
   });
-}*/
+}
