@@ -25,6 +25,9 @@ export class OpenJtalkGRPCHandle<VoiceKind extends string>
       deadline: Infinity,
     });
     this.input = stream;
+    this.input.on("error", (err) => {
+      console.log("grpcVoiceStream:", err);
+    });
     const transformer = new Transform({
       writableObjectMode: true,
       readableObjectMode: false,

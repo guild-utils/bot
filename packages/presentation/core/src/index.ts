@@ -10,6 +10,8 @@ import { initEngineAndKuromoji } from "./bootstrap/engine";
 import GuildMemberUpdateEvent from "./events/guildMemberUpdate";
 import ResumeConnection from "./events/resumeConnection";
 import VoiceStateUpdateEvent from "./events/voiceStateUpdate";
+import ShowInviteEvent from "./events/klasaReady-show-invite";
+import { DeletedCommand } from "./deleted-command";
 export {
   Engine,
   Start,
@@ -23,6 +25,8 @@ export {
   Text2SpeechMonitor,
   VoiceStateUpdateEvent,
   GuildMemberUpdateEvent,
+  ShowInviteEvent,
   ResumeConnection,
+  DeletedCommand,
   initEngineAndKuromoji,
 };

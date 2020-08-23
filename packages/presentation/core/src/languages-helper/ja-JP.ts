@@ -300,5 +300,6 @@ export default class extends Language {
       ].join("\n");
     },
     COMMAND_SKIP_DESCRIPTION: "現在読み上げている文章を飛ばします。",
+    META_COMMAND_DELETED: "このコマンドは削除されました。",
   };
 }

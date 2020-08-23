@@ -4,5 +4,5 @@ module.exports = {
     return config;
   },
   distDir: 'build',
-  exportTrailingSlash: true,
+  trailingSlash: true,
 };

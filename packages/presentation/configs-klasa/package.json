@@ -27,8 +27,7 @@
     "build": "tsc -p ."
   },
   "files": [
-    "dist",
-    "game-event"
+    "dist"
   ],
   "directories": {
     "lib": "dist"

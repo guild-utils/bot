@@ -148,6 +148,10 @@ const VoiceDictionaryCategory = {
   category: "Voice",
   subCategory: "Dictionary",
 };
+const VoiceDictionaryOldCategory = {
+  category: "Voice",
+  subCategory: "DictionaryOld",
+};
 export const end: WWCommandData = {
   receiver: CoreCommandReceiver,
   name: "end",
@@ -181,31 +185,27 @@ export const add_word: WWCommandData = {
   receiver: ["main"],
   name: "add_word",
   runIn: RunInServer,
-  usage:
-    "<word:string> [to:string] [pos:string] [pos_detail_1:string] [pos_detail_2:string] [pos_detail_3:string]",
-  usageDelim: " ",
+  usage: "",
   aliases: ["aw"],
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const add_word_after: WWCommandData = {
   receiver: ["main"],
   name: "add_word_after",
   runIn: RunInServer,
-  usage: "<word:string> [to:string]",
-  usageDelim: " ",
+  usage: "",
   aliases: ["awa"],
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const add_word_before: WWCommandData = {
   receiver: ["main"],
   name: "add_word_before",
   runIn: RunInServer,
-  usage: "<word:string> [to:string]",
-  usageDelim: " ",
+  usage: "",
   aliases: ["awb"],
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const clear: WWCommandData = {
@@ -213,34 +213,34 @@ export const clear: WWCommandData = {
   permissionLevel: 6,
   name: "clear",
   runIn: RunInServer,
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const delete_word: WWCommandData = {
   receiver: ["main"],
   name: "delete_word",
   runIn: RunInServer,
-  usage: "<word:string>",
+  usage: "",
   aliases: ["dw"],
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const delete_word_after: WWCommandData = {
   receiver: ["main"],
   name: "delete_word_after",
   runIn: RunInServer,
-  usage: "<word:string>",
+  usage: "",
   aliases: ["dwa"],
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const delete_word_before: WWCommandData = {
   receiver: ["main"],
   name: "delete_word_before",
   runIn: RunInServer,
-  usage: "<word:string>",
+  usage: "",
   aliases: ["dwb"],
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const exportC: WWCommandData = {
@@ -248,7 +248,7 @@ export const exportC: WWCommandData = {
   permissionLevel: 6,
   name: "export",
   runIn: RunInServer,
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const importC: WWCommandData = {
@@ -258,7 +258,7 @@ export const importC: WWCommandData = {
   cooldown: 30,
   name: "import",
   runIn: RunInServer,
-  ...VoiceDictionaryCategory,
+  ...VoiceDictionaryOldCategory,
 };
 
 export const jumanpp: WWCommandData = {
@@ -276,7 +276,7 @@ export const kuromoji: WWCommandData = {
   runIn: RunInServer,
   ...VoiceDictionaryCategory,
 };
-export const VoiceDictionary = [
+export const VoiceDictionaryOld = [
   add_word,
   add_word_after,
   add_word_before,
@@ -286,8 +286,53 @@ export const VoiceDictionary = [
   delete_word_before,
   exportC,
   importC,
+];
+export const dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "dictionary",
+  usage: "<export|import|clear>",
+  permissionLevel: 6,
+  aliases: ["dic", "dict"],
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+
+const ABUsage =
+  "<add|remove|update|list> [index:number|entey:simple-dict-entry] [entry:simple-dict-entry|to:string]";
+export const after_dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "after-dictionary",
+  aliases: ["adic"],
+  usage: ABUsage,
+  usageDelim: " ",
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+export const before_dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "before-dictionary",
+  aliases: ["bdic"],
+  usage: ABUsage,
+  usageDelim: " ",
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+export const main_dictionary: WWCommandData = {
+  receiver: ["main"],
+  name: "main-dictionary",
+  aliases: ["mdic"],
+  usage: "<add|remove|update|list> [key:string] [entry:main-dict-entry]",
+  usageDelim: " ",
+  runIn: RunInServer,
+  ...VoiceDictionaryCategory,
+};
+export const VoiceDictionary = [
   jumanpp,
   kuromoji,
+  dictionary,
+  after_dictionary,
+  main_dictionary,
+  before_dictionary,
 ];
 export const All = [
   ...Core,
@@ -295,4 +340,5 @@ export const All = [
   userconf,
   ...VoiceBasic,
   ...VoiceDictionary,
+  ...VoiceDictionaryOld,
 ];
