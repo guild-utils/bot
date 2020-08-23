@@ -21,21 +21,6 @@ export const config: KlasaClientOptions = {
   },
   providers: {
     default: ENV.GUILD_UTILS_J_PROVIDER,
-    postgresql:
-      ENV.GUILD_UTILS_J_PROVIDER === "postgresql"
-        ? {
-            host: ENV.POSTGRES_HOST,
-            port: ENV.POSTGRES_PORT,
-            database: ENV.POSTGRES_DATABASE,
-            user: ENV.POSTGRES_USER,
-            password: ENV.POSTGRES_PASSWORD,
-            options: {
-              max: ENV.POSTGRES_MAX,
-              idleTimeoutMillis: ENV.POSTGRES_IDLE_TIMEOUT,
-              connectionTimeoutMillis: 2000,
-            },
-          }
-        : undefined,
     mongodb:
       ENV.GUILD_UTILS_J_PROVIDER === "mongodb"
         ? {
