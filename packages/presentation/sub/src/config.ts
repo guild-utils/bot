@@ -35,6 +35,17 @@ export const config: KlasaClientOptions = {
             },
           }
         : undefined,
+    mongodb:
+      ENV.GUILD_UTILS_J_PROVIDER === "mongodb"
+        ? {
+            connectionString: ENV.MONGO_CONNECTION,
+            host: ENV.MONGO_HOST,
+            port: ENV.MONGO_PORT,
+            db: ENV.MONGO_DB,
+            user: ENV.MONGO_USER,
+            password: ENV.MONGO_PASSWORD,
+          }
+        : undefined,
   },
   /**
    * Console Options
