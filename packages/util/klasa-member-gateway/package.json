@@ -1,0 +1,44 @@
+{
+  "name": "klasa-member-gateway",
+  "version": "1.0.0",
+  "description": "Klasa Member Gateway: a simple plugin for the klasa bot framework that adds an efficient per-member settings gateway.",
+  "homepage": "https://klasa.js.org/",
+  "bugs": {
+    "url": "https://github.com/dirigeants/klasa-member-gateway/issues"
+  },
+  "license": "MIT",
+  "author": "Dirigeants",
+  "main": "dist/index.js",
+  "types": "typings/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dirigeants/klasa-member-gateway.git"
+  },
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "docs": "npx dg --source src --custom guides/.docconfig.json --output dist/docs.json --logging",
+    "build": "tsc -p ."
+  },
+  "peerDependencies": {
+    "klasa": "^0.5.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-config-klasa": "dirigeants/klasa-lint",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "klasa": "^0.5.0",
+    "prettier": "^2.0.5",
+    "typescript": "^3.8.3"
+  },
+  "engines": {
+    "node": ">=8.6.0"
+  },
+  "private": "true"
+}

@@ -1,0 +1,173 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guj-main
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guj-main
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: guj-main
+    spec:
+      containers:
+      - name: guj-main
+        image: tignear/guj-main
+        env:
+        - name: GUILD_UTILS_J_MAIN_DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: main
+        - name: MONGO_DB
+          value: main
+        - name: GUILD_UTILS_J_PROVIDER
+          value: mongodb
+        - name: MONGO_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              name: mongo-connection
+              key: main
+        - name: GUJ_MIXER_RPC_SERVER
+          value: guj-mixer:50051
+        - name: GUJ_DEFAULT_PREFIX
+          value: $
+        - name: GUJ_MIXER_KEYS
+          value: /keys
+        - name: NODE_ENV
+          value: production
+        volumeMounts:
+        - name: keys
+          mountPath: /keys
+      volumes:
+      - name: keys
+        configMap:
+          name: client-keys
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guj-main
+spec:
+  ports:
+    - name: guj-main
+      protocol: TCP
+      port: 50051
+      targetPort: 50051
+  selector:
+    app: guj-main
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guj-sub-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guj-sub-1
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: guj-sub-1
+    spec:
+      containers:
+      - name: guj-sub
+        image: tignear/guj-sub
+        env:
+        - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: sub-1
+        - name: GUILD_UTILS_J_PROVIDER
+          value: mongodb
+        - name: MONGO_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              name: mongo-connection
+              key: sub-1
+        - name: MONGO_DB
+          value: sub1
+        - name: GUILD_UTILS_J_RPC_SERVER
+          value: guj-main:50051
+        - name: GUJ_MIXER_RPC_SERVER
+          value: guj-mixer:50051
+        - name: GUJ_MIXER_KEYS
+          value: /keys
+        - name: NODE_ENV
+          value: production
+        volumeMounts:
+        - name: keys
+          mountPath: /keys
+      volumes:
+      - name: keys
+        configMap:
+          name: client-keys
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guj-sub-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guj-sub-2
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: guj-sub-2
+    spec:
+      containers:
+      - name: guj-sub
+        image: tignear/guj-sub
+        env:
+        - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: sub-2
+        - name: GUILD_UTILS_J_PROVIDER
+          value: mongodb
+        - name: MONGO_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              name: mongo-connection
+              key: sub-2
+        - name: MONGO_DB
+          value: sub2
+        - name: GUILD_UTILS_J_RPC_SERVER
+          value: guj-main:50051
+        - name: GUJ_DEFAULT_PREFIX
+          value: $,
+        - name: GUJ_MIXER_RPC_SERVER
+          value: guj-mixer:50051
+        - name: GUJ_THEME_COLOR
+          value: "0xFF420E"
+        - name: GUJ_MIXER_KEYS
+          value: /keys
+        - name: NODE_ENV
+          value: production
+        volumeMounts:
+        - name: keys
+          mountPath: /keys
+      volumes:
+      - name: keys
+        configMap:
+          name: client-keys

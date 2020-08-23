@@ -1,0 +1,13 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+        "types": ["node", "klasa","discord.js"],
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "baseUrl": "./src",
+        
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}

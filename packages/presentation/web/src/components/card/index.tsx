@@ -1,7 +1,6 @@
 import Icon from "../icon";
 import styled from "styled-components";
 import tw from "tailwind.macro";
-import Link from "next/link";
 
 type Props = {
   src: string;

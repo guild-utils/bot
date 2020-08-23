@@ -47,14 +47,20 @@ export interface DictionaryRepository {
   getMain(guild: string): Promise<Map<string, DictionaryEntryA>>;
   getAfter(guild: string): Promise<DictionaryEntryB[]>;
   removeAll(guild: string): Promise<void>;
-  removeBefore(guild: string, key: string): Promise<string | undefined>;
+  removeBefore(
+    guild: string,
+    key: number
+  ): Promise<DictionaryEntryB | undefined>;
   removeMain(guild: string, key: string): Promise<DictionaryEntryA | undefined>;
-  removeAfter(guild: string, key: string): Promise<string | undefined>;
+  removeAfter(
+    guild: string,
+    key: number
+  ): Promise<DictionaryEntryB | undefined>;
   updateBefore(
     guild: string,
-    key: string,
-    to: string
-  ): Promise<[string | undefined, string]>;
+    key: number,
+    entry: DictionaryEntryB | string
+  ): Promise<[DictionaryEntryB, DictionaryEntryB] | undefined>;
   updateMain(
     guild: string,
     key: string,
@@ -62,7 +68,17 @@ export interface DictionaryRepository {
   ): Promise<[DictionaryEntryA | undefined, DictionaryEntryA]>;
   updateAfter(
     guild: string,
-    key: string,
-    to: string
-  ): Promise<[string | undefined, string]>;
+    key: number,
+    entry: DictionaryEntryB | string
+  ): Promise<[DictionaryEntryB, DictionaryEntryB] | undefined>;
+  appendBefore(
+    guild: string,
+    entry: DictionaryEntryB,
+    pos?: number
+  ): Promise<DictionaryEntryB>;
+  appendAfter(
+    guild: string,
+    entry: DictionaryEntryB,
+    pos?: number
+  ): Promise<DictionaryEntryB>;
 }

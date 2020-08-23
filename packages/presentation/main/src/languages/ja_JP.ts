@@ -30,10 +30,10 @@ export default class extends CoreLanguage {
     COMMAND_ADD_WORD_SUCCESS_WITH_CREATE: (from: string, to: string) =>
       `「${from}」から「${to}」への変換を辞書に追加しました。`,
     COMMAND_ADD_WORD_SUCCESS_WITH_OVERWRITE: (
-      from: string,
-      old: string,
-      to: string
-    ) => `「${from}」からの変換を「${old}」から「${to}」に変更しました。`,
+      from: { from: string; to: string },
+      to: { from: string; to: string }
+    ) =>
+      `「${from.from}」から「${from.to}」への変換を「${to.from}」から「${to.to}」への変換で上書きしました。`,
     COMMAND_DELETE_WORD_DESCRIPTION: "単語を辞書から削除します。",
     COMMAND_DELETE_WORD_SUCCESS_WITH_DELETE: (from: string, to: string) =>
       `「${from}」から「${to}」への変換を削除しました。`,
@@ -46,6 +46,20 @@ export default class extends CoreLanguage {
     COMMAND_IMPORT_COMPLETE: "インポートが完了しました。",
     COMMAND_EXPORT_SUCCESS: "エクスポートが完了しました。",
     COMMAND_CLEAR_SUCCESS: "辞書をすべて削除しました。",
+    COMMAND_MAIN_DICT_INVALID_REMOVE_FORMAT:
+      "第二引数は不要です。「mdic remove 削除したい単語」のように使用してください。",
+    INVALID_ADD_FORMAT:
+      "「数字 変換前の単語,変換後の単語」あるいは、「変換後の単語」のように使用してください。",
+    INVALID_INDEX_RANGE: "その番号のエントリーは存在しません。",
+    INVALID_REMOVE_FORMAT:
+      "第二引数は不要です。また第一引数には必ず削除したいエントリーの番号を指定する必要があります。",
+    INVALID_UPDATE_FORMAT:
+      "第一引数には必ず更新したいエントリーの番号を指定する必要があります。",
+    INVALID_SIMPLE_DICT_ENTRY:
+      "「変換前の単語,変換後の単語」といったフォーマットである必要があります。",
+    INVALID_MAIN_DICT_ENTRY:
+      "「変換後の単語,フィルター,フィルター1,フィルター2,フィルター3」といったフォーマットである必要があります。\nなお、フィルターはオプションです。",
+    COMMAND_MAIN_DICT_REQUIRE_KEY: "第一引数は必須です。",
     ...this.CORE_MESSAGES,
   };
   constructor(

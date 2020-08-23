@@ -35,6 +35,17 @@ export const config: KlasaClientOptions = {
             },
           }
         : undefined,
+    mongodb:
+      ENV.GUILD_UTILS_J_PROVIDER === "mongodb"
+        ? {
+            connectionString: ENV.MONGO_CONNECTION,
+            host: ENV.MONGO_HOST,
+            port: ENV.MONGO_PORT,
+            db: ENV.MONGO_DB,
+            user: ENV.MONGO_USER,
+            password: ENV.MONGO_PASSWORD,
+          }
+        : undefined,
   },
   /**
    * Console Options
@@ -54,6 +65,7 @@ export const config: KlasaClientOptions = {
   },
   language: "ja_JP",
   prefix: process.env["GUJ_DEFAULT_PREFIX"] ?? "$.",
+  restTimeOffset: 50,
   ws: {
     intents:
       Intents.FLAGS.DIRECT_MESSAGES |
@@ -86,7 +98,7 @@ export const config: KlasaClientOptions = {
     })
   ),
   disabledCorePieces: ["commands"],
-  themeColor: 0x006c42,
+  themeColor: ENV.GUJ_THEME_COLOR,
   production: process.env.NODE_ENV === "production",
 };
 

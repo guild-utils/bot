@@ -1,0 +1,35 @@
+{
+  "name": "discordjs-gui",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "tignear",
+  "main": "./dist/base.js",
+  "types": "./dist/base.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "build": "tsc -p ."
+  },
+  "peerDependencies": {
+    "discord.js": "^12.3.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5",
+    "discord.js": "^12.3.1",
+    "typescript": "^3.8.3"
+  },
+  "engines": {
+    "node": ">=8.6.0"
+  },
+  "private": "true",
+  "dependencies": {
+  }
+}

@@ -19,21 +19,18 @@ export const config: KlasaClientOptions = {
     warn: true,
     wtf: true,
   },
+  restTimeOffset: 50,
   providers: {
     default: ENV.GUILD_UTILS_J_PROVIDER,
-    postgresql:
-      ENV.GUILD_UTILS_J_PROVIDER === "postgresql"
+    mongodb:
+      ENV.GUILD_UTILS_J_PROVIDER === "mongodb"
         ? {
-            host: ENV.POSTGRES_HOST,
-            port: ENV.POSTGRES_PORT,
-            database: ENV.POSTGRES_DATABASE,
-            user: ENV.POSTGRES_USER,
-            password: ENV.POSTGRES_PASSWORD,
-            options: {
-              max: ENV.POSTGRES_MAX,
-              idleTimeoutMillis: ENV.POSTGRES_IDLE_TIMEOUT,
-              connectionTimeoutMillis: 2000,
-            },
+            connectionString: ENV.MONGO_CONNECTION,
+            host: ENV.MONGO_HOST,
+            port: ENV.MONGO_PORT,
+            db: ENV.MONGO_DB,
+            user: ENV.MONGO_USER,
+            password: ENV.MONGO_PASSWORD,
           }
         : undefined,
   },
@@ -74,23 +71,11 @@ export const config: KlasaClientOptions = {
   },
   commandDataCollection: new CommandDataCollectionProxy(
     new CommandDataCollectionProviderObject({
-      ww: new CommandDataCollectionObject([
-        ...ww.Core,
-        ...ww.MemberSettings,
-        ww.userconf,
-        ...ww.VoiceBasic,
-        ...ww.VoiceDictionary,
-      ]),
-      ja_JP: new CommandDataCollectionObject([
-        ...ja_JP.Core,
-        ...ja_JP.MemberSettings,
-        ja_JP.userconf,
-        ...ja_JP.VoiceBasic,
-        ...ja_JP.VoiceDictionary,
-      ]),
+      ww: new CommandDataCollectionObject(ww.All),
+      ja_JP: new CommandDataCollectionObject(ja_JP.All),
     })
   ),
-  themeColor: 0xffd700,
+  themeColor: ENV.GUJ_THEME_COLOR,
 };
 const rawtoken = process.env["GUILD_UTILS_J_MAIN_DISCORD_TOKEN"];
 if (!rawtoken) {

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guj-mixer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guj-mixer
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: guj-mixer
+    spec:
+      containers:
+      - name: guj-mixer
+        image: tignear/guj-mixer
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GUJ_MIXER_KEYS
+          value: /keys
+        volumeMounts:
+        - name: keys
+          mountPath: /keys
+      volumes:
+      - name: keys
+        configMap:
+          name: server-keys
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guj-mixer
+spec:
+  selector:
+    app: guj-mixer
+  clusterIP: None
+  ports:
+  - name: guj-mixer
+    protocol: TCP
+    port: 50051
+    targetPort: 50051
