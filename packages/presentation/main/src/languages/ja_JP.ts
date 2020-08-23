@@ -49,16 +49,16 @@ export default class extends CoreLanguage {
     COMMAND_MAIN_DICT_INVALID_REMOVE_FORMAT:
       "第二引数は不要です。「mdic remove 削除したい単語」のように使用してください。",
     INVALID_ADD_FORMAT:
-      "「数字 変換前の単語:変換後の単語」あるいは、「変換後の単語」のように使用してください。",
+      "「数字 変換前の単語,変換後の単語」あるいは、「変換後の単語」のように使用してください。",
     INVALID_INDEX_RANGE: "その番号のエントリーは存在しません。",
     INVALID_REMOVE_FORMAT:
       "第二引数は不要です。また第一引数には必ず削除したいエントリーの番号を指定する必要があります。",
     INVALID_UPDATE_FORMAT:
       "第一引数には必ず更新したいエントリーの番号を指定する必要があります。",
     INVALID_SIMPLE_DICT_ENTRY:
-      "「変換前の単語:変換後の単語」といったフォーマットである必要があります。",
+      "「変換前の単語,変換後の単語」といったフォーマットである必要があります。",
     INVALID_MAIN_DICT_ENTRY:
-      "「変換後の単語:フィルター:フィルター1:フィルター2:フィルター3」といったフォーマットである必要があります。\nなお、フィルターはオプションです。",
+      "「変換後の単語,フィルター,フィルター1,フィルター2,フィルター3」といったフォーマットである必要があります。\nなお、フィルターはオプションです。",
     COMMAND_MAIN_DICT_REQUIRE_KEY: "第一引数は必須です。",
     ...this.CORE_MESSAGES,
   };
