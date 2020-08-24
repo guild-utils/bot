@@ -6,6 +6,10 @@ const Component: React.FC = () => (
   <Layout>
     <Head>
       <title>GuildUtilsJ</title>
+      <meta
+        name="description"
+        content="discord読み上げbot GuildUtilsJは3つのボイスチャンネルで読み上げが可能で、他にも高度な辞書機能などを持っています。"
+      />
     </Head>
     <FirstView></FirstView>
   </Layout>

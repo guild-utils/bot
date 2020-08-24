@@ -12,7 +12,7 @@ const Component = (): JSX.Element => (
   <Link href="/" passHref>
     <Title>
       <IconWrapper>
-        <Icon src="/main-icon.webp" width="24"></Icon>
+        <Icon src="/main-icon.webp" width="24" alt=""></Icon>
       </IconWrapper>
       GuildUtilsJ
     </Title>
