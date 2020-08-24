@@ -7,6 +7,7 @@ import {
 import { DictionaryEntryA, DictionaryEntryB } from "domain_configs";
 import { MessageEmbed } from "discord.js";
 import { DependencyContainer } from "tsyringe";
+import * as LANG_KEYS from "../lang_keys";
 type PageValueM = DictionaryEntryA & { from: string };
 type PageValueBA = DictionaryEntryB & { index: number };
 function setMetaData<Page>(
@@ -79,6 +80,9 @@ export function initMainDictionaryGui(
     help: (context, options) => {
       const embed = new MessageEmbed();
       setMetaData(embed, `Help`, context, options);
+      embed.setDescription(
+        context.member.client.languages.get(LANG_KEYS.PAGINATION_HELP)
+      );
       return embed;
     },
   });
@@ -143,6 +147,9 @@ export function initBADictionaryGui(
     help: (context, options) => {
       const embed = new MessageEmbed();
       setMetaData(embed, `Help`, context, options);
+      embed.setDescription(
+        context.member.client.languages.get(LANG_KEYS.PAGINATION_HELP)
+      );
       return embed;
     },
   });
@@ -157,6 +164,10 @@ export function initBADictionaryGui(
     help: (context, options) => {
       const embed = new MessageEmbed();
       setMetaData(embed, `Help`, context, options);
+      embed.setDescription(
+        context.member.client.languages.get(LANG_KEYS.PAGINATION_HELP)
+      );
+
       return embed;
     },
   });

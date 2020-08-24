@@ -279,6 +279,7 @@ export function initializeGui<
     contentRouter("Exit", [
       "q",
       "end",
+      "halt",
       "quit",
       "exit",
       "close",
