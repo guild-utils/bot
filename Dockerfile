@@ -76,7 +76,7 @@ COPY packages/presentation/klasa-core-command-rewrite/package.json ./packages/pr
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/main/package.json ./packages/presentation/main/package.json
 
-RUN  lerna bootstrap 
+RUN  lerna bootstrap && apk del .ojt
 
 COPY kick.js ./
 COPY .eslintrc.json ./
@@ -109,8 +109,7 @@ COPY packages/presentation/main ./packages/presentation/main
 RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
-    && yarn cache clean \
-    && apk del .ojt
+    && yarn cache clean 
 
 ENV GUILD_UTILS_J_ROLE main
 
