@@ -43,7 +43,8 @@ export class Service {
       const request: ReadNameRequest = call.request;
       const guild = request.getGuild();
       const user = request.getUser();
-      const nick = request.getNickname();
+      const nickRaw = request.getNickname();
+      const nick = nickRaw === "" ? undefined : nickRaw;
       const username = request.getUsername();
       const res = await this.repo.getUserReadName(guild, user, nick, username);
       const r = new ReadName();

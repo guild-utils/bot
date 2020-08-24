@@ -81,7 +81,7 @@ export function initMainDictionaryGui(
       const embed = new MessageEmbed();
       setMetaData(embed, `Help`, context, options);
       embed.setDescription(
-        context.member.client.languages.get(LANG_KEYS.PAGINATION_HELP)
+        context.member.guild.language.get(LANG_KEYS.PAGINATION_HELP)
       );
       return embed;
     },
@@ -148,7 +148,7 @@ export function initBADictionaryGui(
       const embed = new MessageEmbed();
       setMetaData(embed, `Help`, context, options);
       embed.setDescription(
-        context.member.client.languages.get(LANG_KEYS.PAGINATION_HELP)
+        context.member.guild.language.get(LANG_KEYS.PAGINATION_HELP)
       );
       return embed;
     },
@@ -165,7 +165,7 @@ export function initBADictionaryGui(
       const embed = new MessageEmbed();
       setMetaData(embed, `Help`, context, options);
       embed.setDescription(
-        context.member.client.languages.get(LANG_KEYS.PAGINATION_HELP)
+        context.member.guild.language.get(LANG_KEYS.PAGINATION_HELP)
       );
 
       return embed;
