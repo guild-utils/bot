@@ -38,7 +38,9 @@ export default class extends Document {
   render(): JSX.Element {
     return (
       <html>
-        <Head></Head>
+        <Head>
+          <link rel="icon" type="image/webp" href="/main-icon.webp"></link>
+        </Head>
         <body className="bg-gray-800 text-gray-200">
           <Main />
           <NextScript />
