@@ -33,7 +33,7 @@ const Component: React.FC<Props> = ({ src, children, title, inviteURL }) => {
       <ContentWrapper>
         <Title>
           <IconWrapper>
-            <Icon src={src} width="46"></Icon>
+            <Icon src={src} width="46" alt="bot-icon"></Icon>
           </IconWrapper>
           {title}
         </Title>
