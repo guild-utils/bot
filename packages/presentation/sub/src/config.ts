@@ -1,12 +1,6 @@
 import { KlasaClientOptions } from "klasa";
 import { Intents } from "discord.js";
-import {
-  CommandDataCollectionProviderObject,
-  CommandDataCollectionObject,
-  ww,
-  ja_JP,
-} from "presentation_command-data-common";
-import { CommandDataCollectionProxy } from "presentation_command-data-discord";
+import { ww, ja_JP } from "presentation_command-data-common";
 import * as ENV from "./bootstrap/env";
 export const config: KlasaClientOptions = {
   gateways: {},
@@ -79,24 +73,13 @@ export const config: KlasaClientOptions = {
       extendedHelp: false as any,
     },
   },
-  commandDataCollection: new CommandDataCollectionProxy(
-    new CommandDataCollectionProviderObject({
-      ww: new CommandDataCollectionObject([
-        ...ww.Core,
-        ...ww.MemberSettings,
-        ww.userconf,
-        ...ww.VoiceBasic,
-        ...ww.VoiceDictionary,
-      ]),
-      ja_JP: new CommandDataCollectionObject([
-        ...ja_JP.Core,
-        ...ja_JP.MemberSettings,
-        ja_JP.userconf,
-        ...ja_JP.VoiceBasic,
-        ...ja_JP.VoiceDictionary,
-      ]),
-    })
-  ),
+  allCommands: {
+    ww: ww.All.filter((e) => e.receiver.includes("sub")),
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    ja_JP: ja_JP.All.filter((e) =>
+      e.receiver ? e.receiver.includes("sub") : true
+    ),
+  },
   disabledCorePieces: ["commands"],
   themeColor: ENV.GUJ_THEME_COLOR,
   production: process.env.NODE_ENV === "production",

@@ -3,7 +3,7 @@ import { KlasaMessage } from "klasa";
 import { Duration } from "klasa";
 import { version as klasaVersion } from "klasa";
 import { version as discordVersion } from "discord.js";
-import { CommandEx } from "../../../commandEx";
+import { CommandEx } from "../../commandEx";
 
 export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {

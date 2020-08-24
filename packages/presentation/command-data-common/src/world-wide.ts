@@ -3,7 +3,7 @@ export type WWCommandData = {
   name: string;
   runIn: ("text" | "dm" | "news")[];
   category: string;
-  subCategory: string;
+  subCategory?: string;
   aliases?: string[];
   usage?: string;
   guarded?: boolean;
@@ -60,14 +60,12 @@ const CoreCommandBase: {
   guarded: true;
   runIn: ["text", "dm", "news"];
   receiver: ["main", "sub"];
-  category: "General";
-  subCategory: "Chat Bot Info";
+  category: "ChatBotInfo";
 } = {
   runIn: ["text", "dm", "news"],
   guarded: true,
   receiver: CoreCommandReceiver,
-  category: "General",
-  subCategory: "Chat Bot Info",
+  category: "ChatBotInfo",
 };
 
 export const help: WWCommandData = {
@@ -103,7 +101,7 @@ export const conf: WWCommandData = {
   runIn: RunInServer,
   receiver: ["main", "sub"],
   category: "Settings",
-  subCategory: "Server Settings",
+  subCategory: "ServerSettings",
 };
 export const Core = [help, info, invite, ping, stats, conf];
 export const memconf: WWCommandData = {
@@ -115,7 +113,7 @@ export const memconf: WWCommandData = {
   aliases: ["gmconf"],
   usageDelim: " ",
   category: "Settings",
-  subCategory: "Server Member Settings",
+  subCategory: "ServerMemberSettings",
 };
 export const memconf_member: WWCommandData = {
   name: "memconf.member",
@@ -127,7 +125,7 @@ export const memconf_member: WWCommandData = {
   aliases: ["memconf.m", "gmconf.m"],
   usageDelim: " ",
   category: "Settings",
-  subCategory: "Server Member Settings",
+  subCategory: "ServerMemberSettings",
 };
 export const MemberSettings = [memconf, memconf_member];
 export const userconf: WWCommandData = {
@@ -138,7 +136,7 @@ export const userconf: WWCommandData = {
   usage: "<set|show|remove|reset> (key:key) (value:value) [...]",
   usageDelim: " ",
   category: "Settings",
-  subCategory: "User Settings",
+  subCategory: "UserSettings",
 };
 const VoiceBasicCategory = {
   category: "Voice",

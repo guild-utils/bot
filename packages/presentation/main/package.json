@@ -18,7 +18,6 @@
     "moment-timezone": "^0.5.28",
     "mongodb": "^3.6.0",
     "presentation_command-data-common": "^1.0.0",
-    "presentation_command-data-discord": "^1.0.0",
     "presentation_core": "^1.0.0",
     "presentation_klasa-core-command-rewrite": "^1.0.0",
     "presentation_protos": "^1.0.0",

@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CommandStore, KlasaMessage, Language } from "klasa";
-import { CommandEx } from "../../../commandEx";
+import { CommandEx } from "../../commandEx";
 import { MessageEmbed } from "discord.js";
 import {
   ReturnType,
   CategorizedCommands,
   categorizeCommand,
-} from "../../../arguments/category";
+} from "../../arguments/category";
 import { Command } from "klasa";
+import { CommandData } from "presentation_command-data-common";
 export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory);
@@ -40,23 +42,28 @@ export default class extends CommandEx {
           )
         )
         .addFields(
-          Object.values(this.categorizeCommand().category).map((e) => {
-            return {
-              name: e!.name,
-              value: [
-                ...Object.values(e!.subCategory).map(
-                  (e) => `__\`\`${e!.name}\`\`__`
-                ),
-                ...e!.direct.map((e) => e.name).map((e) => `\`\`${e}\`\``),
-              ].join(" "),
-            };
-          })
+          Object.values(this.categorizeCommand(msg.language.name).category).map(
+            (e) => {
+              return {
+                name: e!.name,
+                value: [
+                  ...Object.values(e!.subCategory).map(
+                    (e) => `__\`\`${e!.name}\`\`__`
+                  ),
+                  ...e!.direct.map((e) => e.name).map((e) => `\`\`${e}\`\``),
+                ].join(" "),
+              };
+            }
+          )
         )
         .addFields(
-          this.categorizeCommand().direct.map((e) => {
+          this.categorizeCommand(msg.language.name).direct.map((e) => {
             return {
               name: e.name,
-              value: resolveFunctionOrString(e.description, msg),
+              value: resolveFunctionOrString(
+                e.description ?? msg.language.get("NO_DESCRIPTION_PROVIDED"),
+                msg
+              ),
             };
           })
         )
@@ -69,8 +76,11 @@ export default class extends CommandEx {
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
-    if (cmd instanceof Command) {
-      const embed = buildEmbedWithCmd(cmd, msg);
+    if (cmd instanceof CommandEx) {
+      const cmddata = this.client.options.allCommands[msg.language.name]?.find(
+        (e) => e.name === cmd.name
+      );
+      const embed = buildEmbedWithCmd(cmddata ?? cmd.metadata, msg);
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
@@ -87,7 +97,10 @@ export default class extends CommandEx {
           cmd_.command.map((e) => {
             return {
               name: e.name,
-              value: resolveFunctionOrString(e.description, msg),
+              value: resolveFunctionOrString(
+                e.description ?? msg.language.get("NO_DESCRIPTION_PROVIDED"),
+                msg
+              ),
             };
           })
         )
@@ -124,7 +137,10 @@ export default class extends CommandEx {
         >).direct.map((e) => {
           return {
             name: e.name,
-            value: resolveFunctionOrString(e.description, msg),
+            value: resolveFunctionOrString(
+              e.description ?? msg.language.get("NO_DESCRIPTION_PROVIDED"),
+              msg
+            ),
           };
         })
       )
@@ -137,8 +153,8 @@ export default class extends CommandEx {
     await setCommonConf(embed, msg);
     return msg.sendEmbed(embed);
   }
-  categorizeCommand(): CategorizedCommands {
-    return categorizeCommand(this.client.commands);
+  categorizeCommand(lang: string): CategorizedCommands {
+    return categorizeCommand(lang, this.client.options.allCommands[lang]);
   }
 }
 function setCommonConf(embed: MessageEmbed, msg: KlasaMessage): Promise<void> {
@@ -153,12 +169,11 @@ function resolveFunctionOrString(
   return typeof x === "string" ? x : x(msg.language);
 }
 
-function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
+function buildEmbedWithCmd(cmd: CommandData, msg: KlasaMessage): MessageEmbed {
   const embed = new MessageEmbed();
+  const aliases = cmd.aliases ?? [];
   if (cmd.name) {
-    embed.setTitle(
-      cmd.name + (cmd.aliases.length ? `(${cmd.aliases.join(",")})` : "")
-    );
+    embed.setTitle(cmd.name + (aliases.length ? `(${aliases.join(",")})` : ""));
   }
   if (cmd.description) {
     const resolved = resolveFunctionOrString(cmd.description, msg);
@@ -167,10 +182,13 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
     }
   }
   if (cmd.usage) {
-    embed.addField("Usage", cmd.usage.fullUsage(msg));
+    embed.addField(
+      "Usage",
+      buildUsage(msg, [cmd.name, ...aliases], cmd.usage, cmd.usageDelim)
+    );
   }
-  if (cmd.extendedHelp) {
-    const resolved = resolveFunctionOrString(cmd.extendedHelp, msg);
+  if (cmd.more) {
+    const resolved = resolveFunctionOrString(cmd.more, msg);
     if (resolved) {
       embed.addField("More Info", resolved);
     }
@@ -186,4 +204,24 @@ function buildEmbedWithCmd(cmd: Command, msg: KlasaMessage): MessageEmbed {
   }
 
   return embed;
+}
+function buildUsage(
+  message: KlasaMessage,
+  names: string[],
+  usageString: string,
+  usageDelim: string | undefined
+) {
+  const commands = names.length === 1 ? names[0] : `《${names.join("|")}》`;
+  const deliminatedUsage =
+    usageString !== "" ? ` ${usageString.split(" ").join(usageDelim)}` : "";
+  const nearlyFullUsage = `${commands}${deliminatedUsage}`;
+  let prefix = message.prefixLength
+    ? message.content.slice(0, message.prefixLength)
+    : (message.guildSettings.get("prefix") as string);
+  if (message.prefix === message.client.mentionPrefix) {
+    prefix = `@${message.client.user!.tag}`;
+  } else if (Array.isArray(prefix)) {
+    [prefix] = prefix;
+  }
+  return `${prefix.length !== 1 ? `${prefix} ` : prefix}${nearlyFullUsage}`;
 }
