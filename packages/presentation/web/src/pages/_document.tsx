@@ -37,7 +37,7 @@ export default class extends Document {
   }
   render(): JSX.Element {
     return (
-      <html>
+      <html lang="ja">
         <Head>
           <link rel="icon" type="image/webp" href="/main-icon.webp"></link>
         </Head>
