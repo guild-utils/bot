@@ -15,6 +15,7 @@ const Component = (): JSX.Element => (
   <FirstView>
     <Catchphrase>ちょっと便利な読み上げBot</Catchphrase>
     <MoreInfo>
+      3つのボイスチャンネルで読み上げが可能。
       サーバーごとに読み上げの設定を変えたり、メンバーの設定を変えてあげたり。
       <br />
       読み上げのためにDiscordのニックネームとは別に名前を指定できたり。
