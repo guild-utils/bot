@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "fs-nextra": "^0.5.1",
-    "presentation_command-data-common": "^1.0.0"    
+    "domain_command-data": "^1.0.0"    
   },
   "devDependencies": {
     "@types/node": "^14.0.26",

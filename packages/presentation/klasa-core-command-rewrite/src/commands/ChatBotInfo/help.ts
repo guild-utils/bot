@@ -9,7 +9,7 @@ import {
   categorizeCommand,
 } from "../../arguments/category";
 import { Command } from "klasa";
-import { CommandData } from "presentation_command-data-common";
+import { CommandData } from "domain_command-data";
 export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory);
