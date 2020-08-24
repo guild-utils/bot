@@ -2,6 +2,7 @@ import End from "./commands/Voice/Basic/end";
 import Start from "./commands/Voice/Basic/start";
 import EndChannel from "./commands/Voice/Basic/end_channel";
 import Skip from "./commands/Voice/Basic/skip";
+import AppliedVoiceConfig from "./commands/Voice/applied-voice-config";
 import Text2SpeechMonitor from "./monitors/text2speech";
 import * as LANG_KEYS from "./lang_keys";
 import * as GUILD_SETTINGS from "./guild_settings_keys";
@@ -18,6 +19,7 @@ export {
   End,
   EndChannel,
   Skip,
+  AppliedVoiceConfig,
   LANG_KEYS,
   GUILD_SETTINGS,
   VoiceKindArray,

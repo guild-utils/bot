@@ -304,5 +304,6 @@ export default class extends Language {
     },
     COMMAND_SKIP_DESCRIPTION: "現在読み上げている文章を飛ばします。",
     META_COMMAND_DELETED: "このコマンドは削除されました。",
+    APPLIED_VOICE_CONFIG_TITLE: "読み上げの設定",
   };
 }

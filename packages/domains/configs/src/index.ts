@@ -27,6 +27,22 @@ export type AppliedVoiceConfig = {
   intone: number;
   threshold: number;
 };
+type Entry<T> = {
+  value: T;
+  provider: string;
+};
+export type AppliedVoiceConfigResolvedBy = {
+  dictionary: Entry<Dictionary>;
+  kind: Entry<string>;
+  readName: Entry<string | undefined>;
+  speed: Entry<number>;
+  tone: Entry<number>;
+  volume: Entry<number>;
+  maxReadLimit: Entry<number>;
+  allpass: Entry<number | undefined>;
+  intone: Entry<number>;
+  threshold: Entry<number>;
+};
 export interface Usecase {
   appliedVoiceConfig(
     guild: string,
@@ -34,12 +50,24 @@ export interface Usecase {
     nickname: string | undefined,
     username: string
   ): Promise<AppliedVoiceConfig>;
+  appliedVoiceConfigResolvedBy(
+    guild: string,
+    user: string,
+    nickname: string | undefined,
+    username: string
+  ): Promise<AppliedVoiceConfigResolvedBy>;
   getUserReadName(
     guild: string,
     user: string,
     nickname: string | undefined,
     username: string
   ): Promise<string>;
+  getUserReadNameResolvedBy(
+    guild: string,
+    user: string,
+    nickname: string | undefined,
+    username: string
+  ): Promise<[string, string]>;
 }
 export interface DictionaryRepository {
   getAll(guild: string): Promise<Dictionary>;
