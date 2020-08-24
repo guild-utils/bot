@@ -67,7 +67,6 @@ COPY packages/repository/gss/package.json ./packages/repository/gss/package.json
 COPY packages/repository/schedule/package.json ./packages/repository/schedule/package.json
 COPY packages/repository/mongodb-dictionary/package.json ./packages/repository/mongodb-dictionary/package.json
 COPY packages/presentation/command-data-common/package.json ./packages/presentation/command-data-common/package.json
-COPY packages/presentation/command-data-discord/package.json ./packages/presentation/command-data-discord/package.json
 COPY packages/presentation/shared-config/package.json ./packages/presentation/shared-config/package.json
 COPY packages/presentation/configs-klasa/package.json ./packages/presentation/configs-klasa/package.json
 COPY packages/presentation/protos/package.json ./packages/presentation/protos/package.json
@@ -97,7 +96,6 @@ COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
 COPY packages/repository/mongodb-dictionary ./packages/repository/mongodb-dictionary
 COPY packages/presentation/command-data-common ./packages/presentation/command-data-common
-COPY packages/presentation/command-data-discord ./packages/presentation/command-data-discord
 COPY packages/presentation/shared-config ./packages/presentation/shared-config
 COPY packages/presentation/configs-klasa ./packages/presentation/configs-klasa
 COPY packages/presentation/protos ./packages/presentation/protos

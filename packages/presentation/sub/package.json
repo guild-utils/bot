@@ -14,6 +14,7 @@
     "mongodb": "^3.6.0",
     "presentation_core": "^1.0.0",
     "presentation_klasa-core-command-rewrite": "^1.0.0",
+    "presentation_command-data-common": "^1.0.0",
     "presentation_rpc-client": "^1.0.0",
     "presentation_shared-config": "^1.0.0",
     "reflect-metadata": "^0.1.13",
