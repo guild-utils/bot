@@ -14,7 +14,7 @@ export type CommandData = {
   cooldownLevel?: "author" | "channel" | "guild";
   permissionLevel?: number;
   category: string;
-  subCategory: string;
+  subCategory?: string;
 };
 export class CommandDataCollectionObject
   implements CommandDataCollection<CommandData> {

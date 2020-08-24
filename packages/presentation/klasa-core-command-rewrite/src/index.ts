@@ -2,12 +2,12 @@ import { CommandStore, Store, Piece, ArgumentStore } from "klasa";
 import { join, extname, relative, sep } from "path";
 import * as fs from "fs-nextra";
 import { ColorResolvable } from "discord.js";
-import { CommandOptions } from "klasa";
 export { CommandEx } from "./commandEx";
+import { CommandData } from "presentation_command-data-common";
 declare module "klasa" {
   interface KlasaClientOptions {
     themeColor?: ColorResolvable;
-    commandDataCollection: CommandOptionsCollection;
+    allCommands: { [lang in string]: CommandData[] };
   }
 }
 async function loadFrom<K, V extends Piece, VConstructor>(
@@ -36,7 +36,4 @@ export default async function register(
 ): Promise<void> {
   await loadFrom(arg, join(__dirname, "arguments"));
   await loadFrom(cmd, join(__dirname, "commands"));
-}
-export interface CommandOptionsCollection {
-  get(name: string): CommandOptions;
 }

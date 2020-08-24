@@ -210,9 +210,12 @@ export default class extends Language {
     ],
     COMMAND_INFO: [
       "いまのところこのBotは読み上げが可能です。",
-
-      "詳細はhelpコマンドまたは https://github.com/guild-utils/bot , https://discord.gg/xxkzCHU を参照してください。",
-      "プログラム:tig#2552 アイコン:匿名希望らしいので伏せます",
+      "詳細はhelpコマンドまたは",
+      "ドキュメント https://guj.tignear.com",
+      "サポートサーバー https://discord.gg/xxkzCHU",
+      "レポジトリ https://github.com/guild-utils/bot",
+      "を参照してください。",
+      "プログラム:tig#2552 アイコン:匿名希望",
     ],
     COMMAND_ENABLE: (type, name) => `+ ${type}: ${name} を有効にしました。`,
     COMMAND_ENABLE_DESCRIPTION:

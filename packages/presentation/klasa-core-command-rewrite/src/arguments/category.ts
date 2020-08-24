@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Argument, Possible, KlasaMessage, Command, CommandStore } from "klasa";
+import { Argument, Possible, KlasaMessage } from "klasa";
+import { CommandData } from "presentation_command-data-common";
 export type CategorizedCommandsEntry = {
   [subCategory in string]:
     | {
         categoryName: string;
         name: string;
-        command: Command[];
+        command: CommandData[];
       }
     | undefined;
 };
@@ -15,11 +16,12 @@ export type CategorizedCommands = {
       | {
           name: string;
           subCategory: CategorizedCommandsEntry;
-          direct: Command[];
+          direct: CommandData[];
         }
       | undefined;
   };
-  direct: Command[];
+  subCategory: CategorizedCommandsEntry;
+  direct: CommandData[];
 };
 export type ReturnType =
   | CategorizedCommands["category"][string]
@@ -36,13 +38,16 @@ export default class extends Argument {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _possible: Possible,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _message: KlasaMessage
+    message: KlasaMessage
   ): ReturnType {
     if (!arg) {
       return undefined;
     }
     const split = arg.split("/");
-    const categorized = categorizeCommand(this.client.commands);
+    const categorized = categorizeCommand(
+      message.language.name,
+      this.client.options.allCommands[message.language.name]
+    );
     if (split.length == 2) {
       const category = categorized.category[split[0].toLowerCase()];
       if (!category) {
@@ -53,7 +58,7 @@ export default class extends Argument {
         category.direct.find(
           (cmd) =>
             cmd.name.toLowerCase() === split[1].toLowerCase() ||
-            cmd.aliases
+            (cmd.aliases ?? [])
               .map((e) => e.toLowerCase())
               .includes(split[1].toLowerCase())
         ) ??
@@ -61,7 +66,10 @@ export default class extends Argument {
       );
     }
     if (split.length === 3) {
-      const categorized = categorizeCommand(this.client.commands);
+      const categorized = categorizeCommand(
+        message.language.name,
+        this.client.options.allCommands[message.language.name]
+      );
       const category = categorized.category[split[0].toLowerCase()];
       if (!category) {
         return undefined;
@@ -74,23 +82,33 @@ export default class extends Argument {
         subCategory.command.find(
           (cmd) =>
             cmd.name.toLowerCase() === split[2].toLowerCase() ||
-            cmd.aliases
+            (cmd.aliases ?? [])
               .map((e) => e.toLowerCase())
               .includes(split[2].toLowerCase())
         ) ?? subCategory
       );
     }
-    return categorized.category[arg.toLowerCase()];
+    return (
+      categorized.category[arg.toLowerCase()] ??
+      categorized.subCategory[arg.toLowerCase()]
+    );
   }
 }
-let cacheedCategorizeCommand: CategorizedCommands | undefined;
-export function categorizeCommand(commands: CommandStore): CategorizedCommands {
-  if (cacheedCategorizeCommand) {
-    return cacheedCategorizeCommand;
+const cachedCategorizeCommand: {
+  [lang in string]: CategorizedCommands | undefined;
+} = {};
+export function categorizeCommand(
+  lang: string,
+  commands: CommandData[]
+): CategorizedCommands {
+  const cccl = cachedCategorizeCommand[lang];
+  if (cccl) {
+    return cccl;
   }
   const r: CategorizedCommands = {
     category: {},
     direct: [],
+    subCategory: {},
   };
   commands.forEach((e) => {
     if (!e.category) {
@@ -119,6 +137,19 @@ export function categorizeCommand(commands: CommandStore): CategorizedCommands {
       r.category[categoryL]!.direct.push(e);
     }
   });
-  cacheedCategorizeCommand = r;
+  Object.values(r.category).forEach((categoryValue) => {
+    if (!categoryValue) {
+      return;
+    }
+    Object.entries(categoryValue.subCategory).forEach(
+      ([subCategoryNameL, subCategoryValue]) => {
+        if (r.subCategory[subCategoryNameL]) {
+          throw new Error("duplicate subcategory name");
+        }
+        r.subCategory[subCategoryNameL] = subCategoryValue;
+      }
+    );
+  });
+  cachedCategorizeCommand[lang] = r;
   return r;
 }
