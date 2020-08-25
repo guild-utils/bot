@@ -324,6 +324,15 @@ export const main_dictionary: WWCommandData = {
   runIn: RunInServer,
   ...VoiceDictionaryCategory,
 };
+export const applied_voice_config: WWCommandData = {
+  receiver: ["main", "sub"],
+  name: "applied-voice-config",
+  aliases: ["avc"],
+  usage: "[user:user]",
+  usageDelim: " ",
+  runIn: RunInServer,
+  category: "Voice",
+};
 export const VoiceDictionary = [
   jumanpp,
   kuromoji,
@@ -337,6 +346,7 @@ export const All = [
   ...MemberSettings,
   userconf,
   ...VoiceBasic,
+  applied_voice_config,
   ...VoiceDictionary,
   ...VoiceDictionaryOld,
 ];

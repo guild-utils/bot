@@ -34,11 +34,13 @@ export class ResponseTransformer {
     from: GRPC.AppliedVoiceConfig
   ): Domain.AppliedVoiceConfig {
     const ap = from.getAllpass();
+    const readName = from.getReadname();
+
     return {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       dictionary: this.transformDictionary(from.getDictionary()!),
       kind: from.getKind(),
-      readName: from.getReadname(),
+      readName: readName === "" ? undefined : readName,
       speed: from.getSpeed(),
       tone: from.getTone(),
       volume: from.getVolume(),
@@ -46,6 +48,56 @@ export class ResponseTransformer {
       allpass: ap === -1 ? undefined : ap,
       intone: from.getIntone(),
       threshold: from.getThreshold(),
+    };
+  }
+  transformAppliedVoiceConfigResolvedBy(
+    from: GRPC.AppliedVoiceConfig
+  ): Domain.AppliedVoiceConfigResolvedBy {
+    const provider = "mainbot";
+    const ap = from.getAllpass();
+    const readName = from.getReadname();
+    return {
+      dictionary: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        value: this.transformDictionary(from.getDictionary()!),
+        provider,
+      },
+      kind: {
+        value: from.getKind(),
+        provider,
+      },
+      readName: {
+        value: readName === "" ? undefined : readName,
+        provider,
+      },
+      speed: {
+        value: from.getSpeed(),
+        provider,
+      },
+      tone: {
+        value: from.getTone(),
+        provider,
+      },
+      volume: {
+        value: from.getVolume(),
+        provider,
+      },
+      maxReadLimit: {
+        value: from.getMaxreadlimit(),
+        provider,
+      },
+      allpass: {
+        value: ap === -1 ? undefined : ap,
+        provider,
+      },
+      intone: {
+        value: from.getIntone(),
+        provider,
+      },
+      threshold: {
+        value: from.getThreshold(),
+        provider,
+      },
     };
   }
 }

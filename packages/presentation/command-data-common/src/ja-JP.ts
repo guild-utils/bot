@@ -191,6 +191,28 @@ export const main_dictionary: CommandData = {
   ].join("\n"),
   ...WW.main_dictionary,
 };
+export const applied_voice_config: CommandData = {
+  description: "現在適用されている読み上げの設定を表示します。",
+  more: [
+    "プロパティ名(プロバイダー)といった表記になっています。",
+    "",
+    "**プロバイダーについて**",
+    "上のプロバイダーによって値が提供されない場合に下のプロバイダーに問い合わせます。",
+    "(ただしconfの制限を受けるプロパティがあります。後述します。)",
+    "__conf__",
+    "confの値が使用されていることを表します。(confコマンドで変更が可能です)",
+    "__memconf__",
+    "memconfの値が使用されていることを表します。(memconfコマンドで変更が可能です)",
+    "__userconf__",
+    "userconfの値が使用されていることを表します。(userconfコマンドで変更が可能です)",
+    "__default__",
+    "デフォルトの値が使用されていることを表します。",
+    "**confの制限を受けるプロパティ**",
+    "volumeの値はconfによって上限が定められています。",
+    "ユーザーがconfの設定を超える設定を行ってもconfによって定められた値になります。",
+  ].join("\n"),
+  ...WW.applied_voice_config,
+};
 export const VoiceDictionary = [
   jumanpp,
   kuromoji,
@@ -198,6 +220,7 @@ export const VoiceDictionary = [
   after_dictionary,
   main_dictionary,
   before_dictionary,
+  applied_voice_config,
 ];
 export const All = [
   ...Core,
