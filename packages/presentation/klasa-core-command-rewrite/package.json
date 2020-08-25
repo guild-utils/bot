@@ -5,8 +5,8 @@
   "types": "./dist/index.d.ts",
   "license": "MIT",
   "dependencies": {
-    "fs-nextra": "^0.5.1",
-    "domain_command-data": "^1.0.0"    
+    "domain_command-data": "^1.0.0",
+    "fs-nextra": "^0.5.1"
   },
   "devDependencies": {
     "@types/node": "^14.0.26",
