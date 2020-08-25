@@ -23,7 +23,7 @@
     "babel-plugin-macros": "^2.8.0",
     "babel-plugin-styled-components": "^1.11.1",
     "postcss-import": "^12.0.1",
-    "presentation_command-data-common": "^1.0.0",
+    "protocol_command-data-common": "^1.0.0",
     "styled-components": "^5.1.1",
     "tailwind.macro": "^1.0.0-alpha.10",
     "tailwindcss": "^1.6.0"

@@ -1,12 +1,12 @@
 import "reflect-metadata";
-import { Usecase } from "presentation_rpc-client";
+import { Usecase } from "protocol_rpc-client";
 import { container } from "tsyringe";
 import {
   IConfigManagerClient,
   ConfigManagerClient,
-} from "presentation_protos/config_grpc_pb";
+} from "protocol_protos/config_grpc_pb";
 import { credentials, VerifyOptions } from "grpc";
-import { ClientResponseTransformer } from "presentation_rpc-client";
+import { ClientResponseTransformer } from "protocol_rpc-client";
 import { initEngineAndKuromoji } from "presentation_core";
 import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
 import { KlasaClient, KlasaClientOptions } from "klasa";

@@ -4,7 +4,7 @@ import {
   AppliedVoiceConfig,
   ReadNameRequest,
   ReadName,
-} from "presentation_protos/config_pb";
+} from "protocol_protos/config_pb";
 import { Usecase } from "domain_configs";
 import { ResponseTransformer } from "../transformers/grpc-domain-server";
 export class ServiceErrorImpl extends Error implements ServiceError {}

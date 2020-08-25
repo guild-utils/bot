@@ -5,7 +5,7 @@ import MemberGatewayPlugin from "klasa-member-gateway";
 import {
   Usecase as KlasaUsecase,
   //  DictionaryRepository as KlasaDictionaryRepository,
-} from "presentation_configs-klasa";
+} from "protocol_configs-klasa";
 import { MongoDictionaryRepository } from "repository_mongodb-dictionary";
 import { config as dotenv } from "dotenv";
 const result = dotenv();

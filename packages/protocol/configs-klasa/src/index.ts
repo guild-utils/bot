@@ -6,8 +6,8 @@ import * as Domain from "domain_configs";
 import { GatewayDriver } from "klasa";
 import "klasa-member-gateway";
 import { Settings } from "klasa";
-import * as GUILD_CONFIGS from "presentation_shared-config/guild";
-import * as MEMBER_CONFIGS from "presentation_shared-config/member";
+import * as GUILD_CONFIGS from "protocol_shared-config/guild";
+import * as MEMBER_CONFIGS from "protocol_shared-config/member";
 function get(gws: Settings[], key: string[], data?: any): any {
   for (const gw of gws) {
     const r = gw.get(key);

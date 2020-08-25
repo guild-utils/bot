@@ -1,5 +1,5 @@
 {
-  "name": "presentation_rpc-server",
+  "name": "protocol_rpc-client",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,11 +10,7 @@
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "presentation_protos": "^1.0.0",
     "prettier": "^2.0.5"
-  },
-  "peerDependencies": {
-    "presentation_protos": "^1.0.0"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",
@@ -24,6 +20,8 @@
   },
   "dependencies": {
     "domain_configs": "^1.0.0",
-    "grpc": "^1.24.3"
-  }
+    "grpc": "^1.24.3",
+    "protocol_protos": "^1.0.0"
+  },
+  "resolutions": {}
 }
