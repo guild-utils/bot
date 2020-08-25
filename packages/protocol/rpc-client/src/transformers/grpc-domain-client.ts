@@ -1,4 +1,4 @@
-import * as GRPC from "presentation_protos/config_pb";
+import * as GRPC from "protocol_protos/config_pb";
 import * as Domain from "domain_configs";
 
 export class ResponseTransformer {

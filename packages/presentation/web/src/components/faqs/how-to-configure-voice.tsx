@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import tw from "tailwind.macro";
-import { ww } from "presentation_command-data-common";
+import { ww } from "protocol_command-data-common";
 import FAQ from "../faq";
 
 const ConfigureDescKey = styled.span`

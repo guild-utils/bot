@@ -1,8 +1,5 @@
-import { IConfigManagerClient } from "presentation_protos/config_grpc_pb";
-import {
-  VoiceConfigRequest,
-  ReadNameRequest,
-} from "presentation_protos/config_pb";
+import { IConfigManagerClient } from "protocol_protos/config_grpc_pb";
+import { VoiceConfigRequest, ReadNameRequest } from "protocol_protos/config_pb";
 import * as Domain from "domain_configs";
 import { ClientResponseTransformer } from ".";
 export class Usecase implements Domain.Usecase {
