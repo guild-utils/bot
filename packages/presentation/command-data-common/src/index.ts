@@ -1,4 +1,4 @@
-export { CommandData, CommandDataCollectionObject } from "./command-data";
+export { CommandDataCollectionObject } from "./command-data";
 export {
   CommandDataCollectionProviderObject,
   CommandDataCollectionProvider,

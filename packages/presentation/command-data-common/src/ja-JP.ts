@@ -1,5 +1,5 @@
 import * as WW from "./world-wide";
-import { CommandData } from "./command-data";
+import { CommandData } from "domain_command-data";
 
 export const help: CommandData = {
   description: "コマンドリストと説明を表示します。",

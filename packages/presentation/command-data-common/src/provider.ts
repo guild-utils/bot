@@ -1,5 +1,4 @@
-import { CommandDataCollection } from "domain_command-data";
-import { CommandData } from "./command-data";
+import { CommandDataCollection, CommandData } from "domain_command-data";
 export interface CommandDataCollectionProvider {
   get(lang: string): CommandDataCollection<CommandData>;
 }

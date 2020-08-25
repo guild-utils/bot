@@ -1,5 +1,5 @@
 import { Command, CommandOptions, CommandStore } from "klasa";
-import { CommandData } from "presentation_command-data-common";
+import { CommandData } from "domain_command-data";
 export abstract class CommandEx extends Command {
   public metadata: CommandData;
   constructor(

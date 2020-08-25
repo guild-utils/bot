@@ -1,21 +1,6 @@
 import { CommandDataCollection } from "domain_command-data";
+import { CommandData } from "domain_command-data";
 
-export type CommandData = {
-  receiver?: ("main" | "sub")[];
-  name: string;
-  guarded?: boolean;
-  aliases?: string[];
-  runIn?: ("text" | "dm" | "news")[];
-  usage?: string;
-  usageDelim?: string;
-  description?: string;
-  more?: string;
-  cooldown?: number;
-  cooldownLevel?: "author" | "channel" | "guild";
-  permissionLevel?: number;
-  category: string;
-  subCategory?: string;
-};
 export class CommandDataCollectionObject
   implements CommandDataCollection<CommandData> {
   private readonly source: { [nameOrAlias in string]: CommandData | undefined };
