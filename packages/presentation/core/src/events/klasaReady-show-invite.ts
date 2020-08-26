@@ -7,7 +7,13 @@ export default class extends Event {
     });
   }
   run(): Promise<void> {
-    console.log(`Invite Link: ${this.client.invite}`);
+    console.log(
+      [
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        `Logged in as: ${this.client.user!.tag}`,
+        `Invite Link: ${this.client.invite}`,
+      ].join("\n")
+    );
     return Promise.resolve();
   }
 }

@@ -12,7 +12,11 @@ import GuildMemberUpdateEvent from "./events/guildMemberUpdate";
 import ResumeConnection from "./events/resumeConnection";
 import VoiceStateUpdateEvent from "./events/voiceStateUpdate";
 import ShowInviteEvent from "./events/klasaReady-show-invite";
+import StartingEvent from "./events/klasaReady-starting";
+import HandleStartupMessageEvent from "./events/handleStartupMessage";
 import { DeletedCommand } from "./deleted-command";
+import { initInstanceState } from "./bootstrap/instanceState";
+import { InstanceState } from "./instanceState";
 export {
   Engine,
   Start,
@@ -27,8 +31,12 @@ export {
   Text2SpeechMonitor,
   VoiceStateUpdateEvent,
   GuildMemberUpdateEvent,
+  HandleStartupMessageEvent,
+  StartingEvent,
   ShowInviteEvent,
   ResumeConnection,
   DeletedCommand,
   initEngineAndKuromoji,
+  initInstanceState,
+  InstanceState,
 };

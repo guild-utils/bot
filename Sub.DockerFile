@@ -68,5 +68,8 @@ RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
-ENV GUILD_UTILS_J_ROLE sub
-CMD [ "pm2","--no-daemon","start","kick.js","--name","guild-utils-j"]
+COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN date >/build-date
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["node","./packages/presentation/sub/dist/main.js"]

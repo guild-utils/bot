@@ -27,6 +27,8 @@ import {
   initMainDictionaryGui,
   initBADictionaryGui,
 } from "./bootstrap/dictionary-gui";
+import { initInstanceState } from "presentation_core";
+
 if (result) {
   console.log(result.parsed);
 }
@@ -84,6 +86,7 @@ async function main() {
   initChannelsGateway(client.gateways);
   initRpcServer(configRepo);
   initStarBoard();
+  initInstanceState(container, client);
   await client.login(token);
   await initKlasaCoreCommandRewrite(client.arguments, client.commands);
 }

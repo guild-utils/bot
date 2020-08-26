@@ -103,12 +103,11 @@ COPY packages/protocol/rpc-server ./packages/protocol/rpc-server
 COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/main ./packages/presentation/main
-
 RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
-
-ENV GUILD_UTILS_J_ROLE main
-
-CMD [ "pm2","--no-daemon","start","kick.js","--name","guild-utils-j"]
+COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN date >/build-date
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["node","./packages/presentation/main/dist/main.js"]

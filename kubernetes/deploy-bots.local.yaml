@@ -18,7 +18,8 @@ spec:
     spec:
       containers:
       - name: guj-main
-        image: tignear/guj-main
+        image: tignear/guj-main:local-dev
+        imagePullPolicy: IfNotPresent
         env:
         - name: GUILD_UTILS_J_MAIN_DISCORD_TOKEN
           valueFrom:
@@ -89,7 +90,8 @@ spec:
     spec:
       containers:
       - name: guj-sub
-        image: tignear/guj-sub
+        image: tignear/guj-sub:local-dev
+        imagePullPolicy: IfNotPresent
         env:
         - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
           valueFrom:
@@ -146,7 +148,8 @@ spec:
     spec:
       containers:
       - name: guj-sub
-        image: tignear/guj-sub
+        image: tignear/guj-sub:local-dev
+        imagePullPolicy: IfNotPresent
         env:
         - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
           valueFrom:
