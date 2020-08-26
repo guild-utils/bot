@@ -49,7 +49,6 @@ COPY packages/presentation/sub/package.json ./packages/presentation/sub/package.
 
 RUN lerna bootstrap && apk del .ojt
 
-COPY kick.js ./
 COPY .eslintrc.json ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/domains/text2speech ./packages/domains/text2speech

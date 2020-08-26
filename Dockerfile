@@ -77,7 +77,6 @@ COPY packages/presentation/main/package.json ./packages/presentation/main/packag
 
 RUN  lerna bootstrap && apk del .ojt
 
-COPY kick.js ./
 COPY .eslintrc.json ./
 COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/text2speech ./packages/domains/text2speech
