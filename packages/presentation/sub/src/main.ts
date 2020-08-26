@@ -7,7 +7,7 @@ import {
 } from "protocol_protos/config_grpc_pb";
 import { credentials, VerifyOptions } from "grpc";
 import { ClientResponseTransformer } from "protocol_rpc-client";
-import { initEngineAndKuromoji } from "presentation_core";
+import { initEngineAndKuromoji, initInstanceState } from "presentation_core";
 import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
 import { KlasaClient, KlasaClientOptions } from "klasa";
 import { config, token } from "./config";
@@ -67,7 +67,7 @@ async function main() {
   }
   initSchema();
   const discordClient = new Client(config);
-
+  initInstanceState(container, discordClient);
   await discordClient.login(token);
   await initKlasaCoreCommandRewrite(
     discordClient.arguments,
