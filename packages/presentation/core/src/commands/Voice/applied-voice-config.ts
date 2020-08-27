@@ -38,7 +38,6 @@ export default class extends CommandEx {
       member.nickname ?? undefined,
       member.user.username
     );
-    console.log(ret, readnameMention);
     const embed = new MessageEmbed();
     function addField<K extends keyof typeof ret>(k: K) {
       embed.addField(`${k}(${ret[k].provider})`, ret[k].value ?? "-", true);
