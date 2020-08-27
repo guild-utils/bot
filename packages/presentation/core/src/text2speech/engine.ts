@@ -216,7 +216,6 @@ export default class {
       this.playNext(conn).catch(console.log);
       return;
     }
-
     const dispatcher = conn.play(stream, {
       type: this.text2SpeechServiceGRPC
         ? "opus"
