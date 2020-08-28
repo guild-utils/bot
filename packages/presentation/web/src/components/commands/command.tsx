@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import tw from "tailwind.macro";
-import { Fragment } from "react";
 import { CommandData } from "../../adapter/command-data";
 import * as Badges from "./badges";
 import Usage from "./usage";
