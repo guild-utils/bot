@@ -3,7 +3,7 @@ import { join, extname, relative, sep } from "path";
 import * as fs from "fs-nextra";
 import { ColorResolvable } from "discord.js";
 export { CommandEx } from "./commandEx";
-import { CommandData } from "presentation_command-data-common";
+import { CommandData } from "domain_command-data";
 declare module "klasa" {
   interface KlasaClientOptions {
     themeColor?: ColorResolvable;

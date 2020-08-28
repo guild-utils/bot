@@ -9,8 +9,8 @@ spec:
       app: guj-main
   strategy:
     rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -42,6 +42,11 @@ spec:
           value: /keys
         - name: NODE_ENV
           value: production
+        - name: GUJ_LAUNCH_CHANNEL
+          valueFrom:
+            secretKeyRef: 
+              name: discord-token
+              key: launch-channel
         volumeMounts:
         - name: keys
           mountPath: /keys
@@ -75,8 +80,8 @@ spec:
       app: guj-sub-1
   strategy:
     rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -108,6 +113,11 @@ spec:
           value: /keys
         - name: NODE_ENV
           value: production
+        - name: GUJ_LAUNCH_CHANNEL
+          valueFrom:
+            secretKeyRef: 
+              name: discord-token
+              key: launch-channel
         volumeMounts:
         - name: keys
           mountPath: /keys
@@ -127,8 +137,8 @@ spec:
       app: guj-sub-2
   strategy:
     rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -164,6 +174,11 @@ spec:
           value: /keys
         - name: NODE_ENV
           value: production
+        - name: GUJ_LAUNCH_CHANNEL
+          valueFrom:
+            secretKeyRef: 
+              name: discord-token
+              key: launch-channel
         volumeMounts:
         - name: keys
           mountPath: /keys

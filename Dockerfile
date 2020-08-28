@@ -66,18 +66,17 @@ COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2spee
 COPY packages/repository/gss/package.json ./packages/repository/gss/package.json
 COPY packages/repository/schedule/package.json ./packages/repository/schedule/package.json
 COPY packages/repository/mongodb-dictionary/package.json ./packages/repository/mongodb-dictionary/package.json
-COPY packages/presentation/command-data-common/package.json ./packages/presentation/command-data-common/package.json
-COPY packages/presentation/shared-config/package.json ./packages/presentation/shared-config/package.json
-COPY packages/presentation/configs-klasa/package.json ./packages/presentation/configs-klasa/package.json
-COPY packages/presentation/protos/package.json ./packages/presentation/protos/package.json
-COPY packages/presentation/rpc-server/package.json ./packages/presentation/rpc-server/package.json
+COPY packages/protocol/command-data-common/package.json ./packages/protocol/command-data-common/package.json
+COPY packages/protocol/shared-config/package.json ./packages/protocol/shared-config/package.json
+COPY packages/protocol/configs-klasa/package.json ./packages/protocol/configs-klasa/package.json
+COPY packages/protocol/protos/package.json ./packages/protocol/protos/package.json
+COPY packages/protocol/rpc-server/package.json ./packages/protocol/rpc-server/package.json
 COPY packages/presentation/klasa-core-command-rewrite/package.json ./packages/presentation/klasa-core-command-rewrite/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/main/package.json ./packages/presentation/main/package.json
 
 RUN  lerna bootstrap && apk del .ojt
 
-COPY kick.js ./
 COPY .eslintrc.json ./
 COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/text2speech ./packages/domains/text2speech
@@ -95,20 +94,19 @@ COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
 COPY packages/repository/gss ./packages/repository/gss
 COPY packages/repository/schedule ./packages/repository/schedule
 COPY packages/repository/mongodb-dictionary ./packages/repository/mongodb-dictionary
-COPY packages/presentation/command-data-common ./packages/presentation/command-data-common
-COPY packages/presentation/shared-config ./packages/presentation/shared-config
-COPY packages/presentation/configs-klasa ./packages/presentation/configs-klasa
-COPY packages/presentation/protos ./packages/presentation/protos
-COPY packages/presentation/rpc-server ./packages/presentation/rpc-server
+COPY packages/protocol/command-data-common ./packages/protocol/command-data-common
+COPY packages/protocol/shared-config ./packages/protocol/shared-config
+COPY packages/protocol/configs-klasa ./packages/protocol/configs-klasa
+COPY packages/protocol/protos ./packages/protocol/protos
+COPY packages/protocol/rpc-server ./packages/protocol/rpc-server
 COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/main ./packages/presentation/main
-
 RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
-
-ENV GUILD_UTILS_J_ROLE main
-
-CMD [ "pm2","--no-daemon","start","kick.js","--name","guild-utils-j"]
+COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN date >/build-date
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["node","./packages/presentation/main/dist/main.js"]

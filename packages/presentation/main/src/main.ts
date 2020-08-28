@@ -5,7 +5,7 @@ import MemberGatewayPlugin from "klasa-member-gateway";
 import {
   Usecase as KlasaUsecase,
   //  DictionaryRepository as KlasaDictionaryRepository,
-} from "presentation_configs-klasa";
+} from "protocol_configs-klasa";
 import { MongoDictionaryRepository } from "repository_mongodb-dictionary";
 import { config as dotenv } from "dotenv";
 const result = dotenv();
@@ -27,6 +27,8 @@ import {
   initMainDictionaryGui,
   initBADictionaryGui,
 } from "./bootstrap/dictionary-gui";
+import { initInstanceState } from "presentation_core";
+
 if (result) {
   console.log(result.parsed);
 }
@@ -84,6 +86,7 @@ async function main() {
   initChannelsGateway(client.gateways);
   initRpcServer(configRepo);
   initStarBoard();
+  initInstanceState(container, client);
   await client.login(token);
   await initKlasaCoreCommandRewrite(client.arguments, client.commands);
 }

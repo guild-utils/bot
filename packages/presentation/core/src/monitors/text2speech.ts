@@ -41,7 +41,8 @@ export default class extends Monitor {
     if (!targets.includes(message.channel.id)) {
       return;
     }
-    if (!guild.voice?.connection) {
+    const connection = guild.voice?.connection;
+    if (!connection) {
       await guild.settings.reset(GUILD_SETTINGS.text2speechTargetTextChannels);
       return;
     }
@@ -82,7 +83,7 @@ export default class extends Monitor {
     if (!(VoiceKindArray as string[]).includes(config.kind)) {
       config.kind = "mei_normal";
     }
-    await this.engine.queue(guild.voice.connection, content, {
+    await this.engine.queue(connection, content, {
       dictionary: config.dictionary,
       kind: config.kind as VoiceKind,
       maxReadLimit: config.maxReadLimit,

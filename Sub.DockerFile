@@ -39,17 +39,16 @@ COPY packages/domains/configs/package.json ./packages/domains/configs/package.js
 COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
 COPY packages/usecase/text2speech/package.json ./packages/usecase/text2speech/package.json
 COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2speech-grpc/package.json
-COPY packages/presentation/command-data-common/package.json ./packages/presentation/command-data-common/package.json
-COPY packages/presentation/shared-config/package.json ./packages/presentation/shared-config/package.json
-COPY packages/presentation/protos/package.json ./packages/presentation/protos/package.json
-COPY packages/presentation/rpc-client/package.json ./packages/presentation/rpc-client/package.json
+COPY packages/protocol/command-data-common/package.json ./packages/protocol/command-data-common/package.json
+COPY packages/protocol/shared-config/package.json ./packages/protocol/shared-config/package.json
+COPY packages/protocol/protos/package.json ./packages/protocol/protos/package.json
+COPY packages/protocol/rpc-client/package.json ./packages/protocol/rpc-client/package.json
 COPY packages/presentation/klasa-core-command-rewrite/package.json ./packages/presentation/klasa-core-command-rewrite/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/sub/package.json ./packages/presentation/sub/package.json
 
 RUN lerna bootstrap && apk del .ojt
 
-COPY kick.js ./
 COPY .eslintrc.json ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/domains/text2speech ./packages/domains/text2speech
@@ -57,10 +56,10 @@ COPY packages/domains/configs ./packages/domains/configs
 COPY packages/domains/command-data ./packages/domains/command-data
 COPY packages/usecase/text2speech ./packages/usecase/text2speech
 COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
-COPY packages/presentation/command-data-common ./packages/presentation/command-data-common
-COPY packages/presentation/shared-config ./packages/presentation/shared-config
-COPY packages/presentation/protos ./packages/presentation/protos
-COPY packages/presentation/rpc-client ./packages/presentation/rpc-client
+COPY packages/protocol/command-data-common ./packages/protocol/command-data-common
+COPY packages/protocol/shared-config ./packages/protocol/shared-config
+COPY packages/protocol/protos ./packages/protocol/protos
+COPY packages/protocol/rpc-client ./packages/protocol/rpc-client
 COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/sub ./packages/presentation/sub
@@ -68,5 +67,8 @@ RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
-ENV GUILD_UTILS_J_ROLE sub
-CMD [ "pm2","--no-daemon","start","kick.js","--name","guild-utils-j"]
+COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN date >/build-date
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["node","./packages/presentation/sub/dist/main.js"]

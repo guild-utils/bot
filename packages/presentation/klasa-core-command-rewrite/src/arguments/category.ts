@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Argument, Possible, KlasaMessage } from "klasa";
-import { CommandData } from "presentation_command-data-common";
+import { CommandData } from "domain_command-data";
 export type CategorizedCommandsEntry = {
   [subCategory in string]:
     | {

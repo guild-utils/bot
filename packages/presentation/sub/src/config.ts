@@ -1,6 +1,6 @@
 import { KlasaClientOptions } from "klasa";
 import { Intents } from "discord.js";
-import { ww, ja_JP } from "presentation_command-data-common";
+import { ww, ja_JP } from "protocol_command-data-common";
 import * as ENV from "./bootstrap/env";
 export const config: KlasaClientOptions = {
   gateways: {},

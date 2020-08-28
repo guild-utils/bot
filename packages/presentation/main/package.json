@@ -17,12 +17,12 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
     "mongodb": "^3.6.0",
-    "presentation_command-data-common": "^1.0.0",
     "presentation_core": "^1.0.0",
     "presentation_klasa-core-command-rewrite": "^1.0.0",
-    "presentation_protos": "^1.0.0",
-    "presentation_rpc-server": "^1.0.0",
-    "presentation_shared-config": "^1.0.0",
+    "protocol_command-data-common": "^1.0.0",
+    "protocol_protos": "^1.0.0",
+    "protocol_rpc-server": "^1.0.0",
+    "protocol_shared-config": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "repository_gss": "^1.0.0",
     "repository_mongodb-dictionary": "^1.0.0",
@@ -46,7 +46,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5",
-    "typescript": "^3.8.3"
+    "typescript": "^4.0.2"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",

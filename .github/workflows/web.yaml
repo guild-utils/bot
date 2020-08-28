@@ -28,7 +28,7 @@ jobs:
           git config filter.lfs.smudge "git-lfs smudge --skip %f"
           # Add here contents of sparse-checkout line by line
           echo /packages/domains/command-data > .git/info/sparse-checkout
-          echo /packages/presentation/command-data-common >> .git/info/sparse-checkout
+          echo /packages/protocol/command-data-common >> .git/info/sparse-checkout
           echo /packages/presentation/web >> .git/info/sparse-checkout
           echo /package.json >> .git/info/sparse-checkout
           echo /yarn.lock >> .git/info/sparse-checkout
