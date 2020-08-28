@@ -19,6 +19,7 @@ const HowIsItInherited: React.FC = () => {
         <PriorityListEntry>デフォルト値</PriorityListEntry>
       </PriorityList>
       つまり、memconfが最優先されるということです。
+      ただしvolumeの数値はconfに制約されています。(confより高い値を設定しても無視されます。)
     </FAQ>
   );
 };
