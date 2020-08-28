@@ -1338,6 +1338,14 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+"@types/react@>=16.0.0":
+  version "16.9.48"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.48.tgz#d3387329f070d1b1bc0ff4a54a54ceefd5a8485c"
+  integrity sha512-4ykBVswgYitPGMXFRxJCHkxJDU2rjfU3/zw67f8+dB7sNdVJXsrwqoYxz/stkAucymnEEbRPFmX7Ce5Mc/kJCw==
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^3.0.2"
+
 "@types/react@^16.9.44":
   version "16.9.47"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.47.tgz#fb092936f0b56425f874d0ff1b08051fdf70c1ba"
@@ -4262,6 +4270,14 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
+discord-markdown@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/discord-markdown/-/discord-markdown-2.4.0.tgz#45d4e70fad69889482d5d91996dbacc468193763"
+  integrity sha512-TstZHCXkfHDiHk6l8y1Vmycs4ITEfRnLihGrHp4UByeKeqUrUTYgAg4RxbuAfeIX1Rl67YDKPXZ/5FoHfsDqfg==
+  dependencies:
+    highlight.js "^10.1.2"
+    simple-markdown "^0.7.2"
+
 discord.js@^12.2.0, discord.js@^12.3.1:
   version "12.3.1"
   resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-12.3.1.tgz#8f58ac17d29b068dbfeb6c01fc7777bacd5324cf"
@@ -4334,7 +4350,7 @@ domhandler@2.3:
   dependencies:
     domelementtype "1"
 
-domhandler@3.0.0, domhandler@^3.0.0:
+domhandler@3.0.0, domhandler@^3.0, domhandler@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/domhandler/-/domhandler-3.0.0.tgz#51cd13efca31da95bbb0c5bee3a48300e333b3e9"
   integrity sha512-eKLdI5v9m67kbXQbJSNn1zjh0SDzvzWVWtX+qEI3eMjZw8daH9k8rlj1FZY9memPwjiskQFbe7vHVVJIAqoEhw==
@@ -6384,6 +6400,11 @@ helper-md@^0.2.2:
     fs-exists-sync "^0.1.0"
     remarkable "^1.6.2"
 
+highlight.js@^10.1.2:
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.1.2.tgz#c20db951ba1c22c055010648dfffd7b2a968e00c"
+  integrity sha512-Q39v/Mn5mfBlMff9r+zzA+gWxRsCRKwEMvYTiisLr/XUiFI/4puWt0Ojdko3R3JCNWGdOWaA5g/Yxqa23kC5AA==
+
 highlight.js@^9.12.0:
   version "9.18.3"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.18.3.tgz#a1a0a2028d5e3149e2380f8a865ee8516703d634"
@@ -6424,6 +6445,16 @@ html-tag@^2.0.0:
   dependencies:
     is-self-closing "^1.0.1"
     kind-of "^6.0.0"
+
+html-to-react@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/html-to-react/-/html-to-react-1.4.3.tgz#1430a1cb581ef29533892ec70a2fdc4554b17ffd"
+  integrity sha512-txe09A3vxW8yEZGJXJ1is5gGDfBEVACmZDSgwDyH5EsfRdOubBwBCg63ZThZP0xBn0UE4FyvMXZXmohusCxDcg==
+  dependencies:
+    domhandler "^3.0"
+    htmlparser2 "^4.1.0"
+    lodash.camelcase "^4.3.0"
+    ramda "^0.27"
 
 htmlescape@^1.1.0:
   version "1.1.1"
@@ -9874,6 +9905,11 @@ quick-lru@^4.0.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-4.0.1.tgz#5b8878f113a58217848c6482026c73e1ba57727f"
   integrity sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==
 
+ramda@^0.27:
+  version "0.27.1"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.27.1.tgz#66fc2df3ef873874ffc2da6aa8984658abacf5c9"
+  integrity sha512-PgIdVpn5y5Yns8vqb8FzBUEYn98V3xcPgawAkkgj0YJ0qDsnHCiNmZYfOGMgOvoB0eWFLpYbhxUR3mxfDIMvpw==
+
 randomatic@^3.0.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/randomatic/-/randomatic-3.1.1.tgz#b776efc59375984e36c537b2f51a1f0aff0da1ed"
@@ -10794,6 +10830,13 @@ simple-concat@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/simple-concat/-/simple-concat-1.0.1.tgz#f46976082ba35c2263f1c8ab5edfe26c41c9552f"
   integrity sha512-cSFtAPtRhljv69IK0hTVZQ+OfE9nePi/rtJmw5UjHeVyVroEqJXP1sFztKUy1qU+xvz3u/sfYJLa947b7nAN2Q==
+
+simple-markdown@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/simple-markdown/-/simple-markdown-0.7.2.tgz#896cc3e3dd9acd068d30e696bce70b0b97655665"
+  integrity sha512-XfCvqqzMyzRj4L7eIxJgGaQ2Gaxr20GhTFMB+1yuY8q3xffjzmOg4Q5tC0kcaJPV42NNUHCQDaRK6jzi3/RhrA==
+  dependencies:
+    "@types/react" ">=16.0.0"
 
 simple-swizzle@^0.2.2:
   version "0.2.2"
