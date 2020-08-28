@@ -1,10 +1,11 @@
+import Head from "next/head";
 import Title from "../components/title";
 import Layout from "../components/layout";
 import HowToConfigureVoice from "../components/faqs/how-to-configure-voice";
 import DoNotReadName from "../components/faqs/do-not-read-name";
 import ConfigurationNotApplied from "../components/faqs/configuration-not-applied";
 import HowIsItInherited from "../components/faqs/how-is-it-inherited";
-import Head from "next/head";
+import CheckAppliedVoiceConfig from "../components/faqs/check-applied-voice-config";
 
 const Component: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const Component: React.FC = () => {
       <HowToConfigureVoice></HowToConfigureVoice>
       <ConfigurationNotApplied></ConfigurationNotApplied>
       <HowIsItInherited></HowIsItInherited>
+      <CheckAppliedVoiceConfig></CheckAppliedVoiceConfig>
     </Layout>
   );
 };
