@@ -102,21 +102,18 @@ function initSchema() {
 
   KlasaClient.defaultUserSchema.add("speech", (f) => {
     f.add("kind", "string", {
-      default: "neutral",
       filter: (_client, value) => {
         return !VoiceKindArray.includes(value);
       },
     });
     f.add("speed", "float", {
-      default: 1.0,
       min: 0.3,
       filter: (_client, value) => {
         return value < 0.3;
       },
     });
-    f.add("tone", "float", { default: 0.0 });
+    f.add("tone", "float");
     f.add("volume", "float", {
-      default: 0.0,
       max: 10,
       filter: (_client, value) => {
         return value > 10;
@@ -133,7 +130,6 @@ function initSchema() {
     f.add("intone", "float", {
       max: 4,
       min: 0,
-      default: 1,
       filter: (_client, value) => {
         return value > 4 || value < 0;
       },
@@ -141,7 +137,6 @@ function initSchema() {
     f.add("threshold", "float", {
       max: 1,
       min: 0,
-      default: 0.5,
       filter: (_client, value) => {
         return value > 1 || value < 0;
       },
