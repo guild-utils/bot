@@ -1,6 +1,6 @@
 FROM alpine:3.12 AS build-jumanpp
 RUN apk add --no-cache build-base cmake protobuf-dev protoc libexecinfo-dev
-
+ 
 COPY packages/util/jumanpp-2.0.0-rc3 /usr/app/builder
 
 WORKDIR /usr/app/builder
@@ -106,7 +106,9 @@ RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
-COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker-entrypoint.sh ./entrypoint.sh
 RUN date >/build-date
-ENTRYPOINT ["entrypoint.sh"]
+ARG GIT_SHORT_COMMIT_HASH
+ENV GIT_SHORT_COMMIT_HASH ${GIT_SHORT_COMMIT_HASH:-xxxxxxx}
+ENTRYPOINT ["sh","./entrypoint.sh"]
 CMD ["node","./packages/presentation/main/dist/main.js"]

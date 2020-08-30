@@ -1,0 +1,36 @@
+name: main-bot
+on: 
+  push: 
+    branches: production-main
+jobs: 
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          lfs: true
+      - uses: rlespinasse/github-slug-action@v2.x
+      - uses: docker/build-push-action@v1
+        env:
+          DOCKER_BUILDKIT: "1"
+        with:
+          repository: guildutils/main
+          username: tignear
+          password: ${{ secrets.DOCKER_TOKEN }}
+          tags: latest,${{ env.GITHUB_SHA_SHORT }}
+          build_args: GIT_SHORT_COMMIT_HASH=${{ env.GITHUB_SHA_SHORT }},BUILDKIT_INLINE_CACHE=1
+          cache_froms: guildutils/main:latest
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: rlespinasse/github-slug-action@v2.x
+      - uses: azure/setup-kubectl@v1
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: guild-utils
+      - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+      - run: kubectl set image --record deployment/guj-main guj-main=guildutils/main:${{ env.GITHUB_SHA_SHORT }}
+      - run: kubectl rollout status deployment/guj-main

@@ -5,13 +5,13 @@ set(BACKWARD_headers ${CMAKE_CURRENT_SOURCE_DIR}/backward.hpp PARENT_SCOPE)
 set(JPP_LIBS_DIR ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
 
 set(EIGEN_VERSION "3.3.4")
-set(EIGEN_HASH "dd254beb0bafc695d0f62ae1a222ff85b52dbaa3a16f76e781dce22d0d20a4a6")
+set(EIGEN_HASH "b170583f59d6778be4bfeae88583c77ed610df5b803ce5cb4aa850d0e8017c2f")
 
 if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/eigen3)
   message("-- Eigen3... OK")
 else()
   file(DOWNLOAD
-    "https://bitbucket.org/eigen/eigen/get/${EIGEN_VERSION}.tar.bz2"
+    "https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_VERSION}/eigen-${EIGEN_VERSION}.tar.bz2"
     "${CMAKE_CURRENT_BINARY_DIR}/eigen.tar.bz2"
     EXPECTED_HASH SHA256=${EIGEN_HASH}
     )
