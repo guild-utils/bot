@@ -67,8 +67,9 @@ RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
-COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker-entrypoint.sh ./entrypoint.sh
 RUN date >/build-date
-
-ENTRYPOINT ["entrypoint.sh"]
+ARG GIT_SHORT_COMMIT_HASH
+ENV GIT_SHORT_COMMIT_HASH ${GIT_SHORT_COMMIT_HASH:-xxxxxxx}
+ENTRYPOINT ["sh","entrypoint.sh"]
 CMD ["node","./packages/presentation/sub/dist/main.js"]

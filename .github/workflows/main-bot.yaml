@@ -2,9 +2,6 @@ name: main-bot
 on: 
   push: 
     branches: production-main
-env:
-  GKE_CLUSTER: guj
-  GKE_ZONE: asia-northeast1-b 
 jobs: 
   build: 
     runs-on: ubuntu-latest
