@@ -36,7 +36,7 @@ jobs:
           project_id: guild-utils
       - run: gcloud container clusters get-credentials guj --region=asia-northeast1-b --project=guild-utils
       - run: kubectl set image --record deployment/guj-sub-1 guj-sub=guildutils/sub:${{ env.GITHUB_SHA_SHORT }}
-      - run: kubectl set image --record deployment/guj-sub-2 guj-sub=guildutils/sub:${{ env.GITHUB_SHA_SHORT }}
+      - run: kubectl rollout status deployment/guj-sub-1
   deploy-sub-2:
     needs: build
     runs-on: ubuntu-latest
@@ -49,5 +49,5 @@ jobs:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: guild-utils
       - run: gcloud container clusters get-credentials guj --region=asia-northeast1-b --project=guild-utils
-      - run: kubectl rollout status deployment/guj-sub-1
+      - run: kubectl set image --record deployment/guj-sub-2 guj-sub=guildutils/sub:${{ env.GITHUB_SHA_SHORT }}
       - run: kubectl rollout status deployment/guj-sub-2
