@@ -38,21 +38,6 @@ function initSchema() {
       array: true,
     });
     f.add("readName", "boolean", { default: true });
-    f.add("dictionary", "any", {
-      configurable: false,
-      array: true,
-      default: [],
-    });
-    f.add("dictionaryA", "any", {
-      configurable: false,
-      array: true,
-      default: [],
-    });
-    f.add("dictionaryB", "any", {
-      configurable: false,
-      array: true,
-      default: [],
-    });
     f.add("maxReadLimit", "integer", {
       default: 130,
       max: 400,
