@@ -31,6 +31,6 @@ jobs:
           version: '290.0.1'
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: guild-utils
-      - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+      - run: gcloud container clusters get-credentials guj --region=asia-northeast1-b --project=guild-utils
       - run: kubectl set image --record deployment/guj-main guj-main=guildutils/main:${{ env.GITHUB_SHA_SHORT }}
       - run: kubectl rollout status deployment/guj-main
