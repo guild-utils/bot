@@ -26,6 +26,7 @@ class RandomizerV1 {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return obj[key[1]];
   }
+  name = "rand-v1";
 }
 class RandomizerV2 {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,8 +73,9 @@ class RandomizerV2 {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     return this.obj[key[1]];
   }
+  name = "rand-v2";
 }
 export const randomizers = {
-  v1: RandomizerV1,
-  v2: RandomizerV2,
+  v1: (): RandomizerV1 => new RandomizerV1(),
+  v2: ({ user }: { user: string }): RandomizerV2 => new RandomizerV2(user),
 };

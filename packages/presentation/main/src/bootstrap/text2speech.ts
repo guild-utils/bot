@@ -32,6 +32,7 @@ async function makeCredentials(keys: string | undefined) {
     : credentials.createInsecure();
 }
 function initSchema() {
+  const randomizerVersions = ["v1", "v2"];
   KlasaClient.defaultGuildSchema.add("speech", (f) => {
     f.add("targets", "TextChannel", {
       configurable: false,
@@ -44,15 +45,20 @@ function initSchema() {
       min: 0,
       filter: (_client, value) => {
         if (!Number.isInteger(value)) {
-          return false;
+          return true;
         }
         if (value > 400) {
-          return false;
+          return true;
         }
         if (value < 0) {
-          return false;
+          return true;
         }
-        return true;
+        return false;
+      },
+    });
+    f.add("randomizer", "string", {
+      filter: (_client, value) => {
+        return !randomizerVersions.includes(value);
       },
     });
   });
@@ -98,6 +104,11 @@ function initSchema() {
         return value > 1 || value < 0;
       },
     });
+    f.add("randomizer", "string", {
+      filter: (_client, value) => {
+        return !randomizerVersions.includes(value);
+      },
+    });
   });
 
   KlasaClient.defaultUserSchema.add("speech", (f) => {
@@ -139,6 +150,11 @@ function initSchema() {
       min: 0,
       filter: (_client, value) => {
         return value > 1 || value < 0;
+      },
+    });
+    f.add("randomizer", "string", {
+      filter: (_client, value) => {
+        return !randomizerVersions.includes(value);
       },
     });
   });

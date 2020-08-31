@@ -54,6 +54,7 @@ COPY packages/domains/game-event/package.json ./packages/domains/game-event/pack
 COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
 COPY packages/domains/configs/package.json ./packages/domains/configs/package.json
 COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
+COPY packages/util/xorshift/package.json ./packages/util/xorshift/package.json
 COPY packages/util/fixed-dsl/package.json ./packages/util/fixed-dsl/package.json
 COPY packages/util/periodical-dsl/package.json ./packages/util/periodical-dsl/package.json
 COPY packages/util/timing-to-notify-dsl/package.json ./packages/util/timing-to-notify-dsl/package.json
@@ -82,6 +83,7 @@ COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
 COPY packages/domains/command-data ./packages/domains/command-data
+COPY packages/util/xorshift ./packages/util/xorshift
 COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
 COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
 COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
