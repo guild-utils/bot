@@ -5,10 +5,14 @@
 import * as Domain from "domain_configs";
 import { GatewayDriver } from "klasa";
 import "klasa-member-gateway";
-import { Settings } from "klasa";
 import * as GUILD_CONFIGS from "protocol_shared-config/guild";
 import * as MEMBER_CONFIGS from "protocol_shared-config/member";
-function get(gws: Settings[], key: string[], data?: any): any {
+import { randomizers } from "./randomizer";
+const v1v2Boundary = 1598886000000; //2020/09/01 00:00:00 UTC+9
+interface GetInterface {
+  get(key: string[]): any;
+}
+function get(gws: GetInterface[], key: string[], data?: any): any {
   for (const gw of gws) {
     const r = gw.get(key);
     if (r != undefined) {
@@ -21,7 +25,7 @@ function get(gws: Settings[], key: string[], data?: any): any {
   return data;
 }
 function get2(
-  gws: [Settings, string][],
+  gws: [GetInterface, string][],
   key: string[],
   data?: { value: any; provider: string }
 ): { value: any; provider: string } {
@@ -37,8 +41,8 @@ function get2(
   return data ?? { value: undefined, provider: "default" };
 }
 function readName(
-  ms: Settings,
-  us: Settings,
+  ms: GetInterface,
+  us: GetInterface,
   nickName: string | undefined,
   userName: string
 ): string {
@@ -51,8 +55,8 @@ function readName(
 }
 type ReadName2ReturnType = { value: string; provider: string };
 function readName2(
-  ms: Settings,
-  us: Settings,
+  ms: GetInterface,
+  us: GetInterface,
   nickName: string | undefined,
   userName: string
 ): ReadName2ReturnType {
@@ -102,10 +106,23 @@ export class Usecase implements Domain.Usecase {
     const gs = await this.gateways.guilds.get(guild, true).sync();
     const ms = await this.gateways.members.get([guild, user], true).sync();
     const us = await this.gateways.users.get(user, true).sync();
-    const gws = [ms, us];
+    let randomizerVersion = get(
+      [ms, us, gs],
+      MEMBER_CONFIGS.text2speechRandomizer,
+      undefined
+    );
+    if (!randomizerVersion) {
+      const guildobj = await this.gateways.client.guilds.fetch(guild);
+      randomizerVersion = v1v2Boundary < guildobj.joinedTimestamp ? "v2" : "v1";
+    }
+    const randomizerSupplier =
+      randomizers[randomizerVersion as keyof typeof randomizers] ??
+      randomizers.v1;
+    const randomizer = randomizerSupplier({ user });
+    const gws = [ms, us, randomizer];
     const allpass = get(gws, MEMBER_CONFIGS.text2speechAllpass, undefined);
     return {
-      dictionary: await this.dictionary(gs),
+      dictionary: await this.dictionary(guild),
       kind: get(gws, MEMBER_CONFIGS.text2speechKind),
       readName: gs.get(GUILD_CONFIGS.text2speechReadName)
         ? readName(ms, us, nickName, userName)
@@ -131,9 +148,26 @@ export class Usecase implements Domain.Usecase {
     const gs = await this.gateways.guilds.get(guild, true).sync();
     const ms = await this.gateways.members.get([guild, user], true).sync();
     const us = await this.gateways.users.get(user, true).sync();
-    const gws: [Settings, string][] = [
+    let randomizerVersion = get(
+      [ms, us, gs],
+      MEMBER_CONFIGS.text2speechRandomizer,
+      undefined
+    );
+    console.log(randomizerVersion);
+    if (!randomizerVersion) {
+      const guildobj = await this.gateways.client.guilds.fetch(guild);
+      randomizerVersion = v1v2Boundary < guildobj.joinedTimestamp ? "v2" : "v1";
+    }
+    console.log(randomizerVersion);
+    const randomizerSupplier =
+      randomizers[randomizerVersion as keyof typeof randomizers] ??
+      randomizers.v1;
+    const randomizer = randomizerSupplier({ user });
+    console.log(randomizer, randomizer.name);
+    const gws: [GetInterface, string][] = [
       [ms, "memconf"],
       [us, "userconf"],
+      [randomizer, randomizer.name],
     ];
     const allpass = get2(gws, MEMBER_CONFIGS.text2speechAllpass, {
       value: undefined,
@@ -155,7 +189,7 @@ export class Usecase implements Domain.Usecase {
     }
     return {
       dictionary: {
-        value: await this.dictionary(gs),
+        value: await this.dictionary(guild),
         provider: "default",
       },
       kind: get2(gws, MEMBER_CONFIGS.text2speechKind),
@@ -183,11 +217,7 @@ export class Usecase implements Domain.Usecase {
 
     return readName(ms, us, nickName, userName);
   }
-  dictionary(guild: string | Settings): Promise<Domain.Dictionary> {
-    if (typeof guild === "string") {
-      return this.dictionaryRepo.getAll(guild);
-    } else {
-      return this.dictionaryRepo.getAll(guild.id);
-    }
+  dictionary(guild: string): Promise<Domain.Dictionary> {
+    return this.dictionaryRepo.getAll(guild);
   }
 }
