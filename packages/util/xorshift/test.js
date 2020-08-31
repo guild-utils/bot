@@ -1,6 +1,7 @@
-
-var test = require('tap').test;
-var xorshift = require('./xorshift.js');
+const test = require('tap').test;
+const m = require('./dist/xorshift.js');
+const xorshift = m.default;
+const XorShift = m.XorShift;
 
 var reference = require('./reference.json');
 
@@ -25,7 +26,7 @@ function floatview(d) {
 test('random double', function (t) {
   t.test('with seed = [1, 2]', function (t) {
     var ref = reference.double['1-2'];
-    var rng = xorshift.constructor([0, 1, 0, 2]);
+    var rng = new XorShift([0, 1, 0, 2]);
     for (var i = 0; i < ref.length; i++) {
       t.equal(floatview(rng.random()), ref[i]);
     }
@@ -35,7 +36,7 @@ test('random double', function (t) {
 
   t.test('with seed = [3, 4]', function (t) {
     var ref = reference.double['3-4'];
-    var rng = xorshift.constructor([0, 3, 0, 4]);
+    var rng = new XorShift([0, 3, 0, 4]);
     for (var i = 0; i < ref.length; i++) {
       t.equal(floatview(rng.random()), ref[i]);
     }
@@ -49,7 +50,7 @@ test('random double', function (t) {
 test('random int array', function (t) {
   t.test('with seed = [1, 2]', function (t) {
     var ref = reference.integer['1-2'];
-    var rng = xorshift.constructor([0, 1, 0, 2]);
+    var rng = new XorShift([0, 1, 0, 2]);
     for (var i = 0; i < ref.length; i++) {
       t.strictEqual(hexview(rng.randomint()), ref[i]);
     }
@@ -59,7 +60,7 @@ test('random int array', function (t) {
 
   t.test('with seed = [3, 4]', function (t) {
     var ref = reference.integer['3-4'];
-    var rng = xorshift.constructor([0, 3, 0, 4]);
+    var rng = new XorShift([0, 3, 0, 4]);
     for (var i = 0; i < ref.length; i++) {
       t.strictEqual(hexview(rng.randomint()), ref[i]);
     }
@@ -99,7 +100,7 @@ test('bad initialization', function (t) {
   t.test('wrong input type', function (t) {
     var error = null;
     try {
-      xorshift.constructor("0102");
+      new XorShift("0102");
     } catch (e) { error = e; }
 
     t.equal(error.name, 'TypeError');
@@ -110,7 +111,7 @@ test('bad initialization', function (t) {
   t.test('wrong array length', function (t) {
     var error = null;
     try {
-      xorshift.constructor([1, 2, 0]);
+      new XorShift([1, 2, 0]);
     } catch (e) { error = e; }
 
     t.equal(error.name, 'TypeError');
