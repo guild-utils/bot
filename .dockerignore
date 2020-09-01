@@ -13,3 +13,4 @@
 /docker
 **/.next
 **/yarn-error.log
+packages/util/jumanpp-2.0.0-rc3/libs/eigen3

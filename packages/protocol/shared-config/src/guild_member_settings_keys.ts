@@ -6,3 +6,4 @@ export const text2speechReadName = ["speech", "readName"];
 export const text2speechAllpass = ["speech", "allpass"];
 export const text2speechIntone = ["speech", "intone"];
 export const text2speechThreshold = ["speech", "threshold"];
+export const text2speechRandomizer = ["speech", "randomizer"];

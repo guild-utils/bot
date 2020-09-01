@@ -1,6 +1,6 @@
 FROM alpine:3.12 AS build-jumanpp
 RUN apk add --no-cache build-base cmake protobuf-dev protoc libexecinfo-dev
-
+ 
 COPY packages/util/jumanpp-2.0.0-rc3 /usr/app/builder
 
 WORKDIR /usr/app/builder
@@ -54,6 +54,7 @@ COPY packages/domains/game-event/package.json ./packages/domains/game-event/pack
 COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
 COPY packages/domains/configs/package.json ./packages/domains/configs/package.json
 COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
+COPY packages/util/xorshift/package.json ./packages/util/xorshift/package.json
 COPY packages/util/fixed-dsl/package.json ./packages/util/fixed-dsl/package.json
 COPY packages/util/periodical-dsl/package.json ./packages/util/periodical-dsl/package.json
 COPY packages/util/timing-to-notify-dsl/package.json ./packages/util/timing-to-notify-dsl/package.json
@@ -82,6 +83,7 @@ COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/configs ./packages/domains/configs
 COPY packages/domains/command-data ./packages/domains/command-data
+COPY packages/util/xorshift ./packages/util/xorshift
 COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
 COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
 COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
@@ -106,7 +108,9 @@ RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
-COPY docker-entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker-entrypoint.sh ./entrypoint.sh
 RUN date >/build-date
-ENTRYPOINT ["entrypoint.sh"]
+ARG GIT_SHORT_COMMIT_HASH
+ENV GIT_SHORT_COMMIT_HASH ${GIT_SHORT_COMMIT_HASH:-xxxxxxx}
+ENTRYPOINT ["sh","./entrypoint.sh"]
 CMD ["node","./packages/presentation/main/dist/main.js"]

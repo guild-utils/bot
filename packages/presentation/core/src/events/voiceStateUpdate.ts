@@ -1,5 +1,5 @@
 import { Event, EventStore } from "klasa";
-import { VoiceState, VoiceChannel } from "discord.js";
+import { VoiceState } from "discord.js";
 import { inject, autoInjectable } from "tsyringe";
 import Engine from "../text2speech/engine";
 import { text2speechTargetTextChannels } from "../guild_settings_keys";
@@ -25,10 +25,9 @@ export default class extends Event {
     if (newState.channel && newState.channelID === oldState.channelID) {
       return;
     }
-    const vc: VoiceChannel | undefined = (await this.client.channels.fetch(
-      oldChannel.id
-    )) as VoiceChannel | undefined;
-    if (!vc) {
+
+    const vc = oldChannel.guild.voice?.channel;
+    if (!vc || vc.id !== oldChannel.id) {
       return;
     }
 
