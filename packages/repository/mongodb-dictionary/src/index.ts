@@ -1,4 +1,4 @@
-import * as Domain from "domain_configs";
+import * as Domain from "domain_voice-configs";
 import { Collection } from "mongodb";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recurseObject<R>(obj: any): R {

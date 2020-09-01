@@ -1,5 +1,5 @@
 {
-  "name": "domain_configs",
+  "name": "domain_voice-configs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "version": "1.0.0",

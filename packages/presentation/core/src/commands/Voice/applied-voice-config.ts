@@ -4,7 +4,7 @@ import { User } from "discord.js";
 import { MessageEmbed } from "discord.js";
 import { inject, autoInjectable } from "tsyringe";
 import { CommandStore } from "klasa";
-import { Usecase as ConfigUsecase } from "domain_configs";
+import { Usecase as ConfigUsecase } from "domain_voice-configs";
 import * as LANG_KEYS from "../../lang_keys";
 @autoInjectable()
 export default class extends CommandEx {

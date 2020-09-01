@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import * as Domain from "domain_configs";
+import * as Domain from "domain_voice-configs";
 import { GatewayDriver } from "klasa";
 import "klasa-member-gateway";
 import * as GUILD_CONFIGS from "protocol_shared-config/guild";

@@ -1,6 +1,6 @@
 import { CommandStore, KlasaMessage } from "klasa";
 import { CommandEx } from "presentation_klasa-core-command-rewrite";
-import { DictionaryRepository } from "domain_configs";
+import { DictionaryRepository } from "domain_voice-configs";
 import { autoInjectable, inject } from "tsyringe";
 import * as LANG_KEYS from "../../../lang_keys";
 import { DictionaryJson } from "../../../text2speech";

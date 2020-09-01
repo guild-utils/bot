@@ -7,7 +7,7 @@ import { Text2SpeechServiceOpenJtalkGRPC } from "usecase_text2speech-grpc";
 import { autoInjectable, inject } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import { Readable } from "stream";
-import { Dictionary } from "domain_configs";
+import { Dictionary } from "domain_voice-configs";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { VoiceHandle } from "domain_text2speech";
 export type VoiceKind =

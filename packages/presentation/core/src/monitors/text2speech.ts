@@ -3,7 +3,7 @@ import { inject, autoInjectable } from "tsyringe";
 import Engine, { VoiceKindArray, VoiceKind } from "../text2speech/engine";
 import * as GUILD_SETTINGS from "../guild_settings_keys";
 import replaceAsync = require("string-replace-async");
-import { Usecase as ConfigUsecase } from "domain_configs";
+import { Usecase as ConfigUsecase } from "domain_voice-configs";
 // eslint-disable-next-line no-useless-escape
 const urlRegex = /https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/;
 // eslint-disable-next-line no-useless-escape

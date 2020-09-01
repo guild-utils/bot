@@ -4,7 +4,7 @@ import {
   createPagination,
   PaginationGui,
 } from "../gui/pagination";
-import { DictionaryEntryA, DictionaryEntryB } from "domain_configs";
+import { DictionaryEntryA, DictionaryEntryB } from "domain_voice-configs";
 import { MessageEmbed } from "discord.js";
 import { DependencyContainer } from "tsyringe";
 import * as LANG_KEYS from "../lang_keys";

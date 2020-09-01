@@ -35,7 +35,7 @@ COPY yarn.lock ./
 
 COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
 COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
-COPY packages/domains/configs/package.json ./packages/domains/configs/package.json
+COPY packages/domains/voice-configs/package.json ./packages/domains/voice-configs/package.json
 COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
 COPY packages/usecase/text2speech/package.json ./packages/usecase/text2speech/package.json
 COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2speech-grpc/package.json
@@ -52,7 +52,7 @@ RUN lerna bootstrap && apk del .ojt
 COPY .eslintrc.json ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/domains/text2speech ./packages/domains/text2speech
-COPY packages/domains/configs ./packages/domains/configs
+COPY packages/domains/voice-configs ./packages/domains/voice-configs
 COPY packages/domains/command-data ./packages/domains/command-data
 COPY packages/usecase/text2speech ./packages/usecase/text2speech
 COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
