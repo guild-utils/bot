@@ -31,7 +31,8 @@ module.exports = Structures.extend('Guild', Guild => {
 		 * @type {?Language}
 		 */
 		get language() {
-			return this.client.languages.get(this.settings.language) || null;
+			const key = this.client.options.guildConfigRepository.getLanguage(this.id);
+			return this.client.languages.get(key) || null;
 		}
 
 		/**
@@ -40,7 +41,7 @@ module.exports = Structures.extend('Guild', Guild => {
 		 * @returns {KlasaGuildJSON}
 		 */
 		toJSON() {
-			return { ...super.toJSON(), settings: this.settings.toJSON() };
+			return { ...super.toJSON() };
 		}
 
 	}
