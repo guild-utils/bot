@@ -1662,7 +1662,6 @@ declare module 'discord.js' {
 	}
 
 	export interface Message extends PartialSendAliases {
-		guildSettings: Settings;
 		language: Language;
 		command: Command | null;
 		commandText: string | null;
