@@ -979,7 +979,10 @@ declare module 'klasa' {
 //#endregion Classes
 
 //#region Typedefs
-
+	export interface GuildConfigRepository {
+		getPrefix(guild:string) : string;
+		getDisabledCommands(guild: string): Set<string>;
+	}
 	export interface KlasaClientOptions extends ClientOptions {
 		commandEditing?: boolean;
 		commandLogging?: boolean;
@@ -989,7 +992,6 @@ declare module 'klasa' {
 		createPiecesFolders?: boolean;
 		customPromptDefaults?: CustomPromptDefaults;
 		disabledCorePieces?: string[];
-		gateways?: GatewaysOptions;
 		language?: string;
 		noPrefixDM?: boolean;
 		owners?: string[];
@@ -1006,6 +1008,7 @@ declare module 'klasa' {
 		slowmode?: number;
 		slowmodeAggressive?: boolean;
 		typing?: boolean;
+		guildConfigRepository: GuildConfigRepository;
 	}
 
 	export interface ScheduleOptions {

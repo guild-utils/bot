@@ -321,8 +321,11 @@ module.exports = Structures.extend('Message', Message => {
 		 * @private
 		 */
 		_customPrefix() {
-			if (!this.guildSettings.prefix) return null;
-			for (const prf of Array.isArray(this.guildSettings.prefix) ? this.guildSettings.prefix : [this.guildSettings.prefix]) {
+			const prefix = this.client.options.guildConfigRepository.getPrefix(this.guild.id);
+			if (!prefix) {
+				return null;
+			}
+			for (const prf of Array.isArray(prefix) ? prefix : [prefix]) {
 				const testingPrefix = this.constructor.prefixes.get(prf) || this.constructor.generateNewPrefix(prf, this.client.options.prefixCaseInsensitive ? 'i' : '');
 				if (testingPrefix.regex.test(this.content)) return testingPrefix;
 			}
@@ -340,17 +343,6 @@ module.exports = Structures.extend('Message', Message => {
 			return mentionPrefix ? { length: mentionPrefix[0].length, regex: this.client.mentionPrefix } : null;
 		}
 
-		/**
-		 * Checks if the natural prefix is used
-		 * @since 0.5.0
-		 * @returns {CachedPrefix | null}
-		 * @private
-		 */
-		_naturalPrefix() {
-			if (this.guildSettings.disableNaturalPrefix || !this.client.options.regexPrefix) return null;
-			const results = this.client.options.regexPrefix.exec(this.content);
-			return results ? { length: results[0].length, regex: this.client.options.regexPrefix } : null;
-		}
 
 		/**
 		 * Checks if a prefixless scenario is possible
