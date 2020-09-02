@@ -62,7 +62,6 @@ module.exports = {
 	Usage: require('./lib/usage/Usage'),
 	Possible: require('./lib/usage/Possible'),
 	Tag: require('./lib/usage/Tag'),
-	TextPrompt: require('./lib/usage/TextPrompt'),
 
 	// lib/util
 	Colors: require('./lib/util/Colors'),

@@ -78,7 +78,6 @@ declare module 'klasa' {
 	}
 
 	export class KlasaMessage extends Message {
-		private prompter: CommandPrompt | null;
 		private _responses: KlasaMessage[];
 		private _patch(data: any): void;
 		private _parseCommand(): void;
@@ -416,8 +415,6 @@ declare module 'klasa' {
 		public requiredSettings: string[];
 		public runIn: string[];
 		public subcommands: boolean;
-		public usage: CommandUsage;
-
 		public createCustomResolver(type: string, resolver: ArgResolverCustomMethod): this;
 		public customizeResponse(name: string, response: string | ((message: KlasaMessage, possible: Possible) => string)): this;
 		public definePrompt(usageString: string, usageDelim?: string): Usage;
@@ -611,25 +608,7 @@ declare module 'klasa' {
 
 //#region Usage
 
-	export class CommandPrompt extends TextPrompt {
-		public constructor(message: KlasaMessage, usage: CommandUsage, options: TextPromptOptions);
-		private typing: boolean;
 
-		public run<T = any[]>(): Promise<T>;
-		private static generateNewDelim(delim: string): RegExp;
-		private static delims: Map<string, RegExp>;
-	}
-
-	export class CommandUsage extends Usage {
-		public constructor(client: KlasaClient, usageString: string, usageDelim: string | null, command: Command);
-		public names: string[];
-		public commands: string;
-		public nearlyFullUsage: string;
-
-		public createPrompt(message: KlasaMessage, options?: TextPromptOptions): CommandPrompt;
-		public fullUsage(message: KlasaMessage): string;
-		public toString(): string;
-	}
 
 	export class Possible {
 		public constructor([match, name, type, min, max, regex, flags]: [string, string, string, string, string, string, string]);
@@ -654,43 +633,7 @@ declare module 'klasa' {
 		private static parseTrueMembers(members: string): string[];
 	}
 
-	export class TextPrompt {
-		public constructor(message: KlasaMessage, usage: Usage, options?: TextPromptOptions);
-		public readonly client: KlasaClient;
-		public message: KlasaMessage;
-		public target: KlasaUser;
-		public channel: TextChannel | DMChannel;
-		public usage: Usage | CommandUsage;
-		public reprompted: boolean;
-		public flags: Record<string, string>;
-		public args: string[];
-		public params: any[];
-		public time: number;
-		public limit: number;
-		public quotedStringSupport: boolean;
-		public responses: Collection<string, KlasaMessage>;
-		private _repeat: boolean;
-		private _required: number;
-		private _prompted: number;
-		private _currentUsage: Tag;
 
-		public run<T = any[]>(prompt: StringResolvable | MessageOptions | MessageAdditions | APIMessage): Promise<T>;
-		private prompt(text: string): Promise<KlasaMessage>;
-		private reprompt(prompt: string): Promise<any[]>;
-		private repeatingPrompt(): Promise<any[]>;
-		private validateArgs(): Promise<any[]>;
-		private multiPossibles(index: number): Promise<any[]>;
-		private pushParam(param: any): any[];
-		private handleError(err: string): Promise<any[]>;
-		private finalize(): any[];
-		private _setup(original: string): void;
-
-		private static getFlags(content: string, delim: string): { content: string; flags: Record<string, string> };
-		private static getArgs(content: string, delim: string): string[];
-		private static getQuotedStringArgs(content: string, delim: string): string[];
-
-		public static readonly flagRegex: RegExp;
-	}
 
 	export class Usage {
 		public constructor(client: KlasaClient, usageString: string, usageDelim: string | null);
@@ -703,7 +646,6 @@ declare module 'klasa' {
 
 		public createCustomResolver(type: string, resolver: ArgResolverCustomMethod): this;
 		public customizeResponse(name: string, response: ((message: KlasaMessage) => string)): this;
-		public createPrompt(message: KlasaMessage, options?: TextPromptOptions): TextPrompt;
 		public toJSON(): Tag[];
 		public toString(): string;
 
@@ -1349,15 +1291,7 @@ declare module 'klasa' {
 	export interface PieceLanguageJSON extends PieceJSON, Required<LanguageOptions> {}
 	export interface PieceTaskJSON extends PieceJSON, Required<TaskOptions> {}
 
-	// Usage
-	export interface TextPromptOptions {
-		channel?: TextChannel | DMChannel;
-		limit?: number;
-		quotedStringSupport?: boolean;
-		target?: KlasaUser;
-		time?: number;
-		flagSupport?: boolean;
-	}
+
 
 	// Util
 	export enum ColorsClose {
