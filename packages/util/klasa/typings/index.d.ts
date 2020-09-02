@@ -55,7 +55,6 @@ declare module 'klasa' {
 
 		public sweepMessages(lifetime?: number, commandLifeTime?: number): number;
 		public static basePermissions: Permissions;
-		public static defaultGuildSchema: Schema;
 		public static defaultUserSchema: Schema;
 		public static defaultClientSchema: Schema;
 		public static defaultPermissionLevels: PermissionLevels;
@@ -68,7 +67,6 @@ declare module 'klasa' {
 //#region Extensions
 
 	export class KlasaGuild extends Guild {
-		//public settings: Settings;
 		public readonly language: Language;
 	}
 
@@ -922,8 +920,9 @@ declare module 'klasa' {
 
 //#region Typedefs
 	export interface GuildConfigRepository {
-		getPrefix(guild:string) : string;
+		getPrefix(guild:string): string;
 		getDisabledCommands(guild: string): Set<string>;
+		getLanguage(guild: string): string;
 	}
 	export interface KlasaClientOptions extends ClientOptions {
 		commandEditing?: boolean;
