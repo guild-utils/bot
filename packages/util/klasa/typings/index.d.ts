@@ -68,7 +68,7 @@ declare module 'klasa' {
 //#region Extensions
 
 	export class KlasaGuild extends Guild {
-		public settings: Settings;
+		//public settings: Settings;
 		public readonly language: Language;
 	}
 
@@ -280,7 +280,7 @@ declare module 'klasa' {
 		public readonly client: KlasaClient;
 		public keys: Set<string>;
 		public ready: boolean;
-		public guilds: Gateway;
+		//public guilds: Gateway;
 		public users: Gateway;
 		public clientStorage: Gateway;
 		private _queue: Array<(() => Gateway)>;
