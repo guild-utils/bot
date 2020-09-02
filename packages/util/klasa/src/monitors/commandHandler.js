@@ -11,7 +11,8 @@ module.exports = class extends Monitor {
 		if (message.guild && !message.guild.me) await message.guild.members.fetch(this.client.user);
 		if (!message.channel.postable) return undefined;
 		if (!message.commandText && message.prefix === this.client.mentionPrefix) {
-			return message.sendLocale('PREFIX_REMINDER', [message.guildSettings.prefix.length ? message.guildSettings.prefix : undefined]);
+			const prefix = this.client.options.guildConfigRepository.getPrefix(message.guild.id);
+			return message.sendLocale('PREFIX_REMINDER', [prefix.length ? prefix : undefined]);
 		}
 		if (!message.commandText) return undefined;
 		if (!message.command) return this.client.emit('commandUnknown', message, message.commandText, message.prefix, message.prefixLength);
