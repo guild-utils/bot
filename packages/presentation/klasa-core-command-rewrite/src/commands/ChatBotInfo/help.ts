@@ -10,6 +10,7 @@ import {
 } from "../../arguments/category";
 import { Command } from "klasa";
 import { CommandData } from "domain_command-data";
+
 export default class extends CommandEx {
   constructor(store: CommandStore, file: string[], directory: string) {
     super(store, file, directory);
@@ -107,7 +108,11 @@ export default class extends CommandEx {
         .setFooter(
           msg.language.get(
             "COMMAND_HELP_SUB_CATEGORY_FOOTER",
-            msg.guildSettings?.get("prefix") ?? this.client.options.prefix
+            msg.guild?.id
+              ? this.client.options.guildConfigRepository.getPrefix(
+                  msg.guild.id
+                )
+              : this.client.options.prefix
           )
         );
       await setCommonConf(embed, msg);
@@ -147,7 +152,9 @@ export default class extends CommandEx {
       .setFooter(
         msg.language.get(
           "COMMAND_HELP_CATEGORY_FOOTER",
-          msg.guildSettings.get("prefix") ?? this.client.options.prefix
+          msg.guild?.id
+            ? this.client.options.guildConfigRepository.getPrefix(msg.guild.id)
+            : this.client.options.prefix
         )
       );
     await setCommonConf(embed, msg);
@@ -217,7 +224,9 @@ function buildUsage(
   const nearlyFullUsage = `${commands}${deliminatedUsage}`;
   let prefix = message.prefixLength
     ? message.content.slice(0, message.prefixLength)
-    : (message.guildSettings.get("prefix") as string);
+    : message.guild?.id
+    ? message.client.options.guildConfigRepository.getPrefix(message.guild.id)
+    : message.client.options.prefix;
   if (message.prefix === message.client.mentionPrefix) {
     prefix = `@${message.client.user!.tag}`;
   } else if (Array.isArray(prefix)) {
