@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "domain_voice-configs": "^1.0.0",
-    "klasa-member-gateway": "^1.0.0",
     "protocol_shared-config": "^1.0.0"
   },
   "scripts": {
