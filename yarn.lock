@@ -8890,6 +8890,11 @@ moment-timezone@*, moment-timezone@^0.5.28:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.27.0.tgz#8bff4e3e26a236220dfe3e36de756b6ebaa0105d"
   integrity sha512-al0MUK7cpIcglMv3YF13qSgdAIqxHTO7brRtaz3DlSULbqfazqkc5kEjNrLDOM7fsjshoFIihnU8snrP7zUvhQ==
 
+mongo-dot-notation@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/mongo-dot-notation/-/mongo-dot-notation-2.0.0.tgz#5971f44ba9693f33089750406d8de9bf7f73fa6f"
+  integrity sha512-ooU9nudAGxsMiTXYvfdL8DD9ouQoK2Na1lp4IT85J7uwJuS6770Y2plhkhrl/knMFjEQ0aJqXUMc3MAcnoCHKA==
+
 mongodb@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.6.0.tgz#babd7172ec717e2ed3f85e079b3f1aa29dce4724"
