@@ -5,12 +5,17 @@ function uniformint(self: XorShift, a: number, b: number) {
 function uniformreal(self: XorShift, a: number, b: number, fix: number) {
   return uniformint(self, a * fix, b * fix) / fix;
 }
+export type RandomizerReturnType = {
+  kind: string;
+  speed: number;
+  tone: number;
+  volume: number;
+  allpass: undefined;
+  intone: number;
+  threshold: number;
+};
 class RandomizerV1 {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get(key: string[]): any {
-    if (key[0] !== "speech") {
-      throw new TypeError();
-    }
+  get(): RandomizerReturnType {
     const obj = {
       kind: "neutral",
       speed: 1.0,
@@ -20,17 +25,12 @@ class RandomizerV1 {
       intone: 1,
       threshold: 0.5,
     };
-    if (!(key[1] in obj)) {
-      throw new TypeError();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return obj[key[1]];
+    return obj;
   }
   name = "rand-v1";
 }
 class RandomizerV2 {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private readonly obj: any;
+  private readonly obj: RandomizerReturnType;
   constructor(user: string) {
     const i = BigInt(user);
     const h = Number(BigInt.asUintN(32, i >> 32n));
@@ -61,17 +61,8 @@ class RandomizerV2 {
       threshold: 0.5,
     };
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get(key: string[]): any {
-    if (key[0] !== "speech") {
-      throw new TypeError();
-    }
-
-    if (!(key[1] in this.obj)) {
-      throw new TypeError();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return this.obj[key[1]];
+  get(): RandomizerReturnType {
+    return this.obj;
   }
   name = "rand-v2";
 }
