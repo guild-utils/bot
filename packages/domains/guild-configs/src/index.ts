@@ -30,3 +30,13 @@ export interface BasicBotConfigRepository {
   ): Promise<UpdateResult<Set<string>>>;
   get(guild: string): Promise<BasicBotConfig>;
 }
+export interface BasicBotConfigRepositoryCache {
+  getPrefix(guild: string): string | undefined;
+  getLanguage(guild: string): keyof typeof languages | undefined;
+  getDisabledCommands(guild: string): Set<string> | undefined;
+  get(guild: string): BasicBotConfig | undefined;
+}
+export interface BasicBotConfigRepositoryWithCache
+  extends BasicBotConfigRepository {
+  cache: BasicBotConfigRepositoryCache;
+}
