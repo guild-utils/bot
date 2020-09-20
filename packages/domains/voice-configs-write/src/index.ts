@@ -24,60 +24,65 @@ export const VoiceKind = {
 };
 export type LayeredVoiceConfig = {
   allpass: number | undefined;
-  intone: number;
-  speed: number;
-  threshold: number;
-  tone: number;
-  volume: number;
-  kind: keyof typeof VoiceKind;
-  randomizer: keyof typeof Randomizer;
-  readName: string;
+  intone: number | undefined;
+  speed: number | undefined;
+  threshold: number | undefined;
+  tone: number | undefined;
+  volume: number | undefined;
+  kind: keyof typeof VoiceKind | undefined;
+  randomizer: keyof typeof Randomizer | undefined;
+  readName: string | undefined;
 };
 export type UpdateResult<T, U = T> = {
-  type: "ok" | "same" | "error";
-  before: T;
-  after: U;
+  type: "ok" | "same" | "error" | "not matched";
+  before?: T | undefined;
+  after?: U | undefined;
 };
-export interface LayeredVoiceConfigRepository {
-  get(layerKey: string): LayeredVoiceConfig;
+export interface LayeredVoiceConfigRepository<LayerKeyType> {
+  get(layerKey: LayerKeyType): Promise<LayeredVoiceConfig>;
   set(
-    layerKey: string,
+    layerKey: LayerKeyType,
     newC: LayeredVoiceConfig
   ): Promise<UpdateResult<LayeredVoiceConfig>>;
-  setAllpass(layerKey: string, v: number): Promise<UpdateResult<number>>;
-  setIntone(layerKey: string, v: number): Promise<UpdateResult<number>>;
-  setSpeed(layerKey: string, v: number): Promise<UpdateResult<number>>;
-  setThreshold(layerKey: string, v: number): Promise<UpdateResult<number>>;
-  setTone(layerKey: string, v: number): Promise<UpdateResult<number>>;
-  setVolume(layerKey: string, v: number): Promise<UpdateResult<number>>;
+  setAllpass(layerKey: LayerKeyType, v: number): Promise<UpdateResult<number>>;
+  setIntone(layerKey: LayerKeyType, v: number): Promise<UpdateResult<number>>;
+  setSpeed(layerKey: LayerKeyType, v: number): Promise<UpdateResult<number>>;
+  setThreshold(
+    layerKey: LayerKeyType,
+    v: number
+  ): Promise<UpdateResult<number>>;
+  setTone(layerKey: LayerKeyType, v: number): Promise<UpdateResult<number>>;
+  setVolume(layerKey: LayerKeyType, v: number): Promise<UpdateResult<number>>;
   setKind(
-    layerKey: string,
+    layerKey: LayerKeyType,
     v: keyof typeof VoiceKind
   ): Promise<UpdateResult<keyof typeof VoiceKind>>;
   setRandomizer(
-    layerKey: string,
+    layerKey: LayerKeyType,
     v: keyof typeof Randomizer
   ): Promise<UpdateResult<keyof typeof Randomizer>>;
-  setReadName(layerKey: string, v: string): Promise<string>;
+  setReadName(layerKey: LayerKeyType, v: string): Promise<UpdateResult<string>>;
   setIfNotChanged(
-    layerKey: string,
+    layerKey: LayerKeyType,
     newC: LayeredVoiceConfig,
     comp: LayeredVoiceConfig
   ): Promise<UpdateResult<LayeredVoiceConfig>>;
 }
 export type GuildVoiceConfig = {
-  readName: boolean;
-  maxReadLimit: number;
-  randomizer: keyof typeof Randomizer;
+  readName?: boolean;
+  maxReadLimit?: number;
+  maxVolume?: number;
+  randomizer?: keyof typeof Randomizer;
 };
 export interface GuildVoiceConfigRepository {
-  get(guild: string): GuildVoiceConfig;
+  get(guild: string): Promise<GuildVoiceConfig>;
   set(
     guild: string,
     newC: GuildVoiceConfig
-  ): Promise<UpdateResult<LayeredVoiceConfig>>;
+  ): Promise<UpdateResult<GuildVoiceConfig>>;
   setReadName(guild: string, v: boolean): Promise<UpdateResult<boolean>>;
-  setMaxReadLimit(guild: string, v: number): Promise<UpdateResult<string>>;
+  setMaxReadLimit(guild: string, v: number): Promise<UpdateResult<number>>;
+  setMaxVolume(guild: string, v: number): Promise<UpdateResult<number>>;
   setRandomizer(
     guild: string,
     v: keyof typeof Randomizer
