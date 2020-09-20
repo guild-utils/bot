@@ -6,12 +6,12 @@ import {
 } from "domain_guild-configs";
 import { Collection } from "mongodb";
 
-type RepositoryCollectionType = {
+export type RepositoryCollectionType = {
   prefix?: string;
   language?: string;
   disabledCommands?: string[];
 };
-type DefaultRepositoryCollectionType = {
+export type DefaultRepositoryCollectionType = {
   prefix: string;
   language: keyof typeof languages;
   disabledCommands: string[];
@@ -103,12 +103,12 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
     if (!rr) {
       throw new Error("mongo repository setLanguage failed.");
     }
-    const rrr = Object.keys(languages).includes(rr)
+    const before = Object.keys(languages).includes(rr)
       ? (rr as keyof typeof languages)
       : this.defaultV.language;
     return {
       type: rr === language ? "same" : "ok",
-      before: rrr,
+      before,
       after: language,
     };
   }
@@ -138,11 +138,11 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
     if (!rr) {
       throw new Error("mongo repository addDisabledCommands failed.");
     }
-    const rrr = new Set(rr);
+    const before = new Set(rr);
     return {
       type: "ok",
-      before: rrr,
-      after: new Set([...rrr, key]),
+      before,
+      after: new Set([...before, key]),
     };
   }
   async removeDisabledCommands(
@@ -164,13 +164,13 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
       }
     );
     const rr = r.value?.disabledCommands;
-    const rrr = new Set(rr ?? this.defaultV.disabledCommands);
-    const rrrr = new Set(rrr);
-    rrrr.delete(key);
+    const before = new Set(rr ?? this.defaultV.disabledCommands);
+    const after = new Set(before);
+    after.delete(key);
     return {
       type: "ok",
-      before: rrr,
-      after: rrrr,
+      before,
+      after,
     };
   }
 }
