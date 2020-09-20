@@ -14,14 +14,9 @@ import { config, token } from "./config";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { promises as fs } from "fs";
 import { Permissions } from "discord.js";
-function initSchema() {
-  KlasaClient.defaultGuildSchema.add("speech", (f) => {
-    f.add("targets", "TextChannel", {
-      configurable: false,
-      array: true,
-    });
-  });
-}
+import { initDatabase } from "./bootstrap/mongo";
+import * as ENV from "./bootstrap/env";
+
 async function makeCredentials(keys: string | undefined) {
   const options: VerifyOptions = {
     checkServerIdentity: () => undefined,
@@ -43,6 +38,14 @@ KlasaClient.basePermissions
   .add(Permissions.FLAGS.ATTACH_FILES)
   .add(Permissions.FLAGS.EMBED_LINKS);
 async function main() {
+  const db = await initDatabase({
+    connectionString: ENV.MONGO_CONNECTION,
+    host: ENV.MONGO_HOST,
+    port: ENV.MONGO_PORT,
+    db: ENV.MONGO_DB,
+    user: ENV.MONGO_USER,
+    password: ENV.MONGO_PASSWORD,
+  });
   const grpcConfigClient: IConfigManagerClient = new ConfigManagerClient(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     process.env["GUILD_UTILS_J_RPC_SERVER"]!,
@@ -65,8 +68,7 @@ async function main() {
       super(options);
     }
   }
-  initSchema();
-  const discordClient = new Client(config);
+  const discordClient = new Client(config(db.collection("guilds")));
   initInstanceState(container, discordClient);
   await discordClient.login(token);
   await initKlasaCoreCommandRewrite(

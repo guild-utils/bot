@@ -2,7 +2,7 @@ import { Event, EventStore } from "klasa";
 import { VoiceState } from "discord.js";
 import { inject, autoInjectable } from "tsyringe";
 import Engine from "../text2speech/engine";
-import { text2speechTargetTextChannels } from "../guild_settings_keys";
+import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
 
 @autoInjectable()
 export default class extends Event {
@@ -10,7 +10,9 @@ export default class extends Event {
     store: EventStore,
     file: string[],
     directory: string,
-    @inject("engine") private readonly engine: Engine
+    @inject("engine") private readonly engine: Engine,
+    @inject("TextToSpeechTargetChannelDataStore")
+    private readonly dataStore: TextToSpeechTargetChannelDataStore
   ) {
     super(store, file, directory, {
       event: "voiceStateUpdate",
@@ -37,7 +39,7 @@ export default class extends Event {
     }
     await this.engine.unregister(vc.guild.voice?.connection);
     vc.guild.voice?.connection?.disconnect();
-    await vc.guild.settings.reset(text2speechTargetTextChannels.join("."));
+    await this.dataStore.clearTextToSpeechTargetChannel(oldChannel.guild.id);
     vc.leave();
   }
 }

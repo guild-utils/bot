@@ -34,13 +34,13 @@ export default class extends CommandEx {
       return msg.sendLocale("PLEASE_ALLOW_TO_SEND_EMBED_LINKS");
     }
     if (!cmd) {
+      const prefix = msg.guild?.id
+        ? msg.client.options.guildConfigRepository.getPrefix(msg.guild.id)
+        : this.client.options.prefix;
       const embed = new MessageEmbed()
         .setTitle("Help")
         .setDescription(
-          msg.language.get(
-            "COMMAND_HELP_SIMPLE_EMBED_DESC",
-            msg.guild?.settings.get("prefix") ?? this.client.options.prefix
-          )
+          msg.language.get("COMMAND_HELP_SIMPLE_EMBED_DESC", prefix)
         )
         .addFields(
           Object.values(this.categorizeCommand(msg.language.name).category).map(
@@ -68,12 +68,7 @@ export default class extends CommandEx {
             };
           })
         )
-        .setFooter(
-          msg.language.get(
-            "COMMAND_HELP_ALL_FOOTER",
-            msg.guild?.settings.get("prefix") ?? this.client.options.prefix
-          )
-        );
+        .setFooter(msg.language.get("COMMAND_HELP_ALL_FOOTER", prefix));
       await setCommonConf(embed, msg);
       return msg.sendEmbed(embed);
     }
