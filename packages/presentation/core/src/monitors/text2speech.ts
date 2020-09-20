@@ -1,9 +1,9 @@
 import { Monitor, KlasaMessage, MonitorStore } from "klasa";
 import { inject, autoInjectable } from "tsyringe";
 import Engine, { VoiceKindArray, VoiceKind } from "../text2speech/engine";
-import * as GUILD_SETTINGS from "../guild_settings_keys";
 import replaceAsync = require("string-replace-async");
 import { Usecase as ConfigUsecase } from "domain_voice-configs";
+import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
 // eslint-disable-next-line no-useless-escape
 const urlRegex = /https?:\/\/[\w/:%#\$&\?\(\)~\.=\+\-]+/;
 // eslint-disable-next-line no-useless-escape
@@ -15,7 +15,9 @@ export default class extends Monitor {
     file: string[],
     directory: string,
     @inject("engine") private readonly engine: Engine,
-    @inject("ConfigRepository") private readonly repo: ConfigUsecase
+    @inject("ConfigRepository") private readonly repo: ConfigUsecase,
+    @inject("TextToSpeechTargetChannelDataStore")
+    private readonly dataStore: TextToSpeechTargetChannelDataStore
   ) {
     super(store, file, directory, {
       name: "text2speech",
@@ -35,15 +37,16 @@ export default class extends Monitor {
     if (!guild) {
       return;
     }
-    const targets: string[] = message.guildSettings.get(
-      GUILD_SETTINGS.text2speechTargetTextChannels
+    const targets: Set<string> = await this.dataStore.getTextToSpeechTargetChannel(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      message.guild!.id
     );
-    if (!targets.includes(message.channel.id)) {
+    if (!targets.has(message.channel.id)) {
       return;
     }
     const connection = guild.voice?.connection;
     if (!connection) {
-      await guild.settings.reset(GUILD_SETTINGS.text2speechTargetTextChannels);
+      await this.dataStore.clearTextToSpeechTargetChannel(guild.id);
       return;
     }
     let content = message.content;
