@@ -1,8 +1,16 @@
 import { Event, EventStore } from "klasa";
 import { GuildMember } from "discord.js";
-
+import { autoInjectable, inject } from "tsyringe";
+import { BasicBotConfigRepository } from "domain_guild-configs";
+@autoInjectable()
 export default class extends Event {
-  constructor(store: EventStore, file: string[], directory: string) {
+  constructor(
+    store: EventStore,
+    file: string[],
+    directory: string,
+    @inject("BasicBotConfigRepository")
+    private readonly basicBotConfig: BasicBotConfigRepository
+  ) {
     super(store, file, directory, {
       event: "guildMemberUpdate",
     });
@@ -16,6 +24,9 @@ export default class extends Event {
     if (!prefixWithDisplayName) {
       return;
     }
-    await newMember.guild.settings.update("prefix", prefixWithDisplayName[1]);
+    await this.basicBotConfig.setPrefix(
+      newMember.guild.id,
+      prefixWithDisplayName[1]
+    );
   }
 }

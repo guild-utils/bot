@@ -1,26 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "reflect-metadata";
 import "abort-controller/polyfill";
-import MemberGatewayPlugin from "klasa-member-gateway";
-import {
-  Usecase as KlasaUsecase,
-  //  DictionaryRepository as KlasaDictionaryRepository,
-} from "protocol_configs-klasa";
+import { Usecase as AppliedVoiceConfigResolver } from "protocol_configs-klasa";
 import { MongoDictionaryRepository } from "repository_mongodb-dictionary";
 import { config as dotenv } from "dotenv";
-const result = dotenv();
-import { KlasaClient, KlasaClientOptions, Settings } from "klasa";
+import { KlasaClient, KlasaClientOptions } from "klasa";
 import { container } from "tsyringe";
-import { GameEventNotificationRepositoryKlasa } from "repository_schedule";
 import { config, token } from "./config";
-import { initChannelsGateway } from "./channelSettings";
-import { taskName } from "./tasks/event-notice";
-import * as GUILD_SETINGS from "./guild_settings_keys";
 import initRpcServer from "./bootstrap/grpc";
-import initGameEvent from "./bootstrap/schedule";
 import initText2Speech from "./bootstrap/text2speech";
-import initStarBoard from "./bootstrap/starBoard";
-import { initMongo } from "./bootstrap/mongo";
+import { initDatabase } from "./bootstrap/mongo";
 import { Permissions } from "discord.js";
 import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
 import {
@@ -28,20 +17,23 @@ import {
   initBADictionaryGui,
 } from "./bootstrap/dictionary-gui";
 import { initInstanceState } from "presentation_core";
-
+import * as ENV from "./bootstrap/env";
+import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
+import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
+import {
+  CacheGuildVoiceConfigRepository,
+  CacheMemberLayeredVoiceConfigRepository,
+  CacheSimpleLayeredVoiceConfigRepository,
+} from "repository_cache-voice-configs";
+import {
+  MongoSimpleLayeredVoiceConfigRepository,
+  MongoGuildVoiceConfigRepository,
+} from "repository_mongo-voice-configs";
+const result = dotenv();
 if (result) {
   console.log(result.parsed);
 }
 
-declare module "discord.js" {
-  interface GuildMember {
-    settings: Settings;
-  }
-}
-
-function initMemberGateway(Client: typeof KlasaClient) {
-  Client.use(MemberGatewayPlugin);
-}
 KlasaClient.basePermissions
   .add(Permissions.FLAGS.ADD_REACTIONS)
   .add(Permissions.FLAGS.MANAGE_MESSAGES)
@@ -50,27 +42,54 @@ KlasaClient.basePermissions
   .add(Permissions.FLAGS.ATTACH_FILES)
   .add(Permissions.FLAGS.EMBED_LINKS);
 async function main() {
-  const gameEventNotificationRepository = new GameEventNotificationRepositoryKlasa(
-    taskName,
-    GUILD_SETINGS.nextTaskId
-  );
   class Client extends KlasaClient {
     constructor(options: KlasaClientOptions) {
       super(options);
-      gameEventNotificationRepository.init(this);
     }
   }
-  initGameEvent(container, gameEventNotificationRepository);
-  initMemberGateway(Client);
   await initText2Speech(container);
-  const client = new Client(config);
-  await initMongo(client);
-  const dict = new MongoDictionaryRepository(
-    client.mongodb.collection("guilds")
+  const db = await initDatabase({
+    connectionString: ENV.MONGO_CONNECTION,
+    host: ENV.MONGO_HOST,
+    port: ENV.MONGO_PORT,
+    db: ENV.MONGO_DB,
+    user: ENV.MONGO_USER,
+    password: ENV.MONGO_PASSWORD,
+  });
+  const language = "ja_JP";
+  const prefix = process.env["GUJ_DEFAULT_PREFIX"] ?? "$";
+  const basicBotConfig = new CachedBasicConfigRepository(
+    new MongoBasicBotConfigRepository(db.collection("guilds"), {
+      disabledCommands: [],
+      language,
+      prefix,
+    })
   );
-  const configRepo = new KlasaUsecase(client.gateways, dict);
+  container.register("BasicBotConfigRepository", { useValue: basicBotConfig });
+  const client = new Client(config(basicBotConfig));
+  const dict = new MongoDictionaryRepository(db.collection("guilds"));
+  const memberVoiceConfig = new CacheMemberLayeredVoiceConfigRepository(
+    new MongoSimpleLayeredVoiceConfigRepository(db.collection("members"))
+  );
+  const userVoiceConfig = new CacheSimpleLayeredVoiceConfigRepository(
+    new MongoSimpleLayeredVoiceConfigRepository(db.collection("users"))
+  );
+  const guildVoiceConfig = new CacheGuildVoiceConfigRepository(
+    new MongoGuildVoiceConfigRepository(db.collection("guilds"))
+  );
+
+  const appliedVoiceConfigResolver = new AppliedVoiceConfigResolver(
+    memberVoiceConfig,
+    userVoiceConfig,
+    guildVoiceConfig,
+    dict,
+    {
+      getGuildJoinedTimeStamp: (guild) =>
+        client.guilds.fetch(guild).then((e) => e.joinedTimestamp),
+    }
+  );
   container.register("ConfigRepository", {
-    useValue: configRepo,
+    useValue: appliedVoiceConfigResolver,
   });
   container.register("DictionaryRepository", {
     useValue: dict,
@@ -83,9 +102,7 @@ async function main() {
   container.register("GuiControllers", {
     useValue: [mainDictionaryGui, ...baDictionaryGuis],
   });
-  initChannelsGateway(client.gateways);
-  initRpcServer(configRepo);
-  initStarBoard();
+  initRpcServer(appliedVoiceConfigResolver);
   initInstanceState(container, client);
   await client.login(token);
   await initKlasaCoreCommandRewrite(client.arguments, client.commands);

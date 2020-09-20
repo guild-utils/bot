@@ -14,7 +14,7 @@ export async function initDatabase(opt: Options): Promise<Db> {
     {
       host: "localhost",
       port: "27017",
-      db: "guj-main",
+      db: "guj-sub",
       options: {},
     },
     opt
