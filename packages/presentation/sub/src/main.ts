@@ -16,7 +16,8 @@ import { promises as fs } from "fs";
 import { Permissions } from "discord.js";
 import { initDatabase } from "./bootstrap/mongo";
 import * as ENV from "./bootstrap/env";
-
+import { CacheTextToSpeechTargetChannelDataStore } from "repository_cache-guild-tts-target-channels";
+import { MongoTextToSpeechTargetChannelDataStore } from "repository_mongo-guild-tts-target-channels";
 async function makeCredentials(keys: string | undefined) {
   const options: VerifyOptions = {
     checkServerIdentity: () => undefined,
@@ -62,6 +63,11 @@ async function main() {
     new ClientResponseTransformer()
   );
   container.register("ConfigRepository", { useValue: usecase });
+  container.register("TextToSpeechTargetChannelDataStore", {
+    useValue: new CacheTextToSpeechTargetChannelDataStore(
+      new MongoTextToSpeechTargetChannelDataStore(db.collection("guilds"))
+    ),
+  });
   await initEngineAndKuromoji(container, grpcMixerClient);
   class Client extends KlasaClient {
     constructor(options: KlasaClientOptions) {
