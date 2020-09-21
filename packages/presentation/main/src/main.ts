@@ -29,6 +29,8 @@ import {
   MongoSimpleLayeredVoiceConfigRepository,
   MongoGuildVoiceConfigRepository,
 } from "repository_mongo-voice-configs";
+import { CacheTextToSpeechTargetChannelDataStore } from "repository_cache-guild-tts-target-channels";
+import { MongoTextToSpeechTargetChannelDataStore } from "repository_mongo-guild-tts-target-channels";
 const result = dotenv();
 if (result) {
   console.log(result.parsed);
@@ -94,8 +96,10 @@ async function main() {
   container.register("DictionaryRepository", {
     useValue: dict,
   });
-  container.register("TextToSpeechTargetChannelDataStore",{
-    useValue: 
+  container.register("TextToSpeechTargetChannelDataStore", {
+    useValue: new CacheTextToSpeechTargetChannelDataStore(
+      new MongoTextToSpeechTargetChannelDataStore(db.collection("guilds"))
+    ),
   });
   const messageObj = {
     emptyMessage: "現在辞書にはなにも登録されていません。",
