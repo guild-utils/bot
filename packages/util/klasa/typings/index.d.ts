@@ -754,7 +754,7 @@ declare module 'klasa' {
 
 //#region Typedefs
 	export interface GuildConfigRepository {
-		getPrefix(guild:string): string;
+		getPrefix(guild: string): string;
 		getDisabledCommands(guild: string): Set<string>;
 		getLanguage(guild: string): string;
 	}
