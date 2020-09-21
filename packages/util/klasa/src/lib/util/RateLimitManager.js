@@ -39,7 +39,6 @@ class RateLimitManager extends Collection {
 	set bucket(value) {
 		for (const ratelimit of this.values()) ratelimit.bucket = value;
 		this._bucket = value;
-		return value;
 	}
 
 	/**
@@ -54,7 +53,6 @@ class RateLimitManager extends Collection {
 	set cooldown(value) {
 		for (const ratelimit of this.values()) ratelimit.cooldown = value;
 		this._cooldown = value;
-		return value;
 	}
 
 	/**
