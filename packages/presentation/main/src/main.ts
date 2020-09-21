@@ -94,11 +94,14 @@ async function main() {
   container.register("DictionaryRepository", {
     useValue: dict,
   });
-  const emptyMessageObj = {
+  container.register("TextToSpeechTargetChannelDataStore",{
+    useValue: 
+  });
+  const messageObj = {
     emptyMessage: "現在辞書にはなにも登録されていません。",
   };
-  const mainDictionaryGui = initMainDictionaryGui(container, emptyMessageObj);
-  const baDictionaryGuis = initBADictionaryGui(container, emptyMessageObj);
+  const mainDictionaryGui = initMainDictionaryGui(container, messageObj);
+  const baDictionaryGuis = initBADictionaryGui(container, messageObj);
   container.register("GuiControllers", {
     useValue: [mainDictionaryGui, ...baDictionaryGuis],
   });
