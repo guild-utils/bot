@@ -50,18 +50,6 @@ class CommandUsage extends Usage {
 		return new CommandPrompt(message, this, options);
 	}
 
-	/**
-	 * Creates a full usage string including prefix and commands/aliases for documentation/help purposes
-	 * @since 0.0.1
-	 * @param {KlasaMessage} message The message context for which to generate usage for
-	 * @returns {string}
-	 */
-	fullUsage(message) {
-		let prefix = message.prefixLength ? message.content.slice(0, message.prefixLength) : message.guildSettings.prefix;
-		if (message.prefix === this.client.mentionPrefix) prefix = `@${this.client.user.tag}`;
-		else if (Array.isArray(prefix)) [prefix] = prefix;
-		return `${prefix.length !== 1 ? `${prefix} ` : prefix}${this.nearlyFullUsage}`;
-	}
 
 	/**
 	 * Defines to string behavior of this class.

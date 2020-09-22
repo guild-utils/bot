@@ -273,7 +273,6 @@ module.exports = Structures.extend('Message', Message => {
 			 * @since 0.5.0
 			 * @type {Settings}
 			 */
-			this.guildSettings = this.guild ? this.guild.settings : this.client.gateways.guilds.defaults;
 
 			this._parseCommand();
 		}
