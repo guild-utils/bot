@@ -4485,9 +4485,9 @@ dir-glob@^3.0.1:
     path-type "^4.0.0"
 
 discord-markdown@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/discord-markdown/-/discord-markdown-2.4.0.tgz#45d4e70fad69889482d5d91996dbacc468193763"
-  integrity sha512-TstZHCXkfHDiHk6l8y1Vmycs4ITEfRnLihGrHp4UByeKeqUrUTYgAg4RxbuAfeIX1Rl67YDKPXZ/5FoHfsDqfg==
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/discord-markdown/-/discord-markdown-2.4.1.tgz#a9c31f7a20999cced4342cfcd45409300658dcc2"
+  integrity sha512-YYGfms0rjGsjS2IxskG0IJqZC/fIhx2ayhLNshqU4gkPX/XhL0fQZR+E/jQpU+/tOyWIu6d1fESVzxaIGVYFzQ==
   dependencies:
     highlight.js "^10.1.2"
     simple-markdown "^0.7.2"
