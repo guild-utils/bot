@@ -25,18 +25,18 @@ kubectl apply -f deploy-bots.yaml
 ## ロードマップ
 
 ### v1
-- 辞書のインポート、エクスポート。
-- 読み上げ設定インポート、エクスポート。
+- 辞書のインポート、エクスポート。☑
+- 読み上げ設定インポート、エクスポート。☑
 - 読み上げ設定ガチャ。
 - 読み上げ設定プリセット。(コマンド一つで声を変えれるように)
 - DMでの音声生成。
 - Embed Viewによる表示。
-- スケジューリング機能のDSLを根本的に改善する(GoogleSpreadSheetを使い続けるかも要検討)
 - CI
 - 読み上げ時間の制限
 ## v2
 - OpenJTalkを改造してjumanppを用いて喋るようにする。
 - Web Dashboard
+- スケジューリング機能のDSLを根本的に改善する(GoogleSpreadSheetを使い続けるかも要検討)
 
 ## ライセンス
 htsvoice、OpenJTalk、HTS Engine API、Jumanpp、kuromoji-js、klasa-member-gatewayについてはそれぞれのライセンスにしたがいます。  
