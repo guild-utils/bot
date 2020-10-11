@@ -21,6 +21,7 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
     private readonly guilds: Collection<RepositoryCollectionType>,
     private readonly defaultV: DefaultRepositoryCollectionType
   ) {}
+
   async get(guild: string): Promise<BasicBotConfig> {
     const r = await this.guilds.findOne(
       { id: guild },
@@ -45,14 +46,14 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
     };
   }
 
-  async getPrefix(guild: string): Promise<string> {
+  async getPrefix(guild: string): Promise<string | undefined> {
     const obj = await this.get(guild);
     return obj.prefix;
   }
   async setPrefix(
     guild: string,
     prefix: string
-  ): Promise<UpdateResult<string>> {
+  ): Promise<UpdateResult<string | undefined>> {
     const r = await this.guilds.findOneAndUpdate(
       { id: guild },
       {
@@ -68,7 +69,8 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
       }
     );
     const rr = r.value?.prefix;
-    if (rr == null) {
+    if (!r.ok) {
+      console.log(r.lastErrorObject);
       throw new Error("mongo repository setPrefix failed.");
     }
     return {
@@ -77,7 +79,9 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
       after: prefix,
     };
   }
-  async getLanguage(guild: string): Promise<keyof typeof languages> {
+  async getLanguage(
+    guild: string
+  ): Promise<keyof typeof languages | undefined> {
     const obj = await this.get(guild);
     return obj.language;
   }
@@ -101,6 +105,7 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
     );
     const rr = r.value?.language;
     if (!rr) {
+      console.log(r.lastErrorObject);
       throw new Error("mongo repository setLanguage failed.");
     }
     const before = Object.keys(languages).includes(rr)
@@ -115,6 +120,36 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
   async getDisabledCommands(guild: string): Promise<Set<string>> {
     const obj = await this.get(guild);
     return obj.disabledCommands;
+  }
+  async setDisabledCommands(
+    guild: string,
+    key: string[]
+  ): Promise<UpdateResult<Set<string>, Set<string>>> {
+    const r = await this.guilds.findOneAndUpdate(
+      { id: guild },
+      {
+        $set: {
+          disabledCommands: key,
+        },
+      },
+      {
+        projection: {
+          disabledCommands: 1,
+        },
+        upsert: true,
+      }
+    );
+    const rr = r.value?.disabledCommands;
+    if (!r.ok) {
+      console.log(r.lastErrorObject);
+      throw new Error("mongo repository addDisabledCommands failed.");
+    }
+    const before = new Set(rr);
+    return {
+      type: "ok",
+      before,
+      after: new Set(key),
+    };
   }
   async addDisabledCommands(
     guild: string,
@@ -135,7 +170,8 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
       }
     );
     const rr = r.value?.disabledCommands;
-    if (!rr) {
+    if (!r.ok) {
+      console.log(r.lastErrorObject);
       throw new Error("mongo repository addDisabledCommands failed.");
     }
     const before = new Set(rr);

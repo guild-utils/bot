@@ -75,18 +75,27 @@ export class MongoGuildVoiceConfigRepository
       readName: rr?.readName ?? undefined,
     };
   }
-  async setBase<T>(
+  private async setBase<T>(
     layerKey: string,
     k: string,
-    v: T
-  ): Promise<UpdateResult<T>> {
+    v: T,
+    beforeDefaultValue?: T
+  ): Promise<UpdateResult<T | undefined>> {
     const ks = `speech.${k}`;
     const r = await this.collection.findOneAndUpdate(
       { id: layerKey },
       {
-        $set: {
-          [ks]: v,
-        },
+        ...(v == null
+          ? {
+              $unset: {
+                [ks]: 1,
+              },
+            }
+          : {
+              $set: {
+                [ks]: v,
+              },
+            }),
       },
       {
         projection: {
@@ -99,31 +108,31 @@ export class MongoGuildVoiceConfigRepository
     return {
       type: !r.ok ? "error" : rv === v ? "same" : "ok",
       after: v,
-      before: rv ?? undefined,
+      before: rv ?? beforeDefaultValue,
     };
   }
   setReadName(
     guild: string,
-    v: boolean
-  ): Promise<UpdateResult<boolean, boolean>> {
+    v: boolean | undefined
+  ): Promise<UpdateResult<boolean | undefined>> {
     return this.setBase(guild, "readName", v);
   }
   setMaxReadLimit(
     guild: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(guild, "maxReadLimit", v);
   }
   setMaxVolume(
     guild: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(guild, "maxVolume", v);
   }
   setRandomizer(
     guild: string,
-    v: "v1" | "v2"
-  ): Promise<UpdateResult<"v1" | "v2", "v1" | "v2">> {
+    v: "v1" | "v2" | undefined
+  ): Promise<UpdateResult<"v1" | "v2" | undefined>> {
     return this.setBase(guild, "randomizer", v);
   }
   async setIfNotChanged(

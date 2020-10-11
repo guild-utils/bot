@@ -2,19 +2,19 @@ import {
   LayeredVoiceConfigRepository,
   LayeredVoiceConfig,
   UpdateResult,
-  VoiceKind,
+  VoiceKindType,
   Randomizer,
 } from "domain_voice-configs-write";
 
 class CacheLayeredVoiceConfigRepositoryInternal
   implements LayeredVoiceConfigRepository<string> {
-  private readonly cache = new Map<string, LayeredVoiceConfig>();
+  private readonly cache = new Map<string, LayeredVoiceConfig | undefined>();
   constructor(
     private readonly upstream: LayeredVoiceConfigRepository<string>
   ) {}
   async get(layerKey: string): Promise<LayeredVoiceConfig> {
     const v = this.cache.get(layerKey);
-    if (v) {
+    if (v || this.cache.has(layerKey)) {
       return Object.assign({}, v);
     }
     const r = await this.upstream.get(layerKey);
@@ -31,7 +31,10 @@ class CacheLayeredVoiceConfigRepositoryInternal
     }
     return r;
   }
-  async setAllpass(layerKey: string, v: number): Promise<UpdateResult<number>> {
+  async setAllpass(
+    layerKey: string,
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setAllpass(layerKey, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(layerKey);
@@ -41,8 +44,8 @@ class CacheLayeredVoiceConfigRepositoryInternal
   }
   async setIntone(
     layerKey: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setIntone(layerKey, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(layerKey);
@@ -52,10 +55,10 @@ class CacheLayeredVoiceConfigRepositoryInternal
   }
   async setSpeed(
     layerKey: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setSpeed(layerKey, v);
-    if (r.type === "ok" && r.after) {
+    if (r.type === "ok") {
       const cv = this.cache.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { speed: r.after }));
     }
@@ -63,10 +66,10 @@ class CacheLayeredVoiceConfigRepositoryInternal
   }
   async setThreshold(
     layerKey: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setThreshold(layerKey, v);
-    if (r.type === "ok" && r.after) {
+    if (r.type === "ok") {
       const cv = this.cache.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { threshold: r.after }));
     }
@@ -75,9 +78,9 @@ class CacheLayeredVoiceConfigRepositoryInternal
   async setTone(
     layerKey: string,
     v: number
-  ): Promise<UpdateResult<number, number>> {
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setTone(layerKey, v);
-    if (r.type === "ok" && r.after) {
+    if (r.type === "ok") {
       const cv = this.cache.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { tone: r.after }));
     }
@@ -86,9 +89,9 @@ class CacheLayeredVoiceConfigRepositoryInternal
   async setVolume(
     layerKey: string,
     v: number
-  ): Promise<UpdateResult<number, number>> {
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setVolume(layerKey, v);
-    if (r.type === "ok" && r.after) {
+    if (r.type === "ok") {
       const cv = this.cache.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { volume: r.after }));
     }
@@ -96,10 +99,10 @@ class CacheLayeredVoiceConfigRepositoryInternal
   }
   async setKind(
     layerKey: string,
-    v: keyof typeof VoiceKind
-  ): Promise<UpdateResult<keyof typeof VoiceKind, keyof typeof VoiceKind>> {
+    v: VoiceKindType | undefined
+  ): Promise<UpdateResult<VoiceKindType | undefined>> {
     const r = await this.upstream.setKind(layerKey, v);
-    if (r.type === "ok" && r.after) {
+    if (r.type === "ok") {
       const cv = this.cache.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { kind: r.after }));
     }
@@ -108,8 +111,8 @@ class CacheLayeredVoiceConfigRepositoryInternal
 
   async setRandomizer(
     layerKey: string,
-    v: keyof typeof Randomizer
-  ): Promise<UpdateResult<keyof typeof Randomizer, keyof typeof Randomizer>> {
+    v: keyof typeof Randomizer | undefined
+  ): Promise<UpdateResult<keyof typeof Randomizer | undefined>> {
     const r = await this.upstream.setRandomizer(layerKey, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(layerKey);
@@ -119,8 +122,8 @@ class CacheLayeredVoiceConfigRepositoryInternal
   }
   async setReadName(
     layerKey: string,
-    v: string
-  ): Promise<UpdateResult<string>> {
+    v: string | undefined
+  ): Promise<UpdateResult<string | undefined>> {
     const r = await this.upstream.setReadName(layerKey, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(layerKey);
@@ -156,15 +159,21 @@ export const CacheMemberLayeredVoiceConfigRepository: CacheMemberLayeredVoiceCon
 ) {
   this.origin = new CacheLayeredVoiceConfigRepositoryInternal(upstream);
 } as unknown) as CacheMemberLayeredVoiceConfigRepositoryConstructor;
-CacheMemberLayeredVoiceConfigRepository.prototype = Object.keys(
-  CacheSimpleLayeredVoiceConfigRepository.prototype
-).map((name) => {
-  return function (
-    this: CacheMemberLayeredVoiceConfigRepositoryClass,
-    k: string[],
-    ...args: unknown[]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    this.origin[name](k.join("."), ...args);
-  };
-});
+CacheMemberLayeredVoiceConfigRepository.prototype = Object.fromEntries(
+  Object.getOwnPropertyNames(
+    CacheLayeredVoiceConfigRepositoryInternal.prototype
+  ).map((name) => {
+    console.log("cache:", name);
+    return [
+      name,
+      function (
+        this: CacheMemberLayeredVoiceConfigRepositoryClass,
+        k: string[],
+        ...args: unknown[]
+      ) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
+        return this.origin[name](k.join("."), ...args);
+      },
+    ];
+  })
+);
