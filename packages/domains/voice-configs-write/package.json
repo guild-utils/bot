@@ -1,7 +1,7 @@
 {
   "name": "domain_voice-configs-write",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "version": "1.0.0",
   "license": "MIT",
   "devDependencies": {
@@ -15,6 +15,7 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "domain_meta": "^1.0.0"
   },
   "scripts": {
     "lint": "eslint --ext ts src --fix",
