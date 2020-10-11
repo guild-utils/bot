@@ -1,9 +1,0 @@
-{
-    "extends": "../../../tsconfig.json",
-    "compilerOptions": {
-        "types": ["node", "klasa","discord.js"],
-        "rootDir": "./src",
-        "outDir": "./dist",
-        "allowJs": true
-    }
-}
