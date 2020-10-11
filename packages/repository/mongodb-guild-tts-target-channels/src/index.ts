@@ -23,7 +23,7 @@ export class MongoTextToSpeechTargetChannelDataStore
         },
       }
     );
-    return new Set(r?.speech as string[]);
+    return new Set((r?.speech as string[] | undefined | null) ?? []);
   }
   async addTextToSpeechTargetChannel(
     guild: string,

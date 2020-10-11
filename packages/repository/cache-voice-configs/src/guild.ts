@@ -6,7 +6,7 @@ import {
 
 export class CacheGuildVoiceConfigRepository
   implements GuildVoiceConfigRepository {
-  private readonly cache = new Map<string, GuildVoiceConfig>();
+  private readonly cache = new Map<string, GuildVoiceConfig | undefined>();
   constructor(private readonly upstream: GuildVoiceConfigRepository) {}
   async set(
     guild: string,
@@ -20,7 +20,7 @@ export class CacheGuildVoiceConfigRepository
   }
   async get(guild: string): Promise<GuildVoiceConfig> {
     const v = this.cache.get(guild);
-    if (v) {
+    if (v || this.cache.has(guild)) {
       return Object.assign({}, v);
     }
     const rv = await this.upstream.get(guild);
@@ -29,8 +29,8 @@ export class CacheGuildVoiceConfigRepository
   }
   async setReadName(
     guild: string,
-    v: boolean
-  ): Promise<UpdateResult<boolean, boolean>> {
+    v: boolean | undefined
+  ): Promise<UpdateResult<boolean | undefined>> {
     const r = await this.upstream.setReadName(guild, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(guild);
@@ -40,8 +40,8 @@ export class CacheGuildVoiceConfigRepository
   }
   async setMaxReadLimit(
     guild: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setMaxReadLimit(guild, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(guild);
@@ -51,8 +51,8 @@ export class CacheGuildVoiceConfigRepository
   }
   async setMaxVolume(
     guild: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setMaxVolume(guild, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(guild);
@@ -62,8 +62,8 @@ export class CacheGuildVoiceConfigRepository
   }
   async setRandomizer(
     guild: string,
-    v: "v1" | "v2"
-  ): Promise<UpdateResult<"v1" | "v2", "v1" | "v2">> {
+    v: "v1" | "v2" | undefined
+  ): Promise<UpdateResult<"v1" | "v2" | undefined>> {
     const r = await this.upstream.setRandomizer(guild, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(guild);
