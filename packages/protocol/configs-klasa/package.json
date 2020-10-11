@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "domain_voice-configs": "^1.0.0",
+    "domain_voice-configs-write": "^1.0.0",
     "protocol_shared-config": "^1.0.0"
   },
   "scripts": {
