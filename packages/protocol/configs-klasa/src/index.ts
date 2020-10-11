@@ -10,8 +10,15 @@ function select<
   T extends Record<string, unknown>,
   U extends keyof T,
   R extends T[U] | undefined
->(values: T[], key: U, defaultValue?: R): R | Exclude<T[U], null | undefined> {
+>(
+  values: (T | undefined)[],
+  key: U,
+  defaultValue?: R
+): R | Exclude<T[U], null | undefined> {
   for (const value of values) {
+    if (!value) {
+      continue;
+    }
     const v = value[key] as Exclude<T[U], null | undefined> | null | undefined;
     if (v != undefined) {
       return v;
@@ -27,11 +34,14 @@ function select2<
   U extends keyof T,
   R extends T[U] | undefined
 >(
-  values: [T, string][],
+  values: [T | undefined, string][],
   key: U,
   defaultValue?: [R, string]
 ): { value: R | Exclude<T[U], null | undefined>; provider: string } {
   for (const [rawvalue, provider] of values) {
+    if (!rawvalue) {
+      continue;
+    }
     const value = rawvalue[key] as
       | Exclude<T[U], null | undefined>
       | null
@@ -100,8 +110,8 @@ export class Usecase implements Domain.Usecase {
     username: string
   ): Promise<[string, string]> {
     const { value, provider } = readName2(
-      (await this.memberVoiceConfig.get([guild, user])).readName,
-      (await this.userVoiceConfig.get(user)).readName,
+      (await this.memberVoiceConfig.get([guild, user]))?.readName,
+      (await this.userVoiceConfig.get(user))?.readName,
       nickname,
       username
     );
@@ -133,16 +143,16 @@ export class Usecase implements Domain.Usecase {
     return {
       dictionary: await this.dictionary(guild),
       kind: select(gws, "kind"),
-      readName: gvc.readName
-        ? readName(mss.readName, uss.readName, nickName, userName)
+      readName: gvc?.readName
+        ? readName(mss?.readName, uss?.readName, nickName, userName)
         : undefined,
       speed: select(gws, "speed"),
       tone: select(gws, "tone"),
       volume: Math.min(
-        gvc.maxVolume ?? 0,
+        gvc?.maxVolume ?? 5,
         select(gws, "volume", undefined) ?? 0
       ),
-      maxReadLimit: gvc.maxReadLimit ?? 130,
+      maxReadLimit: gvc?.maxReadLimit ?? 130,
       allpass: allpass,
       intone: select(gws, "intone"),
       threshold: select(gws, "threshold"),
@@ -159,8 +169,8 @@ export class Usecase implements Domain.Usecase {
       this.memberVoiceConfig.get([guild, user]),
       this.userVoiceConfig.get(user),
     ]);
-    const ms: [LayeredVoiceConfig, string] = [mss, "member"];
-    const us: [LayeredVoiceConfig, string] = [uss, "user"];
+    const ms: [LayeredVoiceConfig | undefined, string] = [mss, "member"];
+    const us: [LayeredVoiceConfig | undefined, string] = [uss, "user"];
     let randomizerVersion = select([mss, uss, gvc], "randomizer", undefined);
     if (!randomizerVersion) {
       const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
@@ -172,13 +182,12 @@ export class Usecase implements Domain.Usecase {
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
     const randomizer = randomizerSupplier({ user });
     console.log(randomizer, randomizer.name);
-    const gws: [RandomizerReturnType | LayeredVoiceConfig, string][] = [
-      ms,
-      us,
-      [randomizer.get(), randomizer.name],
-    ];
+    const gws: [
+      RandomizerReturnType | LayeredVoiceConfig | undefined,
+      string
+    ][] = [ms, us, [randomizer.get(), randomizer.name]];
     const allpass = select2(gws, "allpass", [undefined, "default"]);
-    const volumegV = gvc.maxVolume ?? 0;
+    const volumegV = gvc?.maxVolume ?? 0;
     const volumemu = select2<
       RandomizerReturnType | LayeredVoiceConfig,
       "volume",
@@ -186,8 +195,8 @@ export class Usecase implements Domain.Usecase {
     >(gws, "volume", [0, "default"]);
     let volumeV: number;
     let volumeP: string;
-    const readName = gvc.readName
-      ? readName2(mss.readName, uss.readName, nickName, userName)
+    const readName = gvc?.readName
+      ? readName2(mss?.readName, uss?.readName, nickName, userName)
       : { value: undefined, provider: "server" };
     if (volumegV < volumemu.value) {
       volumeV = volumegV;
@@ -207,7 +216,7 @@ export class Usecase implements Domain.Usecase {
       tone: select2(gws, "tone"),
       volume: { value: volumeV, provider: volumeP },
       maxReadLimit:
-        gvc.maxReadLimit != null
+        gvc?.maxReadLimit != null
           ? {
               value: gvc.maxReadLimit,
               provider: "server",
@@ -228,8 +237,8 @@ export class Usecase implements Domain.Usecase {
     userName: string
   ): Promise<string> {
     return readName(
-      (await this.memberVoiceConfig.get([guild, user])).readName,
-      (await this.userVoiceConfig.get(user)).readName,
+      (await this.memberVoiceConfig.get([guild, user]))?.readName,
+      (await this.userVoiceConfig.get(user))?.readName,
       nickName,
       userName
     );
