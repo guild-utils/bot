@@ -31,7 +31,7 @@ module.exports = Structures.extend('Guild', Guild => {
 		 * @type {?Language}
 		 */
 		get language() {
-			const key = this.client.options.guildConfigRepository.getLanguage(this.id);
+			const key = this.client.options.guildConfigRepository.getLanguage(this.id) || this.client.options.language;
 			return this.client.languages.get(key) || null;
 		}
 

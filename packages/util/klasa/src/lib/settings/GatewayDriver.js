@@ -89,9 +89,8 @@ class GatewayDriver {
 	 * Initializes all gateways from the queue
 	 * @since 0.5.0
 	 */
+	// eslint-disable-next-line no-empty-function
 	async init() {
-		await Promise.all([...this._queue].map(fn => fn()));
-		this._queue.length = 0;
 	}
 
 	/**
