@@ -2,7 +2,7 @@ import {
   LayeredVoiceConfigRepository,
   LayeredVoiceConfig,
   UpdateResult,
-  VoiceKind,
+  VoiceKindType,
   Randomizer,
 } from "domain_voice-configs-write";
 import { Collection } from "mongodb";
@@ -14,7 +14,7 @@ export type MongoCollectionType = {
     threshold?: number | null;
     tone?: number | null;
     volume?: number | null;
-    kind?: keyof typeof VoiceKind | null;
+    kind?: VoiceKindType | null;
     randomizer?: keyof typeof Randomizer | null;
     readName?: string | null;
   } | null;
@@ -111,11 +111,11 @@ class MongoLayeredVoiceConfigRepositoryInternal
       },
     };
   }
-  async setBase<T>(
+  private async setBase<T>(
     layerKey: string,
     k: string,
-    v: T
-  ): Promise<UpdateResult<T>> {
+    v: T | undefined
+  ): Promise<UpdateResult<T | undefined>> {
     const ks = `speech.${k}`;
     const r = await this.collection.findOneAndUpdate(
       { id: layerKey },
@@ -132,53 +132,70 @@ class MongoLayeredVoiceConfigRepositoryInternal
     );
     const rvr = r.value?.speech;
     const rv = (rvr ? rvr[k] : undefined) as T | undefined;
+    if (!r.ok) {
+      return {
+        type: "error",
+      };
+    }
     return {
-      type: !r.ok ? "error" : rv === v ? "same" : "ok",
+      type: rv === v ? "same" : "ok",
       after: v,
       before: rv ?? undefined,
     };
   }
-  setAllpass(layerKey: string, v: number): Promise<UpdateResult<number>> {
+  setAllpass(
+    layerKey: string,
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(layerKey, "allpass", v);
   }
   setIntone(
     layerKey: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(layerKey, "intone", v);
   }
-  setSpeed(layerKey: string, v: number): Promise<UpdateResult<number, number>> {
+  setSpeed(
+    layerKey: string,
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(layerKey, "speed", v);
   }
   setThreshold(
     layerKey: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(layerKey, "threshold", v);
   }
-  setTone(layerKey: string, v: number): Promise<UpdateResult<number, number>> {
+  setTone(
+    layerKey: string,
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(layerKey, "tone", v);
   }
   setVolume(
     layerKey: string,
-    v: number
-  ): Promise<UpdateResult<number, number>> {
+    v: number | undefined
+  ): Promise<UpdateResult<number | undefined>> {
     return this.setBase(layerKey, "volume", v);
   }
   setKind(
     layerKey: string,
-    v: keyof typeof VoiceKind
-  ): Promise<UpdateResult<keyof typeof VoiceKind, keyof typeof VoiceKind>> {
+    v: VoiceKindType | undefined
+  ): Promise<UpdateResult<VoiceKindType | undefined>> {
     return this.setBase(layerKey, "kind", v);
   }
 
   setRandomizer(
     layerKey: string,
-    v: keyof typeof Randomizer
-  ): Promise<UpdateResult<keyof typeof Randomizer, keyof typeof Randomizer>> {
+    v: keyof typeof Randomizer | undefined
+  ): Promise<UpdateResult<keyof typeof Randomizer | undefined>> {
     return this.setBase(layerKey, "randomizer", v);
   }
-  setReadName(layerKey: string, v: string): Promise<UpdateResult<string>> {
+  setReadName(
+    layerKey: string,
+    v: string | undefined
+  ): Promise<UpdateResult<string | undefined>> {
     return this.setBase(layerKey, "readName", v);
   }
   async setIfNotChanged(
@@ -225,15 +242,21 @@ export const MongoMemberLayeredVoiceConfigRepository: MongoMemberLayeredVoiceCon
 ) {
   this.origin = new MongoLayeredVoiceConfigRepositoryInternal(collection);
 } as unknown) as MongoMemberLayeredVoiceConfigRepositoryConstructor;
-MongoMemberLayeredVoiceConfigRepository.prototype = Object.keys(
-  MongoSimpleLayeredVoiceConfigRepository.prototype
-).map((name) => {
-  return function (
-    this: MongoMemberLayeredVoiceConfigRepositoryClass,
-    k: string[],
-    ...args: unknown[]
-  ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    this.origin[name](k.join("."), ...args);
-  };
-});
+MongoMemberLayeredVoiceConfigRepository.prototype = Object.fromEntries(
+  Object.getOwnPropertyNames(
+    MongoLayeredVoiceConfigRepositoryInternal.prototype
+  ).map((name) => {
+    console.log("mongo:", name);
+    return [
+      name,
+      function (
+        this: MongoMemberLayeredVoiceConfigRepositoryClass,
+        k: string[],
+        ...args: unknown[]
+      ) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
+        return this.origin[name](k.join("."), ...args);
+      },
+    ];
+  })
+);

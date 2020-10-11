@@ -13,7 +13,7 @@ export class Cache implements Domain.BasicBotConfigRepositoryCache {
   }
   setPrefix(
     guild: string,
-    value: string,
+    value: string | undefined,
     cb: (k: string) => unknown
   ): string | undefined {
     const cur = this.map.get(guild);
@@ -68,13 +68,14 @@ export class CachedBasicConfigRepository
     this.base = base;
     this.cache = new Cache();
   }
-  async getPrefix(guild: string): Promise<string> {
-    return (await this.get(guild)).prefix;
+
+  async getPrefix(guild: string): Promise<string | undefined> {
+    return (await this.get(guild))?.prefix;
   }
   async setPrefix(
     guild: string,
-    prefix: string
-  ): Promise<Domain.UpdateResult<string, string>> {
+    prefix: string | undefined
+  ): Promise<Domain.UpdateResult<string | undefined>> {
     const res = await this.base.setPrefix(guild, prefix);
     if (res.type === "ok") {
       this.cache.setPrefix(guild, res.after, (e) =>
@@ -88,7 +89,7 @@ export class CachedBasicConfigRepository
   }
   async setLanguage(
     guild: string,
-    language: Languages
+    language: Languages | undefined
   ): Promise<Domain.UpdateResult<Languages, Languages>> {
     const res = await this.base.setLanguage(guild, language);
     if (res.type === "ok") {
@@ -100,6 +101,18 @@ export class CachedBasicConfigRepository
   }
   async getDisabledCommands(guild: string): Promise<Set<string>> {
     return (await this.get(guild)).disabledCommands;
+  }
+  async setDisabledCommands(
+    guild: string,
+    key: string[]
+  ): Promise<Domain.UpdateResult<Set<string>, Set<string>>> {
+    const res = await this.base.setDisabledCommands(guild, key);
+    if (res.type === "ok") {
+      this.cache.setDisabledCommands(guild, res.after, (e) =>
+        this.load(e).catch(console.log)
+      );
+    }
+    return res;
   }
   async addDisabledCommands(
     guild: string,
