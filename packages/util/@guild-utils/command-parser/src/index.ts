@@ -28,7 +28,7 @@ export function buildYargsParser(
   return schema.reduce((a, e) => {
     const csr = [
       e.name,
-      ...(e.subCommands.length !== 0 ? [`[...args]`] : []),
+      ...(e.subCommands.length !== 0 ? [`[args..]`] : []),
       ...(e.subCommands.length !== 0
         ? []
         : e.positionalArgumentCollection.map(([name, , o]) =>
