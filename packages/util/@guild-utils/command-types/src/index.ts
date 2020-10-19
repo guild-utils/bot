@@ -68,9 +68,15 @@ export class AT_String extends Base<typeof stringSymbol, string> {
   // eslint-disable-next-line @typescript-eslint/require-await
   async resolve(v: unknown): Promise<string> {
     console.log(v, typeof v);
-    if (typeof v !== "string") {
-      throw new ArgumentTypeMismatchError();
+    switch (typeof v) {
+      case "string":
+        return v;
+      case "boolean":
+      case "number":
+        return String(v);
     }
+    throw new ArgumentTypeMismatchError();
+  }
     return v;
   }
   yargs(): PositionalOptions & Options {
