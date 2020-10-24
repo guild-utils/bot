@@ -126,13 +126,17 @@ class MongoLayeredVoiceConfigRepositoryInternal
       },
       {
         projection: {
-          [ks]: 1,
+          speech: {
+            [k]: 1,
+          },
         },
+        upsert: true,
       }
     );
     const rvr = r.value?.speech;
     const rv = (rvr ? rvr[k] : undefined) as T | undefined;
     if (!r.ok) {
+      console.log(r.lastErrorObject);
       return {
         type: "error",
       };
@@ -215,9 +219,16 @@ class MongoLayeredVoiceConfigRepositoryInternal
         upsert: true,
       }
     );
+
     if (!r.matchedCount) {
       return {
         type: "not matched",
+      };
+    }
+    if (!r.result.ok) {
+      console.log(r);
+      return {
+        type: "error",
       };
     }
     return {
