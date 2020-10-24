@@ -28,7 +28,7 @@ export function buildYargsParser(
   return schema.reduce((a, e) => {
     const csr = [
       e.name,
-      ...(e.subCommands.length !== 0 ? [`[args..]`] : []),
+      ...(e.subCommands.length !== 0 ? [`[subcommandargshandling..]`] : []),
       ...(e.subCommands.length !== 0
         ? []
         : e.positionalArgumentCollection.map(([name, , o]) =>
@@ -68,7 +68,6 @@ async function applySchema(
   const sschema = schema.subCommands.find(([k]) => {
     return k.name === arr[0];
   });
-
   if (sschema != null) {
     const ccmdString = arr.shift();
     const x = sschema[0];
@@ -185,7 +184,8 @@ export function buildMainParser(
       schema,
       optionResolver,
       positionResolver,
-      arr,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-explicit-any
+      arr.concat((r as any)["subcommandargshandling"] ?? []),
       r,
       ctx,
       [initialCommandString]
