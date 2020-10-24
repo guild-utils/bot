@@ -35,6 +35,13 @@ COPY yarn.lock ./
 
 COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
 COPY packages/util/klasa/package.json ./packages/util/klasa/package.json
+COPY packages/util/monitor-discord.js/package.json ./packages/util/monitor-discord.js/package.json
+COPY packages/util/@guild-utils/command-base/package.json ./packages/util/@guild-utils/command-base/package.json
+COPY packages/util/@guild-utils/command-parser/package.json ./packages/util/@guild-utils/command-parser/package.json
+COPY packages/util/@guild-utils/command-schema/package.json ./packages/util/@guild-utils/command-schema/package.json
+COPY packages/util/@guild-utils/command-types/package.json ./packages/util/@guild-utils/command-types/package.json
+COPY packages/util/@guild-utils/command-types-discord.js/package.json ./packages/util/@guild-utils/command-types-discord.js/package.json
+COPY packages/domains/meta/package.json ./packages/domains/meta/package.json
 COPY packages/domains/guild-tts-target-channels/package.json ./packages/domains/guild-tts-target-channels/package.json
 COPY packages/domains/guild-configs/package.json ./packages/domains/guild-configs/package.json
 COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
@@ -47,20 +54,30 @@ COPY packages/repository/cache-guild-tts-target-channels/package.json ./packages
 COPY packages/repository/mongodb-guild-tts-target-channels/package.json ./packages/repository/mongodb-guild-tts-target-channels/package.json
 COPY packages/usecase/text2speech/package.json ./packages/usecase/text2speech/package.json
 COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2speech-grpc/package.json
+COPY packages/protocol/configurate-usecase/package.json ./packages/protocol/configurate-usecase/package.json
 COPY packages/protocol/command-data-common/package.json ./packages/protocol/command-data-common/package.json
 COPY packages/protocol/shared-config/package.json ./packages/protocol/shared-config/package.json
 COPY packages/protocol/protos/package.json ./packages/protocol/protos/package.json
 COPY packages/protocol/rpc-client/package.json ./packages/protocol/rpc-client/package.json
+COPY packages/protocol/command-schema-core/package.json ./packages/protocol/command-schema-core/package.json
+COPY packages/protocol/util-djs/package.json ./packages/protocol/util-djs/package.json
 COPY packages/presentation/guild-config-adapter/package.json ./packages/presentation/guild-config-adapter/package.json
-COPY packages/presentation/klasa-core-command-rewrite/package.json ./packages/presentation/klasa-core-command-rewrite/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/sub/package.json ./packages/presentation/sub/package.json
+COPY packages/languages/command-core/package.json ./packages/languages/command-core/package.json
 
 RUN lerna bootstrap && apk del .ojt
 
 COPY .eslintrc.json ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/util/klasa ./packages/util/klasa
+COPY packages/util/monitor-discord.js ./packages/util/monitor-discord.js
+COPY packages/util/@guild-utils/command-base ./packages/util/@guild-utils/command-base
+COPY packages/util/@guild-utils/command-parser ./packages/util/@guild-utils/command-parser
+COPY packages/util/@guild-utils/command-schema ./packages/util/@guild-utils/command-schema
+COPY packages/util/@guild-utils/command-types ./packages/util/@guild-utils/command-types
+COPY packages/util/@guild-utils/command-types-discord.js ./packages/util/@guild-utils/command-types-discord.js
+COPY packages/domains/meta ./packages/domains/meta
 COPY packages/domains/guild-tts-target-channels ./packages/domains/guild-tts-target-channels
 COPY packages/domains/guild-configs ./packages/domains/guild-configs
 COPY packages/domains/text2speech ./packages/domains/text2speech
@@ -72,14 +89,19 @@ COPY packages/repository/cache-guild-tts-target-channels ./packages/repository/c
 COPY packages/repository/mongodb-guild-tts-target-channels ./packages/repository/mongodb-guild-tts-target-channels
 COPY packages/usecase/text2speech ./packages/usecase/text2speech
 COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
+COPY packages/protocol/configurate-usecase ./packages/protocol/configurate-usecase
 COPY packages/protocol/command-data-common ./packages/protocol/command-data-common
 COPY packages/protocol/shared-config ./packages/protocol/shared-config
 COPY packages/protocol/protos ./packages/protocol/protos
 COPY packages/protocol/rpc-client ./packages/protocol/rpc-client
+COPY packages/protocol/command-schema-core ./packages/protocol/command-schema-core
+COPY packages/protocol/util-djs ./packages/protocol/util-djs
 COPY packages/presentation/guild-config-adapter ./packages/presentation/guild-config-adapter
-COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/sub ./packages/presentation/sub
+COPY packages/languages/command-core ./packages/languages/command-core
+
+
 RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
