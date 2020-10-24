@@ -7,7 +7,13 @@
   "dependencies": {
     "string-replace-async": "^2.0.0",
     "usecase_text2speech": "^1.0.0",
-    "usecase_text2speech-grpc": "^1.0.0"
+    "usecase_text2speech-grpc": "^1.0.0",
+    "domain_meta":"^1.0.0",
+    "protocol_configurate-usecase": "^1.0.0",
+    "protocol_util-djs": "^1.0.0",
+    "protocol_command-schema-core": "^1.0.0",
+    "languages_command-core": "^1.0.0",
+    "monitor-discord.js": "^0.0.1"
   },
   "devDependencies": {
     "@types/kuromoji": "^0.1.0",
@@ -27,7 +33,6 @@
     "eslint-plugin-prettier": "^3.1.4",
     "klasa": "^0.5.0",
     "kuromoji": "^0.1.2",
-    "presentation_klasa-core-command-rewrite": "^1.0.0",
     "prettier": "^2.0.5",
     "protocol_shared-config": "^1.0.0",
     "reflect-metadata": "^0.1.13",
