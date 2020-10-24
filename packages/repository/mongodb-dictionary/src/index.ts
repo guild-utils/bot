@@ -283,9 +283,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
           speech: {
             dictionary: {
               entry: {
-                $arrayElemAt: [`speech.dictionary.${target}`, key],
-                from: 1,
-                to: 1,
+                $arrayElemAt: [`$speech.dictionary.${target}`, key],
               },
             },
           },
@@ -293,6 +291,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
         upsert: true,
       }
     );
+    console.log(r.value?.speech?.dictionary);
     const from = r.value?.speech?.dictionary?.entry;
     if (!from) {
       return undefined;
@@ -333,14 +332,14 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
   async updateAfter(
     guild: string,
     key: number,
-    to: Domain.DictionaryEntryB
+    to: Domain.DictionaryEntryB | string
   ): Promise<[Domain.DictionaryEntryB, Domain.DictionaryEntryB] | undefined> {
     return this.updateBase("after", guild, key, to);
   }
   async updateBefore(
     guild: string,
     key: number,
-    to: Domain.DictionaryEntryB
+    to: Domain.DictionaryEntryB | string
   ): Promise<[Domain.DictionaryEntryB, Domain.DictionaryEntryB] | undefined> {
     return this.updateBase("before", guild, key, to);
   }
