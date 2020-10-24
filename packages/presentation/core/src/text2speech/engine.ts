@@ -7,55 +7,17 @@ import { Text2SpeechServiceOpenJtalkGRPC } from "usecase_text2speech-grpc";
 import { autoInjectable, inject } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import { Readable } from "stream";
-import { Dictionary } from "domain_configs";
+import { Dictionary } from "domain_voice-configs";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { VoiceHandle } from "domain_text2speech";
-export type VoiceKind =
-  | "normal"
-  | "angry"
-  | "happy"
-  | "neutral"
-  | "sad"
-  | "mei_angry"
-  | "mei_bashful"
-  | "mei_happy"
-  | "mei_normal"
-  | "mei_sad"
-  | "takumi_angry"
-  | "takumi_happy"
-  | "takumi_normal"
-  | "takumi_sad"
-  | "alpha"
-  | "beta"
-  | "gamma"
-  | "delta";
-export const VoiceKindArray: VoiceKind[] = [
-  "normal",
-  "angry",
-  "happy",
-  "neutral",
-  "sad",
-  "mei_angry",
-  "mei_bashful",
-  "mei_happy",
-  "mei_normal",
-  "mei_sad",
-  "takumi_angry",
-  "takumi_happy",
-  "takumi_normal",
-  "takumi_sad",
-  "alpha",
-  "beta",
-  "gamma",
-  "delta",
-];
-export type Opt = OpenJTalkOptions<VoiceKind> & {
+import { VoiceKindType } from "domain_meta";
+export type Opt = OpenJTalkOptions<VoiceKindType> & {
   readName?: string;
   dictionary: Dictionary;
   maxReadLimit: number;
 };
-export type Service = Text2SpeechServiceOpenJtalk<VoiceKind>;
-export type ServiceGRPC = Text2SpeechServiceOpenJtalkGRPC<VoiceKind>;
+export type Service = Text2SpeechServiceOpenJtalk<VoiceKindType>;
+export type ServiceGRPC = Text2SpeechServiceOpenJtalkGRPC<VoiceKindType>;
 type Data = {
   hnd: VoiceHandle;
   prepare?: Promise<void>;
@@ -77,7 +39,7 @@ export default class {
     pathToOpenJTalk: string,
     pathToDict: string,
     private readonly mapOfKind2HtsVoice: {
-      [k in VoiceKind]: { path: string; volume_fix?: number };
+      [k in VoiceKindType]: { path: string; volume_fix?: number };
     },
     type: string | undefined,
     mixer: IMixerClient | undefined,
@@ -85,7 +47,7 @@ export default class {
     private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
   ) {
     const obj = {};
-    for (const k of Object.keys(mapOfKind2HtsVoice) as VoiceKind[]) {
+    for (const k of Object.keys(mapOfKind2HtsVoice) as VoiceKindType[]) {
       obj[k] = mapOfKind2HtsVoice[k].path;
     }
     this.type = ["OO", "OW"].includes(type ?? "OO")
