@@ -97,46 +97,26 @@ export type CheckFunction = (
     user: string;
   }
 ) => Promise<void>;
+function createCheckFunctionBase(
+  act: "get" | "update",
+  permissionChecker: ConfigPermissionChecker
+): CheckFunction {
+  return async (target, executor) => {
+    await permissionChecker({
+      action: act,
+      target,
+      executor,
+    });
+  };
+}
 export function createCheckFunction(
   permissionChecker: ConfigPermissionChecker
 ): {
   checkGet: CheckFunction;
   checkUpdate: CheckFunction;
 } {
-  const checkGet = async (
-    target: {
-      guild?: string;
-      user?: string;
-      member?: [string, string];
-    },
-    executor: {
-      guild?: string;
-      user: string;
-    }
-  ) => {
-    await permissionChecker({
-      action: "get",
-      target,
-      executor,
-    });
-  };
-  const checkUpdate = async (
-    target: {
-      guild?: string;
-      user?: string;
-      member?: [string, string];
-    },
-    executor: {
-      guild?: string;
-      user: string;
-    }
-  ) => {
-    await permissionChecker({
-      action: "update",
-      target,
-      executor,
-    });
-  };
+  const checkGet = createCheckFunctionBase("get", permissionChecker);
+  const checkUpdate = createCheckFunctionBase("update", permissionChecker);
   return { checkGet, checkUpdate };
 }
 export function guildOnly(t: TargetType, executor: ExecutorType): string {
@@ -155,105 +135,73 @@ type ContextType = {
   guild: string | undefined;
   user: string;
 };
-export type GetFunction = (
-  t: TargetType,
-  ctx: ContextType
-) => Promise<GetResponseType>;
+type Function2<R> = (t: TargetType, ctx: ContextType) => Promise<R>;
+type Function3<R> = (t: TargetType, v: unknown, ctx: ContextType) => Promise<R>;
+type UpdateFuncton2 = Function2<ConfigurateUsecaseResultType>;
+type UpdateFuncton3 = Function3<ConfigurateUsecaseResultType>;
+function mapAndApply2<R>(m: Record<string, Function2<R> | undefined>) {
+  return (t: TargetType, k: string, ctx: ContextType) => {
+    const f = m[k];
+    if (f) {
+      return f(t, ctx);
+    }
+    throw new InvalidKeyError(k);
+  };
+}
+function mapAndApply3<R>(m: Record<string, Function3<R> | undefined>) {
+  return (t: TargetType, k: string, v: unknown, ctx: ContextType) => {
+    const f = m[k];
+    if (f) {
+      return f(t, v, ctx);
+    }
+    throw new InvalidKeyError(k);
+  };
+}
+export type GetFunction = Function2<GetResponseType>;
 export function getWithRecord(
   mapping: Record<string, GetFunction | undefined>
 ): ConfigurateUsecase["get"] {
-  return (t, k, ctx) => {
-    const f = mapping[k];
-    if (f) {
-      return f(t, ctx);
-    }
-    throw new InvalidKeyError(k);
-  };
+  return mapAndApply2(mapping);
 }
-export type SetFunction = (
-  t: TargetType,
-  v: unknown,
-  ctx: ContextType
-) => Promise<ConfigurateUsecaseResultType>;
+export type SetFunction = UpdateFuncton3;
 export function setWithRecord(
   mapping: Record<string, SetFunction | undefined>
 ): ConfigurateUsecase["set"] {
-  return (t, k, v, ctx) => {
-    const f = mapping[k];
-    if (f) {
-      return f(t, v, ctx);
-    }
-    throw new InvalidKeyError(k);
-  };
+  return mapAndApply3(mapping);
 }
-export type ResetFunction = (
-  t: TargetType,
-  ctx: ContextType
-) => Promise<ConfigurateUsecaseResultType>;
+export type ResetFunction = UpdateFuncton2;
 export function resetWithRecord(
   mapping: Record<string, ResetFunction | undefined>
 ): ConfigurateUsecase["reset"] {
-  return (t, k, ctx) => {
-    const f = mapping[k];
-    if (f) {
-      return f(t, ctx);
-    }
-    throw new InvalidKeyError(k);
-  };
+  return mapAndApply2(mapping);
 }
-export type RemoveFunction = (
-  t: TargetType,
-  v: unknown,
-  ctx: ContextType
-) => Promise<ConfigurateUsecaseResultType>;
+export type RemoveFunction = UpdateFuncton3;
 export function removeWithRecord(
   mapping: Record<string, RemoveFunction | undefined>
 ): ConfigurateUsecase["remove"] {
-  return (t, k, v, ctx) => {
-    const f = mapping[k];
-    if (f) {
-      return f(t, v, ctx);
-    }
-    throw new InvalidKeyError(k);
-  };
+  return mapAndApply3(mapping);
 }
-export type AddFunction = (
-  t: TargetType,
-  v: unknown,
-  ctx: ContextType
-) => Promise<ConfigurateUsecaseResultType>;
+export type AddFunction = UpdateFuncton3;
 export function addWithRecord(
   mapping: Record<string, AddFunction | undefined>
 ): ConfigurateUsecase["add"] {
-  return (t, k, v, ctx) => {
-    const f = mapping[k];
-    if (f) {
-      return f(t, v, ctx);
-    }
-    throw new InvalidKeyError(k);
-  };
+  return mapAndApply3(mapping);
 }
-type GuildPipeLineResutType<T> = T & {
-  kind: "guild";
-  kindValue: string;
+type PipeLineResultType<T, K, KV> = T & {
+  kind: K;
+  kindValue: KV;
 } & {
   vbefore: string;
   vafter: string;
 };
-type UserPipeLineResutType<T> = T & {
-  kind: "user";
-  kindValue: string;
-} & {
-  vbefore: string;
-  vafter: string;
-};
-type MemberPipeLineResutType<T> = T & {
-  kind: "member";
-  kindValue: [string, string];
-} & {
-  vbefore: string;
-  vafter: string;
-};
+type PipeLineResultTypeS<T, K> = PipeLineResultType<T, K, string>;
+type GuildPipeLineResutType<T> = PipeLineResultTypeS<T, "guild">;
+type UserPipeLineResutType<T> = PipeLineResultTypeS<T, "user">;
+type MemberPipeLineResutType<T> = PipeLineResultType<
+  T,
+  "member",
+  [string, string]
+>;
 export const Pipelines = {
   guildSingle<T extends UpdateResult<unknown>>(guild: string) {
     return (e: T): Promise<GuildPipeLineResutType<T>> =>
