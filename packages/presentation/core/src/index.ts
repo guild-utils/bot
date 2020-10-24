@@ -4,7 +4,6 @@ import Engine from "./text2speech/engine";
 import { initEngineAndKuromoji } from "./bootstrap/engine";
 import { ColorResolvable } from "discord.js";
 export { getLangType, getLang } from "./util/get-lang";
-export { DeletedCommand } from "./commands-v2/deleted-command";
 export { initInstanceState } from "./bootstrap/instanceState";
 export {
   commandTextSupplier,
