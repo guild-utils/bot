@@ -53,7 +53,7 @@ function makePropGetterGuild(
     }
     const r = (await repo.guildVoiceConfig.get(t.guild)) ?? {};
     return {
-      user: r[k],
+     guild: r[k],
     };
   };
 }
