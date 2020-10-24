@@ -56,6 +56,7 @@ COPY packages/domains/guild-tts-target-channels/package.json ./packages/domains/
 COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
 COPY packages/domains/voice-configs/package.json ./packages/domains/voice-configs/package.json
 COPY packages/domains/voice-configs-write/package.json ./packages/domains/voice-configs-write/package.json
+COPY packages/domains/meta/package.json ./packages/domains/meta/package.json
 COPY packages/util/@types/mongo-dot-notation/package.json ./packages/util/@types/mongo-dot-notation/package.json
 COPY packages/util/xorshift/package.json ./packages/util/xorshift/package.json
 COPY packages/util/fixed-dsl/package.json ./packages/util/fixed-dsl/package.json
@@ -64,6 +65,12 @@ COPY packages/util/timing-to-notify-dsl/package.json ./packages/util/timing-to-n
 COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
 COPY packages/util/klasa/package.json ./packages/util/klasa/package.json
 COPY packages/util/discordjs-gui/package.json ./packages/util/discordjs-gui/package.json
+COPY packages/util/monitor-discord.js/package.json ./packages/util/monitor-discord.js/package.json
+COPY packages/util/@guild-utils/command-base/package.json ./packages/util/@guild-utils/command-base/package.json
+COPY packages/util/@guild-utils/command-parser/package.json ./packages/util/@guild-utils/command-parser/package.json
+COPY packages/util/@guild-utils/command-schema/package.json ./packages/util/@guild-utils/command-schema/package.json
+COPY packages/util/@guild-utils/command-types/package.json ./packages/util/@guild-utils/command-types/package.json
+COPY packages/util/@guild-utils/command-types-discord.js/package.json ./packages/util/@guild-utils/command-types-discord.js/package.json
 COPY packages/usecase/game-event/package.json ./packages/usecase/game-event/package.json
 COPY packages/usecase/text2speech/package.json ./packages/usecase/text2speech/package.json
 COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2speech-grpc/package.json
@@ -79,10 +86,15 @@ COPY packages/protocol/shared-config/package.json ./packages/protocol/shared-con
 COPY packages/protocol/configs-klasa/package.json ./packages/protocol/configs-klasa/package.json
 COPY packages/protocol/protos/package.json ./packages/protocol/protos/package.json
 COPY packages/protocol/rpc-server/package.json ./packages/protocol/rpc-server/package.json
+COPY packages/protocol/configurate-usecase/package.json ./packages/protocol/configurate-usecase/package.json
+COPY packages/protocol/command-schema-core/package.json ./packages/protocol/command-schema-core/package.json
+COPY packages/protocol/command-schema-main/package.json ./packages/protocol/command-schema-main/package.json
+COPY packages/protocol/util-djs/package.json ./packages/protocol/util-djs/package.json
 COPY packages/presentation/guild-config-adapter/package.json ./packages/presentation/guild-config-adapter/package.json
-COPY packages/presentation/klasa-core-command-rewrite/package.json ./packages/presentation/klasa-core-command-rewrite/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/main/package.json ./packages/presentation/main/package.json
+COPY packages/languages/command-core/package.json ./packages/languages/command-core/package.json
+COPY packages/languages/command-main/package.json ./packages/languages/command-main/package.json
 
 RUN  lerna bootstrap && apk del .ojt
 
@@ -94,6 +106,7 @@ COPY packages/domains/guild-tts-target-channels ./packages/domains/guild-tts-tar
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/voice-configs ./packages/domains/voice-configs
 COPY packages/domains/voice-configs-write ./packages/domains/voice-configs-write
+COPY packages/domains/meta ./packages/domains/meta
 COPY packages/util/@types/mongo-dot-notation ./packages/util/@types/mongo-dot-notation
 COPY packages/util/xorshift ./packages/util/xorshift
 COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
@@ -102,6 +115,12 @@ COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/util/klasa ./packages/util/klasa
 COPY packages/util/discordjs-gui ./packages/util/discordjs-gui
+COPY packages/util/monitor-discord.js ./packages/util/monitor-discord.js
+COPY packages/util/@guild-utils/command-base ./packages/util/@guild-utils/command-base
+COPY packages/util/@guild-utils/command-parser ./packages/util/@guild-utils/command-parser
+COPY packages/util/@guild-utils/command-schema ./packages/util/@guild-utils/command-schema
+COPY packages/util/@guild-utils/command-types ./packages/util/@guild-utils/command-types
+COPY packages/util/@guild-utils/command-types-discord.js ./packages/util/@guild-utils/command-types-discord.js
 COPY packages/usecase/game-event ./packages/usecase/game-event
 COPY packages/usecase/text2speech ./packages/usecase/text2speech
 COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
@@ -117,10 +136,16 @@ COPY packages/protocol/shared-config ./packages/protocol/shared-config
 COPY packages/protocol/configs-klasa ./packages/protocol/configs-klasa
 COPY packages/protocol/protos ./packages/protocol/protos
 COPY packages/protocol/rpc-server ./packages/protocol/rpc-server
+COPY packages/protocol/configurate-usecase ./packages/protocol/configurate-usecase
+COPY packages/protocol/command-schema-core ./packages/protocol/command-schema-core
+COPY packages/protocol/command-schema-main ./packages/protocol/command-schema-main
+COPY packages/protocol/util-djs ./packages/protocol/util-djs
 COPY packages/presentation/guild-config-adapter ./packages/presentation/guild-config-adapter
-COPY packages/presentation/klasa-core-command-rewrite ./packages/presentation/klasa-core-command-rewrite
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/main ./packages/presentation/main
+COPY packages/languages/command-core ./packages/languages/command-core
+COPY packages/languages/command-main ./packages/languages/command-main
+
 RUN lerna run build \
     && lerna run test:lint \
     && yarn global remove lerna \
