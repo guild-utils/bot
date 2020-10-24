@@ -137,7 +137,7 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
       if (!embed) {
         return;
       }
-      const target = await message.send(embed);
+      const target = await message.channel.send(embed);
       list.register(target, context);
       const abortController = (context.abortController = new AbortController());
       await serealAddReaction(

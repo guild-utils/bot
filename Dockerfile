@@ -63,7 +63,6 @@ COPY packages/util/fixed-dsl/package.json ./packages/util/fixed-dsl/package.json
 COPY packages/util/periodical-dsl/package.json ./packages/util/periodical-dsl/package.json
 COPY packages/util/timing-to-notify-dsl/package.json ./packages/util/timing-to-notify-dsl/package.json
 COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
-COPY packages/util/klasa/package.json ./packages/util/klasa/package.json
 COPY packages/util/discordjs-gui/package.json ./packages/util/discordjs-gui/package.json
 COPY packages/util/monitor-discord.js/package.json ./packages/util/monitor-discord.js/package.json
 COPY packages/util/@guild-utils/command-base/package.json ./packages/util/@guild-utils/command-base/package.json
@@ -113,7 +112,6 @@ COPY packages/util/fixed-dsl ./packages/util/fixed-dsl
 COPY packages/util/periodical-dsl ./packages/util/periodical-dsl
 COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
-COPY packages/util/klasa ./packages/util/klasa
 COPY packages/util/discordjs-gui ./packages/util/discordjs-gui
 COPY packages/util/monitor-discord.js ./packages/util/monitor-discord.js
 COPY packages/util/@guild-utils/command-base ./packages/util/@guild-utils/command-base

@@ -64,6 +64,6 @@ export class CommandAppliedVoiceConfig implements CommandBase {
       this.responses(await this.getLang(msg.guild?.id)).embedTitle
     );
     embed.setTimestamp();
-    await msg.sendEmbed(embed);
+    await msg.channel.send(embed);
   }
 }

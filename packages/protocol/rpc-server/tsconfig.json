@@ -1,7 +1,7 @@
 {
     "extends": "../../../tsconfig.json",
     "compilerOptions": {
-        "types": ["node", "klasa","discord.js"],
+        "types": ["node","discord.js"],
         "outDir":"./dist",
         "rootDir": "./src",
         "baseUrl": "./"

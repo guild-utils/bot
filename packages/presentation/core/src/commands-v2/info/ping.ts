@@ -21,7 +21,10 @@ export class CommandPing implements CommandBase {
     const lk = await this.getLang(message.guild?.id);
     const texts = this.texts(lk);
     const executor = executorFromMessage(message);
-    const msg = await message.send(texts.pingText, texts.ping(executor));
+    const msg = await message.channel.send(
+      texts.pingText,
+      texts.ping(executor)
+    );
     await msg.edit(
       texts.pingpongText,
       texts.pingpong(

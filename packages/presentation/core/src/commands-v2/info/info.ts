@@ -11,6 +11,6 @@ export class CommandInfo implements CommandBase {
   async run(message: Message): Promise<void> {
     const lk = await this.getLang(message.guild?.id);
 
-    await message.sendEmbed(this.response(lk)(executorFromMessage(message)));
+    await message.channel.send(this.response(lk)(executorFromMessage(message)));
   }
 }

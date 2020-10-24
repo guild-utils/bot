@@ -15,7 +15,7 @@ export class KuromojiCommand implements CommandBase {
     private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
   ) {}
   public async run(msg: Message, [text]: [string]): Promise<void> {
-    await msg.send(
+    await msg.channel.send(
       "```" +
         this.tokenizer
           .tokenize(toFullWidth(text))

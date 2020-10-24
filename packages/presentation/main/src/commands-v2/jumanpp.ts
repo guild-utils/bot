@@ -10,7 +10,7 @@ function toFullWidth(elm: string) {
 }
 export class JumanppCommand implements CommandBase {
   public async run(msg: Message, [text]: [string]): Promise<void> {
-    await msg.send("```" + (await this.spawn(text)) + "```");
+    await msg.channel.send("```" + (await this.spawn(text)) + "```");
   }
   async spawn(text: string): Promise<string> {
     return await new Promise((resolve) => {

@@ -78,7 +78,7 @@ export default class extends MonitorBase {
         case "ok":
           break;
         case "commandDisabled":
-          await message.sendEmbed(
+          await message.channel.send(
             this.responses(
               message.guild
                 ? (await this.repo.getLanguage(message.guild.id)) ?? "ja_JP"

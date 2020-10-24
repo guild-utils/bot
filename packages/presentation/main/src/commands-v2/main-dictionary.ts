@@ -67,20 +67,20 @@ export class MainDictionaryCommand implements CommandBase {
     const res = this.responses(await this.getLang(msg.guild?.id));
     const exec = executorFromMessage(msg);
     if (!arg1) {
-      await msg.sendEmbed(res.requireKey(exec));
+      await msg.channel.send(res.requireKey(exec));
       return;
     }
     if (arg2) {
-      await msg.sendEmbed(res.invalidRemoveFormat(exec));
+      await msg.channel.send(res.invalidRemoveFormat(exec));
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const r = await this.dictionary.removeMain(msg.guild!.id, arg1);
     if (r) {
-      await msg.sendEmbed(res.deleteWordSuccesWithDelete(exec, arg1, r.to));
+      await msg.channel.send(res.deleteWordSuccesWithDelete(exec, arg1, r.to));
       return;
     } else {
-      await msg.sendEmbed(res.deleteWordSuccesWithNone(exec, arg1));
+      await msg.channel.send(res.deleteWordSuccesWithNone(exec, arg1));
       return;
     }
   }
@@ -91,7 +91,7 @@ export class MainDictionaryCommand implements CommandBase {
     const res = this.responses(await this.getLang(msg.guild?.id));
     const exec = executorFromMessage(msg);
     if (!arg1) {
-      await msg.sendEmbed(res.requireKey(exec));
+      await msg.channel.send(res.requireKey(exec));
       return;
     }
     if (!arg2) {
@@ -101,7 +101,7 @@ export class MainDictionaryCommand implements CommandBase {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const r = await this.dictionary.updateMain(msg.guild!.id, arg1, arg2);
     if (!r[0]) {
-      await msg.sendEmbed(
+      await msg.channel.send(
         res.addWordSuccessWithCreate(exec, {
           from: arg1,
           ...r[1],
@@ -109,7 +109,7 @@ export class MainDictionaryCommand implements CommandBase {
       );
       return;
     } else {
-      await msg.sendEmbed(
+      await msg.channel.send(
         res.addWordSuccessWithOverwrite(
           exec,
           { from: arg1, ...r[0] },

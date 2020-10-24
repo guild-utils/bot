@@ -32,7 +32,7 @@ export function runEmbedWithExecutor(
   f: EmbedWithExecutorType,
   message: Message
 ): Promise<Message> {
-  return message.sendEmbed(f(executorFromMessage(message)));
+  return message.channel.send(f(executorFromMessage(message)));
 }
 export function executorFromMessage(message: Message): Executor {
   return { user: message.author, member: message.member };

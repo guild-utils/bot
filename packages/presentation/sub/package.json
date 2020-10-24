@@ -10,7 +10,6 @@
     "domain_text2speech": "^1.0.0",
     "dotenv": "^8.2.0",
     "grpc": "^1.24.3",
-    "klasa": "dirigeants/klasa#v0.5.0",
     "mongodb": "^3.6.0",
     "presentation_core": "^1.0.0",
     "presentation_guild-config-adapter":"^1.0.0",

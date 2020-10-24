@@ -49,7 +49,7 @@ export class CommandGet implements CommandBase {
   ): Promise<void> {
     const { target, executor } = buildTargetAndExecutor(message, option);
     const r = await this.usecase.get(target, key, executor);
-    await message.sendEmbed(
+    await message.channel.send(
       buildResponseWithSingleKey(key, r, {
         color: this.color,
         member: message.member,

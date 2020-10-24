@@ -2,7 +2,6 @@ import Text2SpeechMonitor from "./monitors-v2/text2speech";
 import * as GUILD_SETTINGS from "./guild_settings_keys";
 import Engine from "./text2speech/engine";
 import { initEngineAndKuromoji } from "./bootstrap/engine";
-import { ColorResolvable } from "discord.js";
 export { getLangType, getLang } from "./util/get-lang";
 export { initInstanceState } from "./bootstrap/instanceState";
 export {
@@ -94,8 +93,3 @@ export {
   SenderPermissionError,
 } from "./errors/permission-error";
 export { UnreachableMemberError } from "./errors/unreachable-error";
-declare module "klasa" {
-  interface KlasaClientOptions {
-    themeColor: ColorResolvable;
-  }
-}
