@@ -1,5 +1,5 @@
 import * as GRPC from "protocol_protos/config_pb";
-import * as Domain from "domain_configs";
+import * as Domain from "domain_voice-configs";
 
 export class ResponseTransformer {
   transformDictionary(from: Domain.Dictionary): GRPC.Dictionary {

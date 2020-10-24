@@ -14,6 +14,7 @@ import {
   TextChannel,
   Permissions,
 } from "discord.js";
+import { getLangType } from "presentation_core";
 export type CtxBase<Page> = {
   pages: Page[][];
   help: boolean;
@@ -32,14 +33,16 @@ type PaginationEventMap<Ctx> = GuiEventMap<Ctx> & {
 };
 export type Options<Ctx> = {
   buildEmbed: (
+    lang: string,
     no: number,
     context: Ctx,
     options: Options<Ctx>
   ) => MessageEmbed | undefined;
-  help: (context: Ctx, options: Options<Ctx>) => MessageEmbed;
-  title: string;
+  help: (lang: string, context: Ctx, options: Options<Ctx>) => MessageEmbed;
+  title: (lang: string) => string;
   color: ColorResolvable;
   timeoutMs: number;
+  getLang: getLangType;
 };
 export type PaginationGui<Ctx> = GuiBase<PaginationEventMap<Ctx>, Ctx>;
 
@@ -51,11 +54,19 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
   const list = new PaginationGui();
   initializeGui(list, { ...options, ctxs });
   list.use("Page", ({ no, target, context }) => {
-    context.help = false;
-    const embed = options.buildEmbed(no, context, options);
-    if (embed) {
-      target.edit(embed).catch(console.log);
+    async function run() {
+      context.help = false;
+      const embed = options.buildEmbed(
+        await options.getLang(context.member.guild.id),
+        no,
+        context,
+        options
+      );
+      if (embed) {
+        await target.edit(embed);
+      }
     }
+    run().catch(console.log);
   });
   list.use("Next", (ev, { emit }) => {
     emit("Page", { ...ev, no: ev.context.currentPage + 1 });
@@ -74,12 +85,21 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
     emit("RemoveReaction", { target, abortController });
   });
   list.use("Help", ({ target, context }, { emit }) => {
-    context.help = !context.help;
-    if (!context.help) {
-      emit("Page", { target, context, no: context.currentPage });
-      return;
+    async function run() {
+      context.help = !context.help;
+      if (!context.help) {
+        emit("Page", { target, context, no: context.currentPage });
+        return;
+      }
+      await target.edit(
+        options.help(
+          await options.getLang(context.member.guild.id),
+          context,
+          options
+        )
+      );
     }
-    target.edit(options.help(context, options)).catch(console.log);
+    run().catch(console.log);
   });
   list.use("Timeout", ({ target }, { emit }) => {
     const { abortController } = ctxs.contexts.contexts.get(target.id) ?? {};
@@ -108,11 +128,16 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
 
   list.use("Init", ({ message, context }, { emit }) => {
     async function run() {
-      const embed = options.buildEmbed(context.currentPage, context, options);
+      const embed = options.buildEmbed(
+        await options.getLang(context.member.guild.id),
+        context.currentPage,
+        context,
+        options
+      );
       if (!embed) {
         return;
       }
-      const target = await message.send(embed);
+      const target = await message.channel.send(embed);
       list.register(target, context);
       const abortController = (context.abortController = new AbortController());
       await serealAddReaction(
