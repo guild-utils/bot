@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
 import { Collection } from "mongodb";
 export type MongoTextToSpeechTargetChannelDataStoreCollectionType = {
@@ -23,7 +24,10 @@ export class MongoTextToSpeechTargetChannelDataStore
         },
       }
     );
-    return new Set((r?.speech as string[] | undefined | null) ?? []);
+    return new Set(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      ((r?.speech as any)?.targets as string[] | undefined | null) ?? []
+    );
   }
   async addTextToSpeechTargetChannel(
     guild: string,
