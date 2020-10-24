@@ -35,7 +35,7 @@ export class CommandEndChannel implements CommandBase {
       await this.engine.unregister(guild.voice?.connection);
       guild.voice?.connection?.disconnect();
     }
-    await msg.sendEmbed(
+    await msg.channel.send(
       this.responses(await this.getLang(guild.id)).success(
         {
           user: msg.author,

@@ -60,7 +60,7 @@ export class CommandHelp implements CommandBase {
       ...cctx,
     };
     if (key == null || key.length === 0) {
-      await msg.sendEmbed(this.root.embed(lang)(hctx));
+      await msg.channel.send(this.root.embed(lang)(hctx));
       return;
     }
     const cmdOrCategory =
@@ -73,14 +73,14 @@ export class CommandHelp implements CommandBase {
       key: string[]
     ) {
       if (processingEntry == undefined) {
-        await msg.sendEmbed(responses.entryNotFound(hctx));
+        await msg.channel.send(responses.entryNotFound(hctx));
         return;
       }
       switch (processingEntry.type) {
         case "category": {
           const v = key[processingKeyIndex];
           if (v == null) {
-            await msg.sendEmbed(processingEntry.embed(lang)(hctx));
+            await msg.channel.send(processingEntry.embed(lang)(hctx));
           } else {
             await processEntry(
               processingEntry.resolverValue.get(v) ??
@@ -101,10 +101,10 @@ export class CommandHelp implements CommandBase {
           return;
         }
         case "command":
-          await msg.sendEmbed(processingEntry.embed(lang)(hctx));
+          await msg.channel.send(processingEntry.embed(lang)(hctx));
           return;
         case "documentation":
-          await msg.sendEmbed(processingEntry.embed(lang)(hctx));
+          await msg.channel.send(processingEntry.embed(lang)(hctx));
           return;
       }
     }

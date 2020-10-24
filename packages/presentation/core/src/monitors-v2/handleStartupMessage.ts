@@ -38,13 +38,13 @@ export default class extends MonitorBase {
       embed.setTitle("Receive Starting");
       embed.addField("New", "terminating");
       embed.setColor(this.color);
-      await message.sendEmbed(embed);
+      await message.channel.send(embed);
       return;
     } else {
       embed.setTitle("Receive Starting");
       embed.addField("New", "terminated");
       embed.setColor(this.color);
-      await message.sendEmbed(embed);
+      await message.channel.send(embed);
       console.log("graceful shutdown");
       message.client.destroy();
       process.exit();

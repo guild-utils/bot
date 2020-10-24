@@ -1,6 +1,6 @@
 import { CommandBase } from "@guild-utils/command-base";
 import { CommandSchema } from "@guild-utils/command-schema";
-import { Client } from "klasa";
+import { Client } from "discord.js";
 import {
   buildParser,
   CommandFromSchemaCtx,

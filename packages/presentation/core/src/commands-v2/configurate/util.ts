@@ -180,7 +180,7 @@ export async function updateConfig(
           exec,
           message
         )
-      ).map((e) => message.sendEmbed(e))
+      ).map((e) => message.channel.send(e))
     );
     r.filter(
       (e): e is PromiseRejectedResult => e.status === "rejected"
@@ -188,15 +188,15 @@ export async function updateConfig(
     return;
   } catch (e) {
     if (e instanceof PermissionError) {
-      await message.sendEmbed(responses.permissionError(e, target, exec));
+      await message.channel.send(responses.permissionError(e, target, exec));
       return;
     }
     if (e instanceof ContextError) {
-      await message.sendEmbed(responses.contextError(e, target, exec));
+      await message.channel.send(responses.contextError(e, target, exec));
       return;
     }
     if (e instanceof InvalidKeyError) {
-      await message.sendEmbed(responses.contextError(e, target, exec));
+      await message.channel.send(responses.contextError(e, target, exec));
       return;
     }
   }

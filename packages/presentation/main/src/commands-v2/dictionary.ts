@@ -63,7 +63,7 @@ export class DictionaryCommand implements CommandBase {
       Buffer.from(json, "utf-8"),
       "dictionary.json"
     );
-    await msg.send(
+    await msg.channel.send(
       this.responses(await this.getLang(msg.guild?.id)),
       attachment
     );
@@ -131,7 +131,7 @@ export class DictionaryCommand implements CommandBase {
       );
       await Promise.all([before, main, after]);
       msg.channel.stopTyping();
-      await msg.sendEmbed(
+      await msg.channel.send(
         this.responses(await this.getLang(msg.guild?.id)).importSuccess(
           executorFromMessage(msg)
         )
@@ -145,7 +145,7 @@ export class DictionaryCommand implements CommandBase {
   async clear(msg: Message): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     await this.dictionary.removeAll(msg.guild!.id);
-    await msg.sendEmbed(
+    await msg.channel.send(
       this.responses(await this.getLang(msg.guild?.id)).clearSuccess(
         executorFromMessage(msg)
       )

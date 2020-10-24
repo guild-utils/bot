@@ -69,18 +69,18 @@ export class SimpleDictionaryCommand implements CommandBase {
     const res = this.responses(await this.getLang(msg.guild?.id));
     const exec = executorFromMessage(msg);
     if (arg1 === undefined) {
-      await msg.sendEmbed(res.invalidAddFormat(exec));
+      await msg.channel.send(res.invalidAddFormat(exec));
       return;
     }
     if (typeof arg2 === "string") {
-      await msg.sendEmbed(res.invalidAddFormat(exec));
+      await msg.channel.send(res.invalidAddFormat(exec));
       return;
     }
 
     const append = () => {
       if (typeof arg1 === "number") {
         if (!arg2) {
-          return msg.sendEmbed(res.invalidAddFormat(exec));
+          return msg.channel.send(res.invalidAddFormat(exec));
         }
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this.actions.append(msg.guild!.id, arg2, arg1 - 1);
@@ -93,13 +93,13 @@ export class SimpleDictionaryCommand implements CommandBase {
     if (r instanceof Message) {
       return;
     }
-    await msg.sendEmbed(res.addSuccess(exec, r));
+    await msg.channel.send(res.addSuccess(exec, r));
   }
   async add(msg: Message, [arg2]: [DictionaryEntryB]): Promise<void> {
     const res = this.responses(await this.getLang(msg.guild?.id));
     const exec = executorFromMessage(msg);
     if (typeof arg2 === "string") {
-      await msg.sendEmbed(res.invalidAddFormat(exec));
+      await msg.channel.send(res.invalidAddFormat(exec));
       return;
     }
 
@@ -111,26 +111,26 @@ export class SimpleDictionaryCommand implements CommandBase {
     if (r instanceof Message) {
       return;
     }
-    await msg.sendEmbed(res.addSuccess(exec, r));
+    await msg.channel.send(res.addSuccess(exec, r));
   }
   async remove(msg: Message, [arg1]: [number]): Promise<void> {
     const res = this.responses(await this.getLang(msg.guild?.id));
     const exec = executorFromMessage(msg);
     if (arg1 === undefined) {
-      await msg.sendEmbed(res.invalidRemoveFormat(exec));
+      await msg.channel.send(res.invalidRemoveFormat(exec));
       return;
     }
     if (typeof arg1 !== "number") {
-      await msg.sendEmbed(res.invalidRemoveFormat(exec));
+      await msg.channel.send(res.invalidRemoveFormat(exec));
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const r = await this.actions.remove(msg.guild!.id, arg1 - 1);
     if (r) {
-      await msg.sendEmbed(res.deleteSuccess(exec, r));
+      await msg.channel.send(res.deleteSuccess(exec, r));
       return;
     } else {
-      await msg.sendEmbed(res.invalidIndexRange(exec));
+      await msg.channel.send(res.invalidIndexRange(exec));
       return;
     }
   }
@@ -141,21 +141,21 @@ export class SimpleDictionaryCommand implements CommandBase {
     const res = this.responses(await this.getLang(msg.guild?.id));
     const exec = executorFromMessage(msg);
     if (arg1 === undefined) {
-      await msg.sendEmbed(res.invalidUpdateFormat(exec));
+      await msg.channel.send(res.invalidUpdateFormat(exec));
       return;
     }
     if (typeof arg1 !== "number") {
-      await msg.sendEmbed(res.invalidUpdateFormat(exec));
+      await msg.channel.send(res.invalidUpdateFormat(exec));
       return;
     }
     arg2 = arg2 ?? "";
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const r = await this.actions.update(msg.guild!.id, arg1 - 1, arg2);
     if (r === undefined) {
-      await msg.sendEmbed(res.invalidIndexRange(exec));
+      await msg.channel.send(res.invalidIndexRange(exec));
       return;
     } else {
-      await msg.sendEmbed(res.updateSuccess(exec, r[0], r[1]));
+      await msg.channel.send(res.updateSuccess(exec, r[0], r[1]));
       return;
     }
   }

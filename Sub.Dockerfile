@@ -34,7 +34,6 @@ COPY package.json ./
 COPY yarn.lock ./
 
 COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
-COPY packages/util/klasa/package.json ./packages/util/klasa/package.json
 COPY packages/util/monitor-discord.js/package.json ./packages/util/monitor-discord.js/package.json
 COPY packages/util/@guild-utils/command-base/package.json ./packages/util/@guild-utils/command-base/package.json
 COPY packages/util/@guild-utils/command-parser/package.json ./packages/util/@guild-utils/command-parser/package.json
@@ -70,7 +69,6 @@ RUN lerna bootstrap && apk del .ojt
 
 COPY .eslintrc.json ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
-COPY packages/util/klasa ./packages/util/klasa
 COPY packages/util/monitor-discord.js ./packages/util/monitor-discord.js
 COPY packages/util/@guild-utils/command-base ./packages/util/@guild-utils/command-base
 COPY packages/util/@guild-utils/command-parser ./packages/util/@guild-utils/command-parser

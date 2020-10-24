@@ -22,6 +22,6 @@ export class CommandInvite implements CommandBase {
     const texts = this.texts(lk);
     embed.setTitle(texts.title);
     embed.setDescription(texts.description);
-    await message.sendEmbed(embed);
+    await message.channel.send(embed);
   }
 }

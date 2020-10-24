@@ -40,7 +40,7 @@ export class CommandStats implements CommandBase {
       }
     }
 
-    await message.sendEmbed(
+    await message.channel.send(
       this.statsEmbed(await this.getLang(message.guild?.id))(
         {
           memory: Math.round(

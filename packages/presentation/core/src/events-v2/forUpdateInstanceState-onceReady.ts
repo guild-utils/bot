@@ -15,7 +15,7 @@ export default function (
     embed.addField("New", "running");
     embed.setColor(color);
     const channel = await client.channels.fetch(GUJ_LAUNCH_CHANNEL);
-    await (channel as TextChannel).sendEmbed(embed);
+    await (channel as TextChannel).send(embed);
   }
   client.once("ready", (): void => {
     f().catch(console.log);

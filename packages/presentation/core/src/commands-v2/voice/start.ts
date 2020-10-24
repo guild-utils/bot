@@ -36,13 +36,13 @@ export class CommandStart implements CommandBase {
       member: msg.member,
     };
     if (!vc) {
-      await msg.sendEmbed(
+      await msg.channel.send(
         this.responses(await this.getLang(gid)).userNotInVc(exec)
       );
       return;
     }
     if (!vc.joinable) {
-      await msg.sendEmbed(
+      await msg.channel.send(
         this.responses(await this.getLang(gid)).notJoinable(exec, vc)
       );
       return;
@@ -53,7 +53,7 @@ export class CommandStart implements CommandBase {
     await this.dataStore.addTextToSpeechTargetChannel(gid, msg.channel.id);
     const tcs = await this.dataStore.getTextToSpeechTargetChannel(gid);
 
-    await msg.sendEmbed(
+    await msg.channel.send(
       this.responses(await this.getLang(gid)).success(
         exec,
         vc,

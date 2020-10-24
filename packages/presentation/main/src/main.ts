@@ -4,13 +4,12 @@ import "abort-controller/polyfill";
 import { Usecase as AppliedVoiceConfigResolver } from "protocol_configs-klasa";
 import { MongoDictionaryRepository } from "repository_mongodb-dictionary";
 import { config as dotenv } from "dotenv";
-import { KlasaClient, KlasaClientOptions } from "klasa";
 import { container } from "tsyringe";
 import { config, token } from "./config";
 import initRpcServer from "./bootstrap/grpc";
 import initText2Speech from "./bootstrap/text2speech";
 import { initDatabase } from "./bootstrap/mongo";
-import { Permissions, UserResolvable } from "discord.js";
+import { Client, Permissions, UserResolvable } from "discord.js";
 import {
   initMainDictionaryGui,
   initBADictionaryGui,
@@ -67,11 +66,6 @@ const permissions = new Permissions()
   .add(Permissions.FLAGS.ATTACH_FILES)
   .add(Permissions.FLAGS.EMBED_LINKS);
 async function main() {
-  class Client extends KlasaClient {
-    constructor(options: KlasaClientOptions) {
-      super(options);
-    }
-  }
   container.register("ThemeColor", {
     useValue: ENV.GUJ_THEME_COLOR,
   });
@@ -94,7 +88,7 @@ async function main() {
     })
   );
   container.register("BasicBotConfigRepository", { useValue: basicBotConfig });
-  const client = new Client(config(basicBotConfig));
+  const client = new Client(config());
   client.token = token;
   const dict = new MongoDictionaryRepository(db.collection("guilds"));
   const memberVoiceConfig = new CacheMemberLayeredVoiceConfigRepository(

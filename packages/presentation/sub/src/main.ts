@@ -8,11 +8,10 @@ import {
 import { credentials, VerifyOptions } from "grpc";
 import { ClientResponseTransformer } from "protocol_rpc-client";
 import { initEngineAndKuromoji, initInstanceState } from "presentation_core";
-import { KlasaClient, KlasaClientOptions } from "klasa";
 import { config, token } from "./config";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { promises as fs } from "fs";
-import { Permissions } from "discord.js";
+import { Client } from "discord.js";
 import { initDatabase } from "./bootstrap/mongo";
 import * as ENV from "./bootstrap/env";
 import { CacheTextToSpeechTargetChannelDataStore } from "repository_cache-guild-tts-target-channels";
@@ -30,13 +29,7 @@ async function makeCredentials(keys: string | undefined) {
       )
     : credentials.createInsecure();
 }
-KlasaClient.basePermissions
-  .add(Permissions.FLAGS.ADD_REACTIONS)
-  .add(Permissions.FLAGS.MANAGE_MESSAGES)
-  .add(Permissions.FLAGS.CONNECT)
-  .add(Permissions.FLAGS.SPEAK)
-  .add(Permissions.FLAGS.ATTACH_FILES)
-  .add(Permissions.FLAGS.EMBED_LINKS);
+
 async function main() {
   const db = await initDatabase({
     connectionString: ENV.MONGO_CONNECTION,
@@ -68,12 +61,8 @@ async function main() {
     ),
   });
   await initEngineAndKuromoji(container, grpcMixerClient);
-  class Client extends KlasaClient {
-    constructor(options: KlasaClientOptions) {
-      super(options);
-    }
-  }
-  const discordClient = new Client(config(db.collection("guilds")));
+
+  const discordClient = new Client(config());
   initInstanceState(container, discordClient, ENV.GUJ_THEME_COLOR);
   await discordClient.login(token);
 }

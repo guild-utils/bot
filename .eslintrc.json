@@ -6,7 +6,6 @@
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:prettier/recommended",
 		"prettier/@typescript-eslint"
-		//"klasa/eslint-ts"
 	],
 	"plugins": [
 		"@typescript-eslint"

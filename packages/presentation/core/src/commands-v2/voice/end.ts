@@ -23,7 +23,7 @@ export class CommandEnd implements CommandBase {
     await this.engine.unregister(connection);
     connection?.disconnect();
     await this.dataStore.clearTextToSpeechTargetChannel(msg.guild!.id);
-    await msg.sendEmbed(
+    await msg.channel.send(
       this.responses(await this.getLang(msg.guild?.id)).success(
         {
           user: msg.author,
