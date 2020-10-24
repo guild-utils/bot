@@ -65,7 +65,6 @@ declare module 'klasa' {
 //#region Extensions
 
 	export class KlasaGuild extends Guild {
-		public readonly language: Language;
 	}
 
 	export interface CachedPrefix {
@@ -130,7 +129,6 @@ declare module 'klasa' {
 		public guild(input: KlasaGuild | Snowflake): Promise<KlasaGuild>;
 		public integer(data: any, guild: KlasaGuild, name: string, minMax: { min: number, max: number }): Promise<number>;
 		public integer(input: string | number): Promise<number>;
-		public language(data: any, guild: KlasaGuild, name: string): Promise<Language>;
 		public role(data: any, guild: KlasaGuild, name: string): Promise<Role>;
 		public role(input: Role | Snowflake, guild: KlasaGuild): Promise<Role>;
 		public string(data: any, guild: KlasaGuild, name: string, minMax: { min: number, max: number }): Promise<string>;
@@ -267,8 +265,6 @@ declare module 'klasa' {
 		public requiredPermissions: Permissions;
 		public cooldownLevel: 'author' | 'channel' | 'guild';
 		public deletable: boolean;
-		public description: string | ((language: Language) => string);
-		public extendedHelp: string | ((language: Language) => string);
 		public flagSupport: boolean;
 		public fullCategory: string[];
 		public guarded: boolean;
@@ -330,13 +326,6 @@ declare module 'klasa' {
 		protected _run(message: KlasaMessage, command: Command): Promise<boolean | string>;
 	}
 
-	export abstract class Language extends Piece {
-		public constructor(store: LanguageStore, file: string[], directory: string, options?: LanguageOptions);
-		public language: Record<string, string | string[] | ((...args: any[]) => string | string[])>;
-
-		public get<T = string>(term: string, ...args: any[]): T;
-		public toJSON(): PieceLanguageJSON;
-	}
 
 	export abstract class Monitor extends Piece {
 		public constructor(store: MonitorStore, file: string[], directory: string, options?: MonitorOptions);
@@ -426,9 +415,7 @@ declare module 'klasa' {
 		public run(message: KlasaMessage, command: Command, selective?: boolean): Promise<void>;
 	}
 
-	export class LanguageStore extends Store<string, Language, typeof Language> {
-		public readonly default: Language;
-	}
+
 
 	export class MonitorStore extends Store<string, Monitor, typeof Monitor> {
 		public run(message: KlasaMessage): Promise<void>;
@@ -814,7 +801,6 @@ declare module 'klasa' {
 	export interface GuildConfigRepository {
 		getPrefix(guild: string): string;
 		getDisabledCommands(guild: string): Set<string>;
-		getLanguage(guild: string): string;
 	}
 	export interface KlasaClientOptions extends ClientOptions {
 		commandEditing?: boolean;
@@ -825,7 +811,6 @@ declare module 'klasa' {
 		createPiecesFolders?: boolean;
 		customPromptDefaults?: CustomPromptDefaults;
 		disabledCorePieces?: string[];
-		language?: string;
 		noPrefixDM?: boolean;
 		owners?: string[];
 		permissionLevels?: PermissionLevels;
@@ -858,7 +843,6 @@ declare module 'klasa' {
 		extendables?: ExtendableOptions;
 		finalizers?: FinalizerOptions;
 		inhibitors?: InhibitorOptions;
-		languages?: LanguageOptions;
 		monitors?: MonitorOptions;
 		providers?: ProviderOptions;
 		serializers?: SerializerOptions;
@@ -997,8 +981,6 @@ declare module 'klasa' {
 		cooldown?: number;
 		cooldownLevel?: 'author' | 'channel' | 'guild';
 		deletable?: boolean;
-		description?: string | string[] | ((language: Language) => string | string[]);
-		extendedHelp?: string | string[] | ((language: Language) => string | string[]);
 		flagSupport?: boolean;
 		guarded?: boolean;
 		hidden?: boolean;
@@ -1042,7 +1024,6 @@ declare module 'klasa' {
 	export interface SerializerOptions extends AliasPieceOptions {}
 	export interface ProviderOptions extends PieceOptions {}
 	export interface FinalizerOptions extends PieceOptions {}
-	export interface LanguageOptions extends PieceOptions {}
 	export interface TaskOptions extends PieceOptions {}
 
 	export interface PieceJSON {
@@ -1088,7 +1069,6 @@ declare module 'klasa' {
 	export interface PieceSerializerJSON extends AliasPieceJSON, Required<SerializerOptions> {}
 	export interface PieceProviderJSON extends PieceJSON, Required<ProviderOptions> {}
 	export interface PieceFinalizerJSON extends PieceJSON, Required<FinalizerOptions> {}
-	export interface PieceLanguageJSON extends PieceJSON, Required<LanguageOptions> {}
 	export interface PieceTaskJSON extends PieceJSON, Required<TaskOptions> {}
 
 	// Usage
@@ -1351,8 +1331,6 @@ declare module 'discord.js' {
 		KlasaGuild,
 		KlasaMessage,
 		KlasaUser,
-		Language,
-		LanguageStore,
 		Monitor,
 		MonitorStore,
 		PermissionLevels,
@@ -1377,7 +1355,6 @@ declare module 'discord.js' {
 		inhibitors: InhibitorStore;
 		finalizers: FinalizerStore;
 		monitors: MonitorStore;
-		languages: LanguageStore;
 		tasks: TaskStore;
 		serializers: SerializerStore;
 		events: EventStore;
@@ -1443,12 +1420,9 @@ declare module 'discord.js' {
 		off(event: 'wtf', listener: (failure: Error) => void): this;
 	}
 
-	export interface Guild {
-		readonly language: Language;
-	}
+
 
 	export interface Message extends PartialSendAliases {
-		language: Language;
 		command: Command | null;
 		commandText: string | null;
 		prefix: RegExp | null;
@@ -1479,12 +1453,6 @@ declare module 'discord.js' {
 	export interface DMChannel extends SendAliases, ChannelExtendables { }
 
 	interface PartialSendAliases {
-		sendLocale(key: string, options?: MessageOptions | MessageAdditions): Promise<KlasaMessage>;
-		sendLocale(key: string, options?: MessageOptions & { split?: false } | MessageAdditions): Promise<KlasaMessage>;
-		sendLocale(key: string, options?: MessageOptions & { split: true | SplitOptions } | MessageAdditions): Promise<KlasaMessage[]>;
-		sendLocale(key: string, localeArgs?: Array<any>, options?: MessageOptions | MessageAdditions): Promise<KlasaMessage>;
-		sendLocale(key: string, localeArgs?: Array<any>, options?: MessageOptions & { split?: false } | MessageAdditions): Promise<KlasaMessage>;
-		sendLocale(key: string, localeArgs?: Array<any>, options?: MessageOptions & { split: true | SplitOptions } | MessageAdditions): Promise<KlasaMessage[]>;
 		sendMessage(content?: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<KlasaMessage>;
 		sendMessage(content?: StringResolvable, options?: MessageOptions & { split?: false } | MessageAdditions): Promise<KlasaMessage>;
 		sendMessage(content?: StringResolvable, options?: MessageOptions & { split: true | SplitOptions } | MessageAdditions): Promise<KlasaMessage[]>;

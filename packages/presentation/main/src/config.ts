@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { KlasaClientOptions } from "klasa";
 import { Intents } from "discord.js";
-import { ww, ja_JP } from "protocol_command-data-common";
 import * as ENV from "./bootstrap/env";
 import GuildConfigRepository from "presentation_guild-config-adapter";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 export function config(repo: CachedBasicConfigRepository): KlasaClientOptions {
   return {
+    disableMentions: "everyone",
     guildConfigRepository: new GuildConfigRepository(repo),
     consoleEvents: {
       debug: false,
@@ -33,7 +33,6 @@ export function config(repo: CachedBasicConfigRepository): KlasaClientOptions {
         wtf: { message: { text: "red" }, time: { background: "red" } },
       },
     },
-    language: "ja_JP",
     prefix: process.env["GUJ_DEFAULT_PREFIX"] ?? "$",
     partials: ["MESSAGE", "USER", "REACTION"],
     ws: {
@@ -46,19 +45,6 @@ export function config(repo: CachedBasicConfigRepository): KlasaClientOptions {
     },
     disabledCorePieces: ["commands"],
     production: process.env.NODE_ENV === "production",
-    pieceDefaults: {
-      commands: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        extendedHelp: false as any,
-      },
-    },
-    allCommands: {
-      ww: ww.All.filter((e) => e.receiver.includes("main")),
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      ja_JP: ja_JP.All.filter((e) =>
-        e.receiver ? e.receiver.includes("main") : true
-      ),
-    },
     themeColor: ENV.GUJ_THEME_COLOR,
   };
 }

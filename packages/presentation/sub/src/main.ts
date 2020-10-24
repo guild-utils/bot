@@ -8,7 +8,6 @@ import {
 import { credentials, VerifyOptions } from "grpc";
 import { ClientResponseTransformer } from "protocol_rpc-client";
 import { initEngineAndKuromoji, initInstanceState } from "presentation_core";
-import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
 import { KlasaClient, KlasaClientOptions } from "klasa";
 import { config, token } from "./config";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
@@ -75,11 +74,7 @@ async function main() {
     }
   }
   const discordClient = new Client(config(db.collection("guilds")));
-  initInstanceState(container, discordClient);
+  initInstanceState(container, discordClient, ENV.GUJ_THEME_COLOR);
   await discordClient.login(token);
-  await initKlasaCoreCommandRewrite(
-    discordClient.arguments,
-    discordClient.commands
-  );
 }
 main().catch(console.log);

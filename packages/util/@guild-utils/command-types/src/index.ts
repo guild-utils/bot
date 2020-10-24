@@ -68,10 +68,14 @@ export class AT_String extends Base<typeof stringSymbol, string> {
   // eslint-disable-next-line @typescript-eslint/require-await
   async resolve(v: unknown): Promise<string> {
     console.log(v, typeof v);
-    if (typeof v !== "string") {
-      throw new ArgumentTypeMismatchError();
+    switch (typeof v) {
+      case "string":
+        return v;
+      case "boolean":
+      case "number":
+        return String(v);
     }
-    return v;
+    throw new ArgumentTypeMismatchError();
   }
   yargs(): PositionalOptions & Options {
     return {
@@ -151,15 +155,18 @@ export class AT_Or<T, U> extends Base<typeof orSymbol, T | U> {
   }
 }
 export const flagSymbol = Symbol("flag");
-export class AT_Flag extends Base<typeof flagSymbol, boolean> {
+export class AT_Flag extends Base<typeof flagSymbol, boolean | undefined> {
   resolverKey: typeof flagSymbol = flagSymbol;
   name = "flag";
   constructor() {
     super();
   }
-  resolve(v: unknown): Promise<boolean> {
-    if (typeof v === "boolean") {
-      return Promise.resolve(v);
+  resolve(v: unknown): Promise<boolean | undefined> {
+    switch (typeof v) {
+      case "boolean":
+        return Promise.resolve(v);
+      case "undefined":
+        return Promise.resolve(undefined);
     }
     return Promise.reject(new NotResolvableError());
   }

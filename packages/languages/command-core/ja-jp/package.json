@@ -1,0 +1,10 @@
+{
+  "name": "languages_command-core-jajp",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "tignear",
+  "types": "../dist/ja-jp/index.d.ts",
+  "main": "../dist/ja-jp/index.js",
+  "private": "true",
+  "dependencies": {}
+}
