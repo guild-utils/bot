@@ -8,20 +8,14 @@ import {
 import { credentials, VerifyOptions } from "grpc";
 import { ClientResponseTransformer } from "protocol_rpc-client";
 import { initEngineAndKuromoji, initInstanceState } from "presentation_core";
-import initKlasaCoreCommandRewrite from "presentation_klasa-core-command-rewrite";
-import { KlasaClient, KlasaClientOptions } from "klasa";
 import { config, token } from "./config";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { promises as fs } from "fs";
-import { Permissions } from "discord.js";
-function initSchema() {
-  KlasaClient.defaultGuildSchema.add("speech", (f) => {
-    f.add("targets", "TextChannel", {
-      configurable: false,
-      array: true,
-    });
-  });
-}
+import { Client } from "discord.js";
+import { initDatabase } from "./bootstrap/mongo";
+import * as ENV from "./bootstrap/env";
+import { CacheTextToSpeechTargetChannelDataStore } from "repository_cache-guild-tts-target-channels";
+import { MongoTextToSpeechTargetChannelDataStore } from "repository_mongo-guild-tts-target-channels";
 async function makeCredentials(keys: string | undefined) {
   const options: VerifyOptions = {
     checkServerIdentity: () => undefined,
@@ -35,14 +29,16 @@ async function makeCredentials(keys: string | undefined) {
       )
     : credentials.createInsecure();
 }
-KlasaClient.basePermissions
-  .add(Permissions.FLAGS.ADD_REACTIONS)
-  .add(Permissions.FLAGS.MANAGE_MESSAGES)
-  .add(Permissions.FLAGS.CONNECT)
-  .add(Permissions.FLAGS.SPEAK)
-  .add(Permissions.FLAGS.ATTACH_FILES)
-  .add(Permissions.FLAGS.EMBED_LINKS);
+
 async function main() {
+  const db = await initDatabase({
+    connectionString: ENV.MONGO_CONNECTION,
+    host: ENV.MONGO_HOST,
+    port: ENV.MONGO_PORT,
+    db: ENV.MONGO_DB,
+    user: ENV.MONGO_USER,
+    password: ENV.MONGO_PASSWORD,
+  });
   const grpcConfigClient: IConfigManagerClient = new ConfigManagerClient(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     process.env["GUILD_UTILS_J_RPC_SERVER"]!,
@@ -59,19 +55,15 @@ async function main() {
     new ClientResponseTransformer()
   );
   container.register("ConfigRepository", { useValue: usecase });
+  container.register("TextToSpeechTargetChannelDataStore", {
+    useValue: new CacheTextToSpeechTargetChannelDataStore(
+      new MongoTextToSpeechTargetChannelDataStore(db.collection("guilds"))
+    ),
+  });
   await initEngineAndKuromoji(container, grpcMixerClient);
-  class Client extends KlasaClient {
-    constructor(options: KlasaClientOptions) {
-      super(options);
-    }
-  }
-  initSchema();
-  const discordClient = new Client(config);
-  initInstanceState(container, discordClient);
+
+  const discordClient = new Client(config());
+  initInstanceState(container, discordClient, ENV.GUJ_THEME_COLOR);
   await discordClient.login(token);
-  await initKlasaCoreCommandRewrite(
-    discordClient.arguments,
-    discordClient.commands
-  );
 }
 main().catch(console.log);
