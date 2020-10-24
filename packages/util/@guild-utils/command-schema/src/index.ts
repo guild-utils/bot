@@ -28,11 +28,12 @@ export class ContextError extends TypeError {
   }
 }
 
-export class PermissionError extends TypeError {
-  constructor() {
-    super("Command failed. Permission error.");
+export class PermissionError extends Error {
+  constructor(message = "Command failed. Permission error.") {
+    super(message);
   }
 }
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface SubCommandOption extends OptionBase {}
 export class CommandSchema<
