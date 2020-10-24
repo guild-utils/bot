@@ -1,6 +1,5 @@
 import { KlasaClientOptions } from "klasa";
 import { Intents } from "discord.js";
-import { ww, ja_JP } from "protocol_command-data-common";
 import GuildConfigRepository from "presentation_guild-config-adapter";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 import {
@@ -16,6 +15,7 @@ export function config(
   const prefix = process.env["GUJ_DEFAULT_PREFIX"] ?? "$.";
   const language = "ja_JP";
   return {
+    disableMentions: "everyone",
     guildConfigRepository: new GuildConfigRepository(
       new CachedBasicConfigRepository(
         new MongoBasicBotConfigRepository(collection, {
@@ -49,7 +49,6 @@ export function config(
         wtf: { message: { text: "red" }, time: { background: "red" } },
       },
     },
-    language,
     prefix,
     restTimeOffset: 50,
     ws: {
@@ -58,19 +57,6 @@ export function config(
         Intents.FLAGS.GUILD_MESSAGES |
         Intents.FLAGS.GUILDS |
         Intents.FLAGS.GUILD_VOICE_STATES,
-    },
-    pieceDefaults: {
-      commands: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-assignment
-        extendedHelp: false as any,
-      },
-    },
-    allCommands: {
-      ww: ww.All.filter((e) => e.receiver.includes("sub")),
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      ja_JP: ja_JP.All.filter((e) =>
-        e.receiver ? e.receiver.includes("sub") : true
-      ),
     },
     disabledCorePieces: ["commands"],
     themeColor: ENV.GUJ_THEME_COLOR,
