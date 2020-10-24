@@ -17,8 +17,7 @@
   "dependencies": {
     "domain_guild-tts-target-channels": "^1.0.0"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",

@@ -18,8 +18,7 @@
     "domain_voice-configs": "^1.0.0",
     "domain_voice-configs-write": "^1.0.0"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",

@@ -14,8 +14,7 @@
     "prettier": "^2.0.5",
     "typescript": "^4.0.2"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
     "lint": "eslint --ext ts src --fix",
     "test:lint": "eslint --ext ts src",

@@ -42,7 +42,7 @@ class MongoLayeredVoiceConfigRepositoryInternal
         },
       }
     );
-    const rr = r?.speech as MongoCollectionType["speech"] | undefined;
+    const rr = r?.speech;
     if (!rr) {
       return {
         allpass: undefined,

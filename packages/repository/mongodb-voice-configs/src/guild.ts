@@ -67,7 +67,7 @@ export class MongoGuildVoiceConfigRepository
         },
       }
     );
-    const rr = r?.speech as MongoGuildVoiceConfigCollectionType["speech"];
+    const rr = r?.speech;
     return {
       maxReadLimit: rr?.maxReadLimit ?? undefined,
       maxVolume: rr?.maxVolume ?? undefined,
