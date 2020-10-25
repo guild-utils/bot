@@ -16,6 +16,8 @@ import {
   initConfCommand,
   CoreCommands,
   InitConfCommandArg,
+  CommandResolver,
+  commandTextSupplier,
 } from "presentation_core";
 import {
   categoryWords,
@@ -32,8 +34,9 @@ import {
   initCoreCommands,
   createCommandCollectionWithAlias,
   commandsToMapWithNameAndAlias,
+  RateLimitLangJaJP,
+  RateLimitEntrys,
 } from "presentation_core";
-
 export function initCommands(
   coreCommandOptions: CoreCommandOptions,
   mainCommandOptions: MainCommandOptions,
@@ -64,8 +67,11 @@ function initCommandParser(
 }
 function initCommandResolver(
   container: DependencyContainer,
-  collection: Map<string, [CommandBase, CommandSchema | undefined]>
-) {
+  collection: Map<
+    string,
+    [CommandBase, CommandSchema | undefined, RateLimitEntrys | undefined]
+  >
+): CommandResolver {
   const resolverFunc = (k: string) => {
     console.log("resolver:", k);
     const resolvers = [collection];
@@ -177,7 +183,13 @@ export function initCommandSystem(
     mainCommandOptions,
     initConfCommandArgs
   );
-  const collection = createCommandCollectionWithAlias(command, schema);
+  const collection = createCommandCollectionWithAlias(
+    command,
+    schema,
+    commandTextSupplier({
+      ja_JP: RateLimitLangJaJP(ctx.color),
+    })
+  );
   console.log(`Command Collection Size: ${collection.size}`);
   const parser = initCommandParser(container, Object.values(schema));
   const resolver = initCommandResolver(container, collection);
