@@ -4,7 +4,8 @@ import { CommandSchema } from "@guild-utils/command-schema";
 import { Client, Message, MessageEmbed } from "discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
 import { MonitorBase } from "monitor-discord.js";
-import { Executor } from "protocol_util-djs";
+import { Executor, executorFromMessage } from "protocol_util-djs";
+import { getLangType } from "../util/get-lang";
 async function checkSchema(
   schema: CommandSchema,
   repo: BasicBotConfigRepository,
@@ -24,6 +25,7 @@ export type CommandHandlerResponses = {
     prefix: string,
     exec: Executor
   ) => MessageEmbed;
+  internalError: (error: Error, exec: Executor) => MessageEmbed;
 };
 export default class extends MonitorBase {
   constructor(
@@ -38,7 +40,8 @@ export default class extends MonitorBase {
     ) => [CommandBase, CommandSchema | undefined] | undefined,
     private readonly repo: BasicBotConfigRepository,
     private readonly responses: (lang: string) => CommandHandlerResponses,
-    private readonly prefix: string
+    private readonly prefix: string,
+    private readonly getLang: getLangType
   ) {
     super({
       ignoreBots: true,
@@ -53,16 +56,24 @@ export default class extends MonitorBase {
     if (!this.mentionPrefix) {
       return;
     }
-    const r = await this.parser(message.content, {
-      guild: message.guild?.id,
-      user: message.author.id,
-      prefix: message.guild?.id
-        ? (await this.repo.getPrefix(message.guild.id)) ?? this.prefix
-        : this.prefix,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      mentionPrefix: this.mentionPrefix,
-      channelType: message.channel.type,
-    });
+    let r:
+      | [string, unknown[], Record<string, unknown>, CommandContext]
+      | undefined;
+    try {
+      r = await this.parser(message.content, {
+        guild: message.guild?.id,
+        user: message.author.id,
+        prefix: message.guild?.id
+          ? (await this.repo.getPrefix(message.guild.id)) ?? this.prefix
+          : this.prefix,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        mentionPrefix: this.mentionPrefix,
+        channelType: message.channel.type,
+      });
+    } catch (e) {
+      console.error(e);
+      return;
+    }
     if (!r) {
       return;
     }
@@ -80,9 +91,7 @@ export default class extends MonitorBase {
         case "commandDisabled":
           await message.channel.send(
             this.responses(
-              message.guild
-                ? (await this.repo.getLanguage(message.guild.id)) ?? "ja_JP"
-                : "ja_JP"
+              await this.getLang(message.guild?.id)
             ).commandDisabled(schema.name, ctx.prefix, {
               user: message.author,
               member: message.member,
@@ -91,7 +100,19 @@ export default class extends MonitorBase {
           return;
       }
     }
-    await impl.run(message, pos, opt, ctx);
+    try {
+      await impl.run(message, pos, opt, ctx);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e);
+        await message.channel.send(
+          this.responses(await this.getLang(message.guild?.id)).internalError(
+            e,
+            executorFromMessage(message)
+          )
+        );
+      }
+    }
   }
   init(client: Client): void {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
