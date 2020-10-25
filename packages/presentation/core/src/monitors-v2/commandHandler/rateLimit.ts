@@ -15,12 +15,12 @@ export function createRateLimitEntrys(
     lang: string
   ) => (e: RateLimitEntry, rt: ResetTime, message: Message) => MessageEmbed
 ): RateLimitEntrys {
-  const [a, l, b] = [...entrySet].map(
-    ([t, cnt, interval]: [RateLimitScope, number, number]): [
+  return [...entrySet].map(
+    ([t, cnt, interval]: [
       RateLimitScope,
-      RateLimitLangDescription,
-      RateLimit<unknown>
-    ] => {
+      number,
+      number
+    ]): RateLimitEntrys[number] => {
       return [
         t,
         (l: string) => (resetTime: ResetTime, message: Message) =>
@@ -32,5 +32,4 @@ export function createRateLimitEntrys(
       ];
     }
   );
-  return [a, l, b];
 }
