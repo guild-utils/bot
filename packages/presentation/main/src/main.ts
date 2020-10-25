@@ -49,7 +49,6 @@ import {
 } from "presentation_core";
 import { Gui } from "./gui/common";
 import { CommandSchema } from "@guild-utils/command-schema";
-import { createEmbedWithMetaData } from "protocol_util-djs";
 const result = dotenv();
 if (result) {
   console.log(result.parsed);
@@ -262,17 +261,7 @@ async function main() {
     commandResolver: resolver,
     instanceState,
     parser,
-    commandHandlerResponses: () => {
-      return {
-        commandDisabled: (k, prefix, exec) =>
-          createEmbedWithMetaData({
-            ...exec,
-            color: ENV.GUJ_THEME_COLOR,
-          }).setDescription(
-            `コマンド「${k}」は無効化されています。\n\`\`${prefix} conf remove disabledCommands ${k}\`\`を実行することで有効化できます。`
-          ),
-      };
-    },
+    getLang,
   });
   const monitorRunner = new MonitorRunner(monitors);
   initEvents(client, {

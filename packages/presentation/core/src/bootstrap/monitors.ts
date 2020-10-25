@@ -5,14 +5,15 @@ import Engine from "../text2speech/engine";
 import { Usecase as ConfigUsecase } from "domain_voice-configs";
 import handleStartupMessage from "../monitors-v2/handleStartupMessage";
 import text2speech from "../monitors-v2/text2speech";
-import commandHandler, {
-  CommandHandlerResponses,
-} from "../monitors-v2/commandHandler";
+import commandHandler from "../monitors-v2/commandHandler";
 import { Monitor } from "monitor-discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
 import { MainParserContext } from "@guild-utils/command-parser";
 import { CommandSchema } from "@guild-utils/command-schema";
+import { getLangType } from "../util/get-lang";
+import { commandTextSupplier } from "./commands";
+import { CommandHandlerJaJP } from "../languages/ja-jp/commandHandler";
 export type CreateCoreMonitorEnv = {
   engine: Engine;
   usecase: ConfigUsecase;
@@ -30,7 +31,7 @@ export type CreateCoreMonitorEnv = {
   ) => [CommandBase, CommandSchema | undefined] | undefined;
   repo: BasicBotConfigRepository;
   prefix: string;
-  commandHandlerResponses: (lang: string) => CommandHandlerResponses;
+  getLang: getLangType;
 };
 export function createCoreMonitor(env: CreateCoreMonitorEnv): Set<Monitor> {
   return new Set([
@@ -40,8 +41,11 @@ export function createCoreMonitor(env: CreateCoreMonitorEnv): Set<Monitor> {
       env.parser,
       env.commandResolver,
       env.repo,
-      env.commandHandlerResponses,
-      env.prefix
+      commandTextSupplier({
+        ja_JP: CommandHandlerJaJP(env.color),
+      }),
+      env.prefix,
+      env.getLang
     ),
   ]);
 }
