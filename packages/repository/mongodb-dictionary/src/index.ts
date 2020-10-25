@@ -1,4 +1,4 @@
-import * as Domain from "domain_configs";
+import * as Domain from "domain_voice-configs";
 import { Collection } from "mongodb";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recurseObject<R>(obj: any): R {
@@ -49,7 +49,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
     private readonly guilds: Collection<DictionaryRepositoryCollectionType>
   ) {}
 
-  async getBase(
+  private async getBase(
     guild: string,
     {
       before,
@@ -164,7 +164,9 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
       }
     );
   }
-  async removeBefore(
+
+  private async removeBase(
+    target: "before" | "after",
     guild: string,
     key: number
   ): Promise<Domain.DictionaryEntryB | undefined> {
@@ -175,14 +177,14 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
       [
         {
           $set: {
-            "speech.dictionary.before": {
+            [`speech.dictionary.${target}`]: {
               $concatArrays: [
-                { $slice: ["$speech.dictionary.before", key] },
+                { $slice: [`$speech.dictionary.${target}`, key] },
                 {
                   $slice: [
-                    "$speech.dictionary.before",
+                    `$speech.dictionary.${target}`,
                     { $add: [1, key] },
-                    { $size: "$speech.dictionary.before" },
+                    { $size: `$speech.dictionary.${target}` },
                   ],
                 },
               ],
@@ -196,7 +198,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
           speech: {
             dictionary: {
               entry: {
-                $arrayElemAt: ["$speech.dictionary.before", key],
+                $arrayElemAt: [`$speech.dictionary.${target}`, key],
               },
             },
           },
@@ -246,49 +248,16 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
     guild: string,
     key: number
   ): Promise<Domain.DictionaryEntryB | undefined> {
-    const r = await this.guilds.findOneAndUpdate(
-      {
-        id: guild,
-      },
-      [
-        {
-          $set: {
-            "speech.dictionary.after": {
-              $concatArrays: [
-                { $slice: ["$speech.dictionary.after", key] },
-                {
-                  $slice: [
-                    "$speech.dictionary.after",
-                    { $add: [1, key] },
-                    { $size: "$speech.dictionary.after" },
-                  ],
-                },
-              ],
-            },
-          },
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ] as any,
-      {
-        projection: {
-          speech: {
-            dictionary: {
-              entry: {
-                $arrayElemAt: ["$speech.dictionary.after", key],
-              },
-            },
-          },
-        },
-        upsert: true,
-      }
-    );
-    const entry = r.value?.speech?.dictionary?.entry;
-    if (!entry) {
-      return undefined;
-    }
-    return recurseObject(entry);
+    return this.removeBase("after", guild, key);
   }
-  async updateBefore(
+  async removeBefore(
+    guild: string,
+    key: number
+  ): Promise<Domain.DictionaryEntryB | undefined> {
+    return this.removeBase("before", guild, key);
+  }
+  async updateBase(
+    target: "before" | "after",
     guild: string,
     key: number,
     to: Domain.DictionaryEntryB | string
@@ -296,10 +265,10 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
     const setQuery =
       typeof to === "string"
         ? {
-            [`speech.dictionary.before.${key}.to`]: to,
+            [`speech.dictionary.${target}.${key}.to`]: to,
           }
         : {
-            [`speech.dictionary.before.${key}`]: to,
+            [`speech.dictionary.${target}.${key}`]: to,
           };
 
     const r = await this.guilds.findOneAndUpdate(
@@ -314,9 +283,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
           speech: {
             dictionary: {
               entry: {
-                $arrayElemAt: ["speech.dictionary.before", key],
-                from: 1,
-                to: 1,
+                $arrayElemAt: [`$speech.dictionary.${target}`, key],
               },
             },
           },
@@ -324,6 +291,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
         upsert: true,
       }
     );
+    console.log(r.value?.speech?.dictionary);
     const from = r.value?.speech?.dictionary?.entry;
     if (!from) {
       return undefined;
@@ -364,39 +332,19 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
   async updateAfter(
     guild: string,
     key: number,
-    to: Domain.DictionaryEntryB
+    to: Domain.DictionaryEntryB | string
   ): Promise<[Domain.DictionaryEntryB, Domain.DictionaryEntryB] | undefined> {
-    const r = await this.guilds.findOneAndUpdate(
-      {
-        id: guild,
-      },
-      {
-        $set: {
-          [`speech.dictionary.after.${key}`]: to,
-        },
-      },
-      {
-        projection: {
-          speech: {
-            dictionary: {
-              entry: {
-                $arrayElemAt: ["$speech.dictionary.after", key],
-                from: 1,
-                to: 1,
-              },
-            },
-          },
-        },
-        upsert: true,
-      }
-    );
-    const from = r.value?.speech?.dictionary?.entry;
-    if (!from) {
-      return undefined;
-    }
-    return recurseObject([from, to]);
+    return this.updateBase("after", guild, key, to);
   }
-  async appendBefore(
+  async updateBefore(
+    guild: string,
+    key: number,
+    to: Domain.DictionaryEntryB | string
+  ): Promise<[Domain.DictionaryEntryB, Domain.DictionaryEntryB] | undefined> {
+    return this.updateBase("before", guild, key, to);
+  }
+  private async appendBase(
+    target: "before" | "after",
     guild: string,
     entry: Domain.DictionaryEntryB,
     pos = -1
@@ -405,7 +353,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
       { id: guild },
       {
         $push: {
-          "speech.dictionary.before": {
+          [`speech.dictionary.${target}`]: {
             $each: [entry],
             $position: pos,
           },
@@ -415,28 +363,21 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
     if (r.result.ok) {
       return recurseObject(entry);
     }
-    throw new Error("appendBefore failed");
+    throw new Error("appendBase failed");
   }
   async appendAfter(
     guild: string,
     entry: Domain.DictionaryEntryB,
     pos = -1
   ): Promise<Domain.DictionaryEntryB> {
-    const r = await this.guilds.updateOne(
-      { id: guild },
-      {
-        $push: {
-          "speech.dictionary.after": {
-            $each: [entry],
-            $position: pos,
-          },
-        },
-      }
-    );
-    if (r.result.ok) {
-      return recurseObject(entry);
-    }
-    throw new Error("appendBefore failed");
+    return this.appendBase("after", guild, entry, pos);
+  }
+  async appendBefore(
+    guild: string,
+    entry: Domain.DictionaryEntryB,
+    pos = -1
+  ): Promise<Domain.DictionaryEntryB> {
+    return this.appendBase("before", guild, entry, pos);
   }
 }
 function toFullWidth(elm: string) {

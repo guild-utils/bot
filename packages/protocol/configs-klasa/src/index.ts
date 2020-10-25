@@ -1,67 +1,78 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import * as Domain from "domain_configs";
-import { GatewayDriver } from "klasa";
-import "klasa-member-gateway";
-import * as GUILD_CONFIGS from "protocol_shared-config/guild";
-import * as MEMBER_CONFIGS from "protocol_shared-config/member";
-import { randomizers } from "./randomizer";
+import * as Domain from "domain_voice-configs";
+import {
+  GuildVoiceConfigRepository,
+  LayeredVoiceConfigRepository,
+  LayeredVoiceConfig,
+} from "domain_voice-configs-write";
+import { randomizers, RandomizerReturnType } from "./randomizer";
 const v1v2Boundary = 1598886000000; //2020/09/01 00:00:00 UTC+9
-interface GetInterface {
-  get(key: string[]): any;
-}
-function get(gws: GetInterface[], key: string[], data?: any): any {
-  for (const gw of gws) {
-    const r = gw.get(key);
-    if (r != undefined) {
-      return r;
+function select<
+  T extends Record<string, unknown>,
+  U extends keyof T,
+  R extends T[U] | undefined
+>(
+  values: (T | undefined)[],
+  key: U,
+  defaultValue?: R
+): R | Exclude<T[U], null | undefined> {
+  for (const value of values) {
+    if (!value) {
+      continue;
+    }
+    const v = value[key] as Exclude<T[U], null | undefined> | null | undefined;
+    if (v != undefined) {
+      return v;
     }
   }
-  if (arguments.length === 2) {
-    throw new TypeError("Not Resolvable");
+  if (arguments.length === 3) {
+    return defaultValue as R;
   }
-  return data;
+  throw new Error("Not Resolved");
 }
-function get2(
-  gws: [GetInterface, string][],
-  key: string[],
-  data?: { value: any; provider: string }
-): { value: any; provider: string } {
-  for (const [gw, provider] of gws) {
-    const r = gw.get(key);
-    if (r != undefined) {
-      return { value: r, provider };
+function select2<
+  T extends Record<string, unknown>,
+  U extends keyof T,
+  R extends T[U] | undefined
+>(
+  values: [T | undefined, string][],
+  key: U,
+  defaultValue?: [R, string]
+): { value: R | Exclude<T[U], null | undefined>; provider: string } {
+  for (const [rawvalue, provider] of values) {
+    if (!rawvalue) {
+      continue;
+    }
+    const value = rawvalue[key] as
+      | Exclude<T[U], null | undefined>
+      | null
+      | undefined;
+    if (value != undefined) {
+      return { value, provider };
     }
   }
-  if (arguments.length === 2) {
-    throw new TypeError("Not Resolvable");
+  if (arguments.length === 3) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return { value: defaultValue![0], provider: defaultValue![1] };
   }
-  return data ?? { value: undefined, provider: "default" };
+  throw new TypeError("Not Resolvable");
 }
 function readName(
-  ms: GetInterface,
-  us: GetInterface,
+  ms: string | undefined,
+  us: string | undefined,
   nickName: string | undefined,
   userName: string
 ): string {
-  return (
-    ms.get(MEMBER_CONFIGS.text2speechReadName) ??
-    nickName ??
-    us.get(MEMBER_CONFIGS.text2speechReadName) ??
-    userName
-  );
+  return ms ?? nickName ?? us ?? userName;
 }
 type ReadName2ReturnType = { value: string; provider: string };
 function readName2(
-  ms: GetInterface,
-  us: GetInterface,
+  ms: string | undefined,
+  us: string | undefined,
   nickName: string | undefined,
   userName: string
 ): ReadName2ReturnType {
-  let value = ms.get(MEMBER_CONFIGS.text2speechReadName);
-  let provider = "memconf";
+  let value = ms;
+  let provider = "member";
   if (value) {
     return { value, provider };
   }
@@ -70,8 +81,8 @@ function readName2(
   if (value) {
     return { value, provider };
   }
-  value = us.get(MEMBER_CONFIGS.text2speechReadName);
-  provider = "userconf";
+  value = us;
+  provider = "user";
   if (value) {
     return { value, provider };
   }
@@ -79,10 +90,18 @@ function readName2(
   provider = "username";
   return { value, provider };
 }
+export interface ContextualDataResolver {
+  getGuildJoinedTimeStamp(guild: string): Promise<number>;
+}
 export class Usecase implements Domain.Usecase {
   constructor(
-    private readonly gateways: GatewayDriver,
-    private readonly dictionaryRepo: Domain.DictionaryRepository
+    private readonly memberVoiceConfig: LayeredVoiceConfigRepository<
+      [string, string]
+    >,
+    private readonly userVoiceConfig: LayeredVoiceConfigRepository<string>,
+    private readonly guildVoiceConfig: GuildVoiceConfigRepository,
+    private readonly dictionaryRepo: Domain.DictionaryRepository,
+    private readonly contextualDataResolver: ContextualDataResolver
   ) {}
   async getUserReadNameResolvedBy(
     guild: string,
@@ -90,10 +109,12 @@ export class Usecase implements Domain.Usecase {
     nickname: string | undefined,
     username: string
   ): Promise<[string, string]> {
-    const ms = await this.gateways.members.get([guild, user], true).sync();
-    const us = await this.gateways.users.get(user, true).sync();
-
-    const { value, provider } = readName2(ms, us, nickname, username);
+    const { value, provider } = readName2(
+      (await this.memberVoiceConfig.get([guild, user]))?.readName,
+      (await this.userVoiceConfig.get(user))?.readName,
+      nickname,
+      username
+    );
     return [value, provider];
   }
 
@@ -103,40 +124,38 @@ export class Usecase implements Domain.Usecase {
     nickName: string | undefined,
     userName: string
   ): Promise<Domain.AppliedVoiceConfig> {
-    const gs = await this.gateways.guilds.get(guild, true).sync();
-    const ms = await this.gateways.members.get([guild, user], true).sync();
-    const us = await this.gateways.users.get(user, true).sync();
-    let randomizerVersion = get(
-      [ms, us, gs],
-      MEMBER_CONFIGS.text2speechRandomizer,
-      undefined
-    );
+    const [mss, uss, gvc] = await Promise.all([
+      this.memberVoiceConfig.get([guild, user]),
+      this.userVoiceConfig.get(user),
+      this.guildVoiceConfig.get(guild),
+    ]);
+    let randomizerVersion = select([mss, uss, gvc], "randomizer", undefined);
     if (!randomizerVersion) {
-      const guildobj = await this.gateways.client.guilds.fetch(guild);
-      randomizerVersion = v1v2Boundary < guildobj.joinedTimestamp ? "v2" : "v1";
+      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
+        guild
+      );
+      randomizerVersion = v1v2Boundary < joinedTimestamp ? "v2" : "v1";
     }
-    const randomizerSupplier =
-      randomizers[randomizerVersion as keyof typeof randomizers] ??
-      randomizers.v1;
-    const randomizer = randomizerSupplier({ user });
-    const gws = [ms, us, randomizer];
-    const allpass = get(gws, MEMBER_CONFIGS.text2speechAllpass, undefined);
+    const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
+    const randomizer = randomizerSupplier({ user }).get();
+    const allpass = select([mss, uss, randomizer], "allpass", undefined);
+    const gws = [mss, uss, randomizer];
     return {
       dictionary: await this.dictionary(guild),
-      kind: get(gws, MEMBER_CONFIGS.text2speechKind),
-      readName: gs.get(GUILD_CONFIGS.text2speechReadName)
-        ? readName(ms, us, nickName, userName)
+      kind: select(gws, "kind"),
+      readName: gvc?.readName
+        ? readName(mss?.readName, uss?.readName, nickName, userName)
         : undefined,
-      speed: get(gws, MEMBER_CONFIGS.text2speechSpeed),
-      tone: get(gws, MEMBER_CONFIGS.text2speechTone),
+      speed: select(gws, "speed"),
+      tone: select(gws, "tone"),
       volume: Math.min(
-        gs.get(GUILD_CONFIGS.text2speechVolumeMax) ?? 0,
-        get(gws, MEMBER_CONFIGS.text2speechVolume) ?? 0
+        gvc?.maxVolume ?? 5,
+        select(gws, "volume", undefined) ?? 0
       ),
-      maxReadLimit: gs.get(GUILD_CONFIGS.text2speechMaxReadLimit),
+      maxReadLimit: gvc?.maxReadLimit ?? 130,
       allpass: allpass,
-      intone: get(gws, MEMBER_CONFIGS.text2speechIntone),
-      threshold: get(gws, MEMBER_CONFIGS.text2speechThreshold),
+      intone: select(gws, "intone"),
+      threshold: select(gws, "threshold"),
     };
   }
   async appliedVoiceConfigResolvedBy(
@@ -145,44 +164,43 @@ export class Usecase implements Domain.Usecase {
     nickName: string | undefined,
     userName: string
   ): Promise<Domain.AppliedVoiceConfigResolvedBy> {
-    const gs = await this.gateways.guilds.get(guild, true).sync();
-    const ms = await this.gateways.members.get([guild, user], true).sync();
-    const us = await this.gateways.users.get(user, true).sync();
-    let randomizerVersion = get(
-      [ms, us, gs],
-      MEMBER_CONFIGS.text2speechRandomizer,
-      undefined
-    );
-    console.log(randomizerVersion);
+    const [gvc, mss, uss] = await Promise.all([
+      this.guildVoiceConfig.get(guild),
+      this.memberVoiceConfig.get([guild, user]),
+      this.userVoiceConfig.get(user),
+    ]);
+    const ms: [LayeredVoiceConfig | undefined, string] = [mss, "member"];
+    const us: [LayeredVoiceConfig | undefined, string] = [uss, "user"];
+    let randomizerVersion = select([mss, uss, gvc], "randomizer", undefined);
     if (!randomizerVersion) {
-      const guildobj = await this.gateways.client.guilds.fetch(guild);
-      randomizerVersion = v1v2Boundary < guildobj.joinedTimestamp ? "v2" : "v1";
+      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
+        guild
+      );
+      randomizerVersion = v1v2Boundary < joinedTimestamp ? "v2" : "v1";
     }
     console.log(randomizerVersion);
-    const randomizerSupplier =
-      randomizers[randomizerVersion as keyof typeof randomizers] ??
-      randomizers.v1;
+    const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
     const randomizer = randomizerSupplier({ user });
     console.log(randomizer, randomizer.name);
-    const gws: [GetInterface, string][] = [
-      [ms, "memconf"],
-      [us, "userconf"],
-      [randomizer, randomizer.name],
-    ];
-    const allpass = get2(gws, MEMBER_CONFIGS.text2speechAllpass, {
-      value: undefined,
-      provider: "default",
-    });
-    const volumegV = gs.get(GUILD_CONFIGS.text2speechVolumeMax) ?? 0;
-    const volumemu = get2(gws, MEMBER_CONFIGS.text2speechVolume);
+    const gws: [
+      RandomizerReturnType | LayeredVoiceConfig | undefined,
+      string
+    ][] = [ms, us, [randomizer.get(), randomizer.name]];
+    const allpass = select2(gws, "allpass", [undefined, "default"]);
+    const volumegV = gvc?.maxVolume ?? 0;
+    const volumemu = select2<
+      RandomizerReturnType | LayeredVoiceConfig,
+      "volume",
+      number
+    >(gws, "volume", [0, "default"]);
     let volumeV: number;
     let volumeP: string;
-    const readName = gs.get(GUILD_CONFIGS.text2speechReadName)
-      ? readName2(ms, us, nickName, userName)
-      : { value: undefined, provider: "conf" };
+    const readName = gvc?.readName
+      ? readName2(mss?.readName, uss?.readName, nickName, userName)
+      : { value: undefined, provider: "server" };
     if (volumegV < volumemu.value) {
       volumeV = volumegV;
-      volumeP = "conf";
+      volumeP = "server";
     } else {
       volumeV = volumemu.value;
       volumeP = volumemu.provider;
@@ -192,18 +210,24 @@ export class Usecase implements Domain.Usecase {
         value: await this.dictionary(guild),
         provider: "default",
       },
-      kind: get2(gws, MEMBER_CONFIGS.text2speechKind),
+      kind: select2(gws, "kind"),
       readName,
-      speed: get2(gws, MEMBER_CONFIGS.text2speechSpeed),
-      tone: get2(gws, MEMBER_CONFIGS.text2speechTone),
+      speed: select2(gws, "speed"),
+      tone: select2(gws, "tone"),
       volume: { value: volumeV, provider: volumeP },
-      maxReadLimit: {
-        value: gs.get(GUILD_CONFIGS.text2speechMaxReadLimit),
-        provider: "conf",
-      },
+      maxReadLimit:
+        gvc?.maxReadLimit != null
+          ? {
+              value: gvc.maxReadLimit,
+              provider: "server",
+            }
+          : {
+              value: 130,
+              provider: "default",
+            },
       allpass: allpass,
-      intone: get2(gws, MEMBER_CONFIGS.text2speechIntone),
-      threshold: get2(gws, MEMBER_CONFIGS.text2speechThreshold),
+      intone: select2(gws, "intone"),
+      threshold: select2(gws, "threshold"),
     };
   }
   async getUserReadName(
@@ -212,10 +236,12 @@ export class Usecase implements Domain.Usecase {
     nickName: string | undefined,
     userName: string
   ): Promise<string> {
-    const ms = await this.gateways.members.get([guild, user], true).sync();
-    const us = await this.gateways.users.get(user, true).sync();
-
-    return readName(ms, us, nickName, userName);
+    return readName(
+      (await this.memberVoiceConfig.get([guild, user]))?.readName,
+      (await this.userVoiceConfig.get(user))?.readName,
+      nickName,
+      userName
+    );
   }
   dictionary(guild: string): Promise<Domain.Dictionary> {
     return this.dictionaryRepo.getAll(guild);

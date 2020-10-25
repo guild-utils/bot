@@ -1,0 +1,25 @@
+{
+  "name": "protocol_util-djs",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5",
+    "discord.js": "^12.3.1"
+  },
+  "peerDependencies": {
+    "discord.js": "^12.3.1"
+  },
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "watch": "tsc -p . -w",
+    "build": "tsc -p ."
+  }
+}
