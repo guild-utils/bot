@@ -1,6 +1,6 @@
-type ResetTime = number; //millsec
+export type ResetTime = number; //millsec
 
-class RateLimit<K> {
+export class RateLimit<K> {
   private readonly _queue = new Map<K, [number, ResetTime]>();
   constructor(
     private readonly limitAndExpire: (
