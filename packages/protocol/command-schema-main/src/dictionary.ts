@@ -139,6 +139,10 @@ export function commandSimpleDictionary(
     alias: [h + "dic"],
     descriptionResolver: computeLanguage(f, "command"),
     runIn,
+    rateLimits: new Set([
+      ["guild", 60, 60 * 1000],
+      ["guild", 5, 3 * 1000],
+    ]),
   })
     .command(addSchema)
     .command(insertSchema)
@@ -224,6 +228,10 @@ export function commandMainDictionary(
     alias: ["mdic"],
     descriptionResolver: computeLanguage(f, "command"),
     runIn,
+    rateLimits: new Set([
+      ["guild", 60, 60 * 1000],
+      ["guild", 5, 3 * 1000],
+    ]),
   })
     .command(addSchema)
     .command(removeSchema)
@@ -241,6 +249,10 @@ export function commandDictionary(
     descriptionResolver: computeLanguage(f, "command"),
     runIn: runInServer,
     alias: ["dic", "dict"],
+    rateLimits: new Set([
+      ["guild", 3 * 10, 60 * 10 * 1000],
+      ["guild", 6, 60 * 1000],
+    ]),
   })
     .command(
       new CommandSchema("export", {
