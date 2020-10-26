@@ -96,3 +96,5 @@ export { UnreachableMemberError } from "./errors/unreachable-error";
 export { CommandResolver } from "./monitors-v2/commandHandler";
 export { RateLimitLangJaJP } from "./bootstrap/rateLimit";
 export { RateLimitEntrys } from "./monitors-v2/commandHandler/rateLimit";
+export { initText2Speech } from "./bootstrap/text2speech";
+export { createConfigPermissionChecker } from "./bootstrap/permissionChecker";

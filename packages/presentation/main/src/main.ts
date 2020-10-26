@@ -7,15 +7,14 @@ import { config as dotenv } from "dotenv";
 import { container } from "tsyringe";
 import { config, token } from "./config";
 import initRpcServer from "./bootstrap/grpc";
-import initText2Speech from "./bootstrap/text2speech";
 import { initDatabase } from "./bootstrap/mongo";
-import { Client, Permissions, UserResolvable } from "discord.js";
+import { Client, Permissions } from "discord.js";
 import {
   initMainDictionaryGui,
   initBADictionaryGui,
   GuiTexts,
 } from "./bootstrap/dictionary-gui";
-import { initInstanceState, SenderPermissionError } from "presentation_core";
+import { initInstanceState, initText2Speech } from "presentation_core";
 import * as ENV from "./bootstrap/env";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
@@ -31,10 +30,7 @@ import {
 import { CacheTextToSpeechTargetChannelDataStore } from "repository_cache-guild-tts-target-channels";
 import { MongoTextToSpeechTargetChannelDataStore } from "repository_mongo-guild-tts-target-channels";
 import { defineSchemas, initCommandSystem } from "./bootstrap/commands";
-import {
-  configPermissionCheckerFactory,
-  configurateUsecaseCore,
-} from "presentation_core";
+import { configurateUsecaseCore } from "presentation_core";
 import {
   layeredConfigureUsecase,
   mainConfigurateUsecase,
@@ -44,8 +40,8 @@ import { initEvents } from "./bootstrap/events";
 import { MonitorRunner } from "monitor-discord.js";
 import {
   createInviteLink,
-  UnreachableMemberError,
   getLang as getLangBase,
+  createConfigPermissionChecker,
 } from "presentation_core";
 import { Gui } from "./gui/common";
 import { CommandSchema } from "@guild-utils/command-schema";
@@ -165,25 +161,7 @@ async function main() {
     client,
     ENV.GUJ_THEME_COLOR
   );
-  const cf = async (guild: string, user: UserResolvable): Promise<void> => {
-    const guildObj = await client.guilds.fetch(guild);
-    if (!guildObj) {
-      throw new TypeError("Permission check failed caused guild unreachable.");
-    }
-    const memberObj = await guildObj.members.fetch(user);
-    if (!memberObj) {
-      throw new UnreachableMemberError(user, guildObj);
-    }
-    if (!memberObj.hasPermission("MANAGE_GUILD")) {
-      throw new SenderPermissionError(
-        new Permissions("MANAGE_GUILD"),
-        memberObj.permissions,
-        guildObj
-      );
-    }
-  };
-  const cf2 = ([guild, user]: [string, string]) => cf(guild, user);
-  const pc = configPermissionCheckerFactory(cf, cf2);
+
   const schemas = defineSchemas(() => client);
   const commandNames = new Set<string>(
     Object.values(schemas)
@@ -191,6 +169,7 @@ async function main() {
       .filter((e): e is CommandSchema => !!e)
       .map((e) => e.name)
   );
+  const pc = createConfigPermissionChecker(client);
   console.log("CommandNames:", commandNames);
   const usecase = layeredConfigureUsecase([
     configurateUsecaseCore(basicBotConfig, pc, commandNames, {
