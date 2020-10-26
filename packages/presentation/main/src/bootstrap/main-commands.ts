@@ -247,17 +247,24 @@ export function initMainCommands(
       opt.dictionary,
       (): DictionaryCommandResponses => ({
         exportSuccess: (exec) =>
-          createEmbedWithMetaData({ ...exec, color }).setDescription(
-            "エクスポートが完了しました。"
-          ),
+          createEmbedWithMetaData({ ...exec, color })
+            .setTitle("成功")
+            .setDescription("エクスポートが完了しました。"),
         clearSuccess: (exec) =>
-          createEmbedWithMetaData({ ...exec, color }).setDescription(
-            "全消去が完了しました。"
-          ),
+          createEmbedWithMetaData({ ...exec, color })
+            .setTitle("成功")
+            .setDescription("全消去が完了しました。"),
         importSuccess: (exec) =>
-          createEmbedWithMetaData({ ...exec, color }).setDescription(
-            "インポートが完了しました。"
-          ),
+          createEmbedWithMetaData({ ...exec, color })
+            .setTitle("成功")
+            .setDescription("インポートが完了しました。"),
+        requireSubCommand: (exec) =>
+          createEmbedWithMetaData({
+            ...exec,
+            color,
+          })
+            .setTitle("サブコマンド")
+            .setDescription("サブコマンドを指定する必要があります。"),
       }),
       opt.getLang
     ),
