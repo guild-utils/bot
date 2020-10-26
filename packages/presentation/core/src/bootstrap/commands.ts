@@ -278,7 +278,9 @@ export function initCoreCommands(
               })
                 .setTitle("成功")
                 .setDescription(
-                  "読み上げ対象のテキストチャンネルがなくなったため読み上げを終了しました。"
+                  `読み上げ対象のテキストチャンネルがなくなったため${
+                    vc ? vc.name + "での" : ""
+                  }読み上げを終了しました。`
                 );
             } else {
               const embed = createEmbedWithMetaData({
@@ -286,14 +288,17 @@ export function initCoreCommands(
                 color,
               })
                 .setTitle("成功")
-                .setDescription(`${place.toString()}の読み上げを終了しました。`)
-                .addField(
-                  "テキストチャンネル",
-                  others.map((e) => e.toString()).join(" ")
+                .setDescription(
+                  `${place.toString()}の読み上げを終了しました。`
                 );
               if (vc) {
                 embed.addField("ボイスチャンネル", vc.name);
               }
+              embed.addField(
+                "テキストチャンネル",
+                others.map((e) => e.toString()).join(" ")
+              );
+
               return embed;
             }
           },
@@ -313,7 +318,7 @@ export function initCoreCommands(
             })
               .setTitle("成功")
               .setDescription(
-                `${vc ? vc.toString() + "での" : ""}読み上げを終了しました。`
+                `${vc ? vc.name + "での" : ""}読み上げを終了しました。`
               );
             return embed;
           },
