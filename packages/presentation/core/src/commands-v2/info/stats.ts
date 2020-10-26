@@ -46,7 +46,7 @@ export class CommandStats implements CommandBase {
           memory: Math.round(
             (memory || process.memoryUsage().rss) / 1024 / 1024
           ),
-          uptimeInMs: Math.round(Date.now() - process.uptime() * 1000),
+          uptimeInMs: Math.round(process.uptime() * 1000),
           channels: channels || client.channels.cache.size,
           guilds: guilds || client.guilds.cache.size,
           color: this.color,
