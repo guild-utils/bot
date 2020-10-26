@@ -1,5 +1,5 @@
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
-import { MainParserContext } from "@guild-utils/command-parser";
+import { MainParserContext, SpecialInfo } from "@guild-utils/command-parser";
 import { CommandSchema, RateLimitScope } from "@guild-utils/command-schema";
 import { Client, Message, MessageEmbed } from "discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
@@ -58,6 +58,7 @@ export type CommandHandlerResponses = {
     exec: Executor
   ) => MessageEmbed;
   internalError: (error: Error, exec: Executor) => MessageEmbed;
+  remindPrefix: (prefix: string, exec: Executor) => MessageEmbed;
 };
 export type CommandResolver = (
   k: string
@@ -70,7 +71,14 @@ export default class extends MonitorBase {
       content: string,
       ctx: MainParserContext
     ) => Promise<
-      [string, unknown[], Record<string, unknown>, CommandContext] | undefined
+      | [
+          string,
+          unknown[],
+          Record<string, unknown>,
+          CommandContext,
+          SpecialInfo | undefined
+        ]
+      | undefined
     >,
     private readonly commandResolver: CommandResolver,
     private readonly repo: BasicBotConfigRepository,
@@ -92,15 +100,22 @@ export default class extends MonitorBase {
       return;
     }
     let r:
-      | [string, unknown[], Record<string, unknown>, CommandContext]
+      | [
+          string,
+          unknown[],
+          Record<string, unknown>,
+          CommandContext,
+          SpecialInfo | undefined
+        ]
       | undefined;
+    const prefix = message.guild?.id
+      ? (await this.repo.getPrefix(message.guild.id)) ?? this.prefix
+      : this.prefix;
     try {
       r = await this.parser(message.content, {
         guild: message.guild?.id,
         user: message.author.id,
-        prefix: message.guild?.id
-          ? (await this.repo.getPrefix(message.guild.id)) ?? this.prefix
-          : this.prefix,
+        prefix,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         mentionPrefix: this.mentionPrefix,
         channelType: message.channel.type,
@@ -113,7 +128,16 @@ export default class extends MonitorBase {
       return;
     }
     console.log(r);
-    const [rk, pos, opt, ctx] = r;
+    const [rk, pos, opt, ctx, si] = r;
+    if (si?.isDefault && this.mentionPrefix.test(ctx.prefix)) {
+      await message.channel.send(
+        this.responses(await this.getLang(message.guild?.id)).remindPrefix(
+          prefix,
+          executorFromMessage(message)
+        )
+      );
+      return;
+    }
     const resolved = this.commandResolver(rk);
     if (!resolved) {
       return;

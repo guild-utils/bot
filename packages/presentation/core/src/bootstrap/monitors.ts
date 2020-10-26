@@ -9,7 +9,7 @@ import commandHandler, { CommandResolver } from "../monitors-v2/commandHandler";
 import { Monitor } from "monitor-discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
 import { CommandContext } from "@guild-utils/command-base";
-import { MainParserContext } from "@guild-utils/command-parser";
+import { MainParserContext, SpecialInfo } from "@guild-utils/command-parser";
 import { getLangType } from "../util/get-lang";
 import { commandTextSupplier } from "./commands";
 import { CommandHandlerJaJP } from "../languages/ja-jp/commandHandler";
@@ -23,7 +23,8 @@ export type CreateCoreMonitorEnv = {
     content: string,
     ctx: MainParserContext
   ) => Promise<
-    [string, unknown[], Record<string, unknown>, CommandContext] | undefined
+    | [string, unknown[], Record<string, unknown>, CommandContext, SpecialInfo]
+    | undefined
   >;
   commandResolver: CommandResolver;
   repo: BasicBotConfigRepository;

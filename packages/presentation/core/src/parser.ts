@@ -3,6 +3,7 @@ import {
   buildMainParser,
   buildYargsParser,
   MainParserContext,
+  SpecialInfo,
 } from "@guild-utils/command-parser";
 import { CommandSchema } from "@guild-utils/command-schema";
 import {
@@ -27,7 +28,8 @@ export function buildParser(
   content: string,
   ctx: MainParserContext
 ) => Promise<
-  [string, unknown[], Record<string, unknown>, CommandContext] | undefined
+  | [string, unknown[], Record<string, unknown>, CommandContext, SpecialInfo]
+  | undefined
 > {
   const yargs = buildYargsParser(
     schemas,
@@ -43,7 +45,7 @@ export function buildParser(
       }
       throw new TypeError();
     }
-  ).demandCommand();
+  );
   const rawParser = buildMainParser(
     schemas,
     (k, o, v, ctx) => {
@@ -80,6 +82,7 @@ export function buildParser(
       r[1],
       r[2],
       { prefix: matchedPrefix, runningCommand: r[0] },
+      r[3],
     ];
   };
 }
