@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { CommandBase } from "@guild-utils/command-base";
 import { CommandSchema } from "@guild-utils/command-schema";
 import { Client } from "discord.js";
@@ -20,6 +21,7 @@ import {
   commandTextSupplier,
   RateLimitLangJaJP,
   RateLimitEntrys,
+  CommandResolver,
 } from "presentation_core";
 import { DependencyContainer } from "tsyringe";
 export function defineSchema(
@@ -35,10 +37,12 @@ export function initCommand(
 export function initCommandParser(
   container: DependencyContainer,
   schemas: CommandSchema[]
-): void {
+) {
+  const parser = buildParser(schemas);
   container.register("CommandParser", {
-    useValue: buildParser(schemas),
+    useValue: parser,
   });
+  return parser;
 }
 export function initCommandResolver(
   container: DependencyContainer,
@@ -46,26 +50,27 @@ export function initCommandResolver(
     string,
     [CommandBase, CommandSchema | undefined, RateLimitEntrys]
   >
-): void {
-  container.register("CommandResolver", {
-    useValue: (k: string) => {
-      console.log("resolver:", k);
-      const resolvers = [collection];
-      for (const resolver of resolvers) {
-        const cmdBase = resolver.get(k);
-        if (cmdBase) {
-          return cmdBase;
-        }
+): CommandResolver {
+  const resolver = (k: string) => {
+    const resolvers = [collection];
+    for (const resolver of resolvers) {
+      const cmdBase = resolver.get(k);
+      if (cmdBase) {
+        return cmdBase;
       }
-    },
+    }
+  };
+  container.register("CommandResolver", {
+    useValue: resolver,
   });
+  return resolver;
 }
 export function initCommandSystem(
   container: DependencyContainer,
   client: () => Client,
   injection: Omit<CoreCommandOptions, "flatten" | "rootCategory">,
   ctx: CommandFromSchemaCtx
-): void {
+) {
   const schema = defineSchema(client);
   const infoValue = infoCategoryValue(schema, ctx);
   const infoCat = infoCategory(
@@ -110,6 +115,7 @@ export function initCommandSystem(
     })
   );
   console.log(`Command Collection Size: ${collection.size}`);
-  initCommandParser(container, Object.values(schema));
-  initCommandResolver(container, collection);
+  const parser = initCommandParser(container, Object.values(schema));
+  const resolver = initCommandResolver(container, collection);
+  return { parser, resolver };
 }

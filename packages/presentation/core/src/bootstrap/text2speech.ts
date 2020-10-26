@@ -1,10 +1,11 @@
 import { DependencyContainer } from "tsyringe";
-import { Engine, initEngineAndKuromoji } from "presentation_core";
+import Engine from "../text2speech/engine";
+import { initEngineAndKuromoji } from "./engine";
 import { credentials, VerifyOptions } from "grpc";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { promises as fs } from "fs";
 import { IpadicFeatures, Tokenizer } from "kuromoji";
-export default async function initText2Speech(
+export async function initText2Speech(
   container: DependencyContainer
 ): Promise<[Tokenizer<IpadicFeatures>, Engine]> {
   const grpcMixerClient = process.env["GUJ_MIXER_RPC_SERVER"]
