@@ -28,5 +28,10 @@ export function CommandHandlerJaJP(
           ),
         ]);
     },
+    remindPrefix: (prefix, exec) =>
+      createEmbedWithMetaData({
+        ...exec,
+        color,
+      }).setDescription(`このサーバーのプレフィックスは${prefix}です。`),
   };
 }

@@ -25,20 +25,26 @@ export function buildYargsParser(
   ) => PositionalOptions,
   instance = yargs().help(false)
 ): Argv {
-  return schema.reduce((a, e) => {
-    const csr = [
-      e.name,
-      ...(e.subCommands.length !== 0 ? [`[subcommandargshandling..]`] : []),
-      ...(e.subCommands.length !== 0
-        ? []
-        : e.positionalArgumentCollection.map(([name, , o]) =>
-            o.variable ? `[${name}..]` : !o.optional ? `<${name}>` : `[${name}]`
-          )),
-    ].join(" ");
-    console.log(csr);
-    const r = a.command(csr, "");
-    return r;
-  }, instance);
+  return schema
+    .reduce((a, e) => {
+      const csr = [
+        e.name,
+        ...(e.subCommands.length !== 0 ? [`[subcommandargshandling..]`] : []),
+        ...(e.subCommands.length !== 0
+          ? []
+          : e.positionalArgumentCollection.map(([name, , o]) =>
+              o.variable
+                ? `[${name}..]`
+                : !o.optional
+                ? `<${name}>`
+                : `[${name}]`
+            )),
+      ].join(" ");
+      console.log(csr);
+      const r = a.command(csr, "");
+      return r;
+    }, instance)
+    .default("default", {});
 }
 function isValidContext(
   schema: CommandSchema<unknown[], Record<string, unknown>>,
@@ -125,6 +131,9 @@ async function applySchema(
   );
   return [commandString, positional, option];
 }
+export type SpecialInfo = {
+  isDefault: boolean;
+};
 export function buildMainParser(
   schemas: CommandSchema<unknown[], Record<string, unknown>>[],
   optionResolver: (
@@ -144,7 +153,7 @@ export function buildMainParser(
   content: string,
   ctx: MainParserContext
 ) => Promise<
-  [string[], unknown[], Record<string, unknown>, unknown[]] | undefined
+  [string[], unknown[], Record<string, unknown>, SpecialInfo] | undefined
 > {
   const commands = new Map(
     schemas.flatMap((e): [string, CommandSchema][] => [
@@ -169,7 +178,16 @@ export function buildMainParser(
     console.log(r);
     const initialCommandString = arr.shift();
     if (!initialCommandString) {
-      return;
+      return r["default"]
+        ? [
+            [],
+            [],
+            {},
+            {
+              isDefault: true,
+            },
+          ]
+        : undefined;
     }
     delete (r as { $0?: string }).$0;
     delete r._;
@@ -191,6 +209,13 @@ export function buildMainParser(
       [initialCommandString]
     );
     console.log(positional);
-    return [commandString, positional, option, []];
+    return [
+      commandString,
+      positional,
+      option,
+      {
+        isDefault: false,
+      },
+    ];
   };
 }
