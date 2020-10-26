@@ -3,7 +3,7 @@ import { DictionaryJson } from "../text2speech";
 import { Message, MessageAttachment, MessageEmbed } from "discord.js";
 import request = require("superagent");
 import { Stream } from "stream";
-import { CommandBase } from "@guild-utils/command-base";
+import { CommandBase, CommandContext } from "@guild-utils/command-base";
 import { getLangType } from "presentation_core";
 import { Executor, executorFromMessage } from "protocol_util-djs";
 type DeepUnknown<T> = {
@@ -37,6 +37,7 @@ export type DictionaryCommandResponses = {
   exportSuccess(exec: Executor): MessageEmbed;
   importSuccess(exec: Executor): MessageEmbed;
   clearSuccess(exec: Executor): MessageEmbed;
+  requireSubCommand(exec: Executor): MessageEmbed;
 };
 export class DictionaryCommand implements CommandBase {
   constructor(
@@ -46,8 +47,23 @@ export class DictionaryCommand implements CommandBase {
   ) {}
   async run(
     msg: Message,
-    [sub]: ["export" | "import" | "clear"]
+    pos: never,
+    opt: never,
+    ctx: CommandContext
   ): Promise<void> {
+    const sub = ctx.runningCommand[1] as
+      | "export"
+      | "import"
+      | "clear"
+      | undefined;
+    if (sub == null) {
+      await msg.channel.send(
+        this.responses(await this.getLang(msg.guild?.id)).requireSubCommand(
+          executorFromMessage(msg)
+        )
+      );
+      return;
+    }
     await this[sub](msg);
   }
   async export(msg: Message): Promise<void> {
