@@ -1,10 +1,10 @@
 import { CommandBase } from "@guild-utils/command-base";
 import { ConfigurateUsecase } from "protocol_configurate-usecase";
 import { CommandSet } from "../commands-v2/configurate/set";
-import { CommandSchema } from "@guild-utils/command-schema";
+import { CommandSchema, RateLimitEntry } from "@guild-utils/command-schema";
 import * as Schemas from "protocol_command-schema-core";
 import * as SchemaJa from "languages_command-core/ja-jp";
-import { Client, ColorResolvable } from "discord.js";
+import { Client, ColorResolvable, Message, MessageEmbed } from "discord.js";
 import { CommandAdd } from "../commands-v2/configurate/add";
 import { CommandGet } from "../commands-v2/configurate/get";
 import { CommandInvite } from "../commands-v2/info/invite";
@@ -32,6 +32,10 @@ import {
   CommandUserconf,
 } from "../commands-v2/configurate/conf";
 import { createEmbedWithMetaData } from "protocol_util-djs";
+import {
+  createRateLimitEntrys,
+  RateLimitEntrys,
+} from "../monitors-v2/commandHandler/rateLimit";
 export function schemaTextSupplier<T>(
   obj: Record<string, T>
 ): (lang: string, ctx?: Schemas.Context) => T {
@@ -403,16 +407,30 @@ function isSetsEqual<A extends B, B>(a: Set<A>, b: Set<B>) {
 }
 export function createCommandCollectionWithAlias(
   commands: Record<string, CommandBase>,
-  schemas: Record<string, CommandSchema>
-): Map<string, [CommandBase, CommandSchema]> {
+  schemas: Record<string, CommandSchema>,
+  lang: (
+    lang: string
+  ) => (
+    e: RateLimitEntry,
+    rt: number,
+    schema: CommandSchema,
+    message: Message
+  ) => MessageEmbed
+): Map<string, [CommandBase, CommandSchema, RateLimitEntrys]> {
   const ks = new Set(Object.keys(commands));
   if (!isSetsEqual(ks, new Set(Object.keys(schemas)))) {
     throw new TypeError();
   }
-  const r = new Map<string, [CommandBase, CommandSchema]>();
+  const r = new Map<string, [CommandBase, CommandSchema, RateLimitEntrys]>();
   ks.forEach((e) => {
-    [schemas[e].name, ...(schemas[e].options.alias ?? [])].forEach((k) => {
-      r.set(k, [commands[e], schemas[e]]);
+    const schema = schemas[e];
+    const rles = createRateLimitEntrys(
+      schema.options.rateLimits ?? new Set(),
+      (l: string) => (e: RateLimitEntry, rt: number, message: Message) =>
+        lang(l)(e, rt, schema, message)
+    );
+    [schema.name, ...(schema.options.alias ?? [])].forEach((k) => {
+      r.set(k, [commands[e], schema, rles]);
     });
   });
   return r;

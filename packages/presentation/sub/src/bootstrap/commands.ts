@@ -17,6 +17,9 @@ import {
   rootCategory,
   voiceCategory,
   voiceCategoryValue,
+  commandTextSupplier,
+  RateLimitLangJaJP,
+  RateLimitEntrys,
 } from "presentation_core";
 import { DependencyContainer } from "tsyringe";
 export function defineSchema(
@@ -39,7 +42,10 @@ export function initCommandParser(
 }
 export function initCommandResolver(
   container: DependencyContainer,
-  collection: Map<string, [CommandBase, CommandSchema | undefined]>
+  collection: Map<
+    string,
+    [CommandBase, CommandSchema | undefined, RateLimitEntrys]
+  >
 ): void {
   container.register("CommandResolver", {
     useValue: (k: string) => {
@@ -96,7 +102,13 @@ export function initCommandSystem(
       rootCategory: rootCategory(ctx.color, rootValue, rootValue),
     })
   );
-  const collection = createCommandCollectionWithAlias(command, schema);
+  const collection = createCommandCollectionWithAlias(
+    command,
+    schema,
+    commandTextSupplier({
+      ja_JP: RateLimitLangJaJP(ctx.color),
+    })
+  );
   console.log(`Command Collection Size: ${collection.size}`);
   initCommandParser(container, Object.values(schema));
   initCommandResolver(container, collection);

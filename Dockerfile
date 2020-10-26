@@ -65,6 +65,7 @@ COPY packages/util/timing-to-notify-dsl/package.json ./packages/util/timing-to-n
 COPY packages/util/sound-mixing-proto/package.json ./packages/util/sound-mixing-proto/package.json
 COPY packages/util/discordjs-gui/package.json ./packages/util/discordjs-gui/package.json
 COPY packages/util/monitor-discord.js/package.json ./packages/util/monitor-discord.js/package.json
+COPY packages/util/rate-limit/package.json ./packages/util/rate-limit/package.json
 COPY packages/util/@guild-utils/command-base/package.json ./packages/util/@guild-utils/command-base/package.json
 COPY packages/util/@guild-utils/command-parser/package.json ./packages/util/@guild-utils/command-parser/package.json
 COPY packages/util/@guild-utils/command-schema/package.json ./packages/util/@guild-utils/command-schema/package.json
@@ -114,6 +115,7 @@ COPY packages/util/timing-to-notify-dsl ./packages/util/timing-to-notify-dsl
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto
 COPY packages/util/discordjs-gui ./packages/util/discordjs-gui
 COPY packages/util/monitor-discord.js ./packages/util/monitor-discord.js
+COPY packages/util/rate-limit ./packages/util/rate-limit
 COPY packages/util/@guild-utils/command-base ./packages/util/@guild-utils/command-base
 COPY packages/util/@guild-utils/command-parser ./packages/util/@guild-utils/command-parser
 COPY packages/util/@guild-utils/command-schema ./packages/util/@guild-utils/command-schema
