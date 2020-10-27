@@ -2,6 +2,7 @@
 import { CommandBase } from "@guild-utils/command-base";
 import { CommandSchema } from "@guild-utils/command-schema";
 import { Client } from "discord.js";
+import { BasicBotConfigRepository } from "domain_guild-configs";
 import {
   buildParser,
   CommandFromSchemaCtx,
@@ -22,17 +23,43 @@ import {
   RateLimitLangJaJP,
   RateLimitEntrys,
   CommandResolver,
+  defineConfCommandSchema,
+  initConfCommand,
 } from "presentation_core";
 import { DependencyContainer } from "tsyringe";
 export function defineSchema(
   client: () => Client
 ): Record<string, CommandSchema> {
-  return defineCoreCommandSchema(client);
+  return {
+    ...defineCoreCommandSchema(client),
+    ...defineConfCommandSchema(
+      {
+        guild: true,
+        member: false,
+        user: false,
+      },
+      client
+    ),
+  };
 }
 export function initCommand(
-  injection: CoreCommandOptions
+  injection: CoreCommandOptions & { botConfig: BasicBotConfigRepository }
 ): Record<string, CommandBase> {
-  return initCoreCommands(injection);
+  return {
+    ...initCoreCommands(injection),
+    ...initConfCommand(
+      {
+        guild: true,
+        member: false,
+        user: false,
+      },
+      {
+        botConfig: injection.botConfig,
+        usecase: injection.configurate,
+        color: injection.color,
+      }
+    ),
+  };
 }
 export function initCommandParser(
   container: DependencyContainer,
@@ -67,24 +94,26 @@ export function initCommandResolver(
 }
 export function initCommandSystem(
   container: DependencyContainer,
-  client: () => Client,
-  injection: Omit<CoreCommandOptions, "flatten" | "rootCategory">,
+  injection: Omit<CoreCommandOptions, "flatten" | "rootCategory"> & {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    schema: Record<string, CommandSchema<[], {}>>;
+    botConfig: BasicBotConfigRepository;
+  },
   ctx: CommandFromSchemaCtx
 ) {
-  const schema = defineSchema(client);
-  const infoValue = infoCategoryValue(schema, ctx);
+  const infoValue = infoCategoryValue(injection.schema, ctx);
   const infoCat = infoCategory(
     ctx.color,
     commandsToMapWithNameAndAlias(infoValue),
     ...commandsToMapWithName(infoValue)
   );
-  const configurateValue = configureCategoryValue(schema, ctx);
+  const configurateValue = configureCategoryValue(injection.schema, ctx);
   const confCat = configurateCategory(
     ctx.color,
     commandsToMapWithNameAndAlias(configurateValue),
     ...commandsToMapWithName(configurateValue)
   );
-  const voiceValue = voiceCategoryValue(schema, ctx);
+  const voiceValue = voiceCategoryValue(injection.schema, ctx);
   const voiceCat = voiceCategory(
     ctx.color,
     commandsToMapWithNameAndAlias(voiceValue),
@@ -109,13 +138,13 @@ export function initCommandSystem(
   );
   const collection = createCommandCollectionWithAlias(
     command,
-    schema,
+    injection.schema,
     commandTextSupplier({
       ja_JP: RateLimitLangJaJP(ctx.color),
     })
   );
   console.log(`Command Collection Size: ${collection.size}`);
-  const parser = initCommandParser(container, Object.values(schema));
+  const parser = initCommandParser(container, Object.values(injection.schema));
   const resolver = initCommandResolver(container, collection);
   return { parser, resolver };
 }
