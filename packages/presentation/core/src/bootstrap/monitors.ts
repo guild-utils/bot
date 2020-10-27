@@ -1,6 +1,6 @@
 import { ColorResolvable } from "discord.js";
 import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
-import { InstanceState } from "../instanceState";
+import { InstanceState } from "../util/instance-state";
 import Engine from "../text2speech/engine";
 import { Usecase as ConfigUsecase } from "domain_voice-configs";
 import handleStartupMessage from "../monitors-v2/handleStartupMessage";

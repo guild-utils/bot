@@ -1,11 +1,22 @@
 import { DictionaryRepository } from "domain_voice-configs";
 import { DictionaryJson } from "../text2speech";
-import { Message, MessageAttachment, MessageEmbed } from "discord.js";
+import {
+  Message,
+  MessageAttachment,
+  MessageEmbed,
+  Permissions,
+} from "discord.js";
 import request = require("superagent");
 import { Stream } from "stream";
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
-import { getLangType } from "presentation_core";
+import {
+  getLangType,
+  SenderPermissionError,
+  subCommandProcessor,
+  SubCommandProcessor,
+} from "presentation_core";
 import { Executor, executorFromMessage } from "protocol_util-djs";
+import { MANAGEMENT } from "protocol_command-schema-core";
 type DeepUnknown<T> = {
   [K in keyof T]: T[K] extends Record<string, unknown>
     ? T[K] extends unknown[]
@@ -40,11 +51,24 @@ export type DictionaryCommandResponses = {
   requireSubCommand(exec: Executor): MessageEmbed;
 };
 export class DictionaryCommand implements CommandBase {
+  private readonly processor: SubCommandProcessor<DictionaryCommand>;
   constructor(
     private readonly dictionary: DictionaryRepository,
     private readonly responses: (lang: string) => DictionaryCommandResponses,
     private readonly getLang: getLangType
-  ) {}
+  ) {
+    this.processor = subCommandProcessor(
+      this,
+      async (msg) => {
+        await msg.channel.send(
+          this.responses(await this.getLang(msg.guild?.id)).requireSubCommand(
+            executorFromMessage(msg)
+          )
+        );
+      },
+      () => new Set([MANAGEMENT])
+    );
+  }
   async run(
     msg: Message,
     pos: never,
@@ -56,15 +80,29 @@ export class DictionaryCommand implements CommandBase {
       | "import"
       | "clear"
       | undefined;
-    if (sub == null) {
-      await msg.channel.send(
-        this.responses(await this.getLang(msg.guild?.id)).requireSubCommand(
-          executorFromMessage(msg)
-        )
-      );
-      return;
-    }
-    await this[sub](msg);
+    await this.processor(
+      sub,
+      new Map([
+        [
+          MANAGEMENT,
+          (msg: Message) => {
+            if (!msg.member?.hasPermission("MANAGE_GUILD")) {
+              const perms = new Permissions(["MANAGE_GUILD"]);
+              return Promise.reject(
+                new SenderPermissionError(
+                  perms,
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  msg.member!.permissions,
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  msg.guild!
+                )
+              );
+            }
+            return Promise.resolve();
+          },
+        ],
+      ])
+    )(msg, pos, opt, ctx);
   }
   async export(msg: Message): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

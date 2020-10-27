@@ -31,3 +31,4 @@ export {
   commandSkip,
   commandStart,
 } from "./voice";
+export { OPERATE, MANAGEMENT } from "./permissions";

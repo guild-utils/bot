@@ -32,10 +32,7 @@ import {
   CommandUserconf,
 } from "../commands-v2/configurate/conf";
 import { createEmbedWithMetaData } from "protocol_util-djs";
-import {
-  createRateLimitEntrys,
-  RateLimitEntrys,
-} from "../monitors-v2/commandHandler/rateLimit";
+import { createRateLimitEntrys, RateLimitEntrys } from "../util/rate-limit";
 export function schemaTextSupplier<T>(
   obj: Record<string, T>
 ): (lang: string, ctx?: Schemas.Context) => T {

@@ -32,8 +32,8 @@ export {
   rootCategory,
   usageFromSchema,
 } from "./bootstrap/help";
-export { buildParser } from "./parser";
-export { InstanceState } from "./instanceState";
+export { buildParser } from "./util/parser";
+export { InstanceState } from "./util/instance-state";
 export { Engine, GUILD_SETTINGS, Text2SpeechMonitor, initEngineAndKuromoji };
 export {
   buildBadge,
@@ -95,6 +95,12 @@ export {
 export { UnreachableMemberError } from "./errors/unreachable-error";
 export { CommandResolver } from "./monitors-v2/commandHandler";
 export { RateLimitLangJaJP } from "./bootstrap/rateLimit";
-export { RateLimitEntrys } from "./monitors-v2/commandHandler/rateLimit";
+export { RateLimitEntrys } from "./util/rate-limit";
 export { initText2Speech } from "./bootstrap/text2speech";
 export { createConfigPermissionChecker } from "./bootstrap/permissionChecker";
+export {
+  checkRateLimit,
+  checkSchema,
+  subCommandProcessor,
+  SubCommandProcessor,
+} from "./util/command-processor";

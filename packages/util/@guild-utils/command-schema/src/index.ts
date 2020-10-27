@@ -13,11 +13,13 @@ export interface OptionalValueArgumentOption<T> extends OptionBase {
 }
 export type RateLimitScope = "user" | "member" | "guild" | "channel";
 export type RateLimitEntry = [RateLimitScope, number, number];
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface CommandOption extends OptionBase {
   alias?: undefined | string[];
   runIn: Set<"text" | "news" | "dm">;
   rateLimits?: Set<RateLimitEntry>;
+  requiredPermissions?: Set<string>;
 }
 export interface PostionalArgumentOption extends OptionBase {
   optional?: boolean;

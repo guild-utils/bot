@@ -1,4 +1,4 @@
-import { InstanceState } from "../instanceState";
+import { InstanceState } from "../util/instance-state";
 import { GUJ_LAUNCH_CHANNEL } from "../bootstrap/env";
 import { ColorResolvable, Message, MessageEmbed } from "discord.js";
 import { MonitorBase } from "monitor-discord.js";
