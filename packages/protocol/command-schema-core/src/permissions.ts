@@ -1,2 +1,2 @@
-toexport const OPERATE = "operate";
+export const OPERATE = "operate";
 export const MANAGEMENT = "management";
