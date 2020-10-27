@@ -36,15 +36,16 @@ export function statsEmbed(
 ): MessageEmbed {
   const embed = createEmbedWithMetaData({ color: color, user, member });
   embed.setTitle("統計情報");
-  embed.addField("メモリ使用量", String(memory) + "MB");
+  embed.addField("メモリ使用量", String(memory) + "MB", true);
   embed.addField(
     "稼働時間",
-    String(Math.round(uptimeInMs / 1000 / 60 / 60)) + "H"
+    String(Math.round(uptimeInMs / 1000 / 60 / 60)) + "時間",
+    true
   );
-  embed.addField("サーバ数", String(guilds) + "Servers");
-  embed.addField("チャンネル数", String(channels) + "Channels");
-  embed.addField("Discord.js", discordVersion);
-  embed.addField("Node.js", process.version);
+  embed.addField("サーバ数", String(guilds) + "サーバー", true);
+  embed.addField("チャンネル数", String(channels) + "チャンネル", true);
+  embed.addField("Discord.js", discordVersion, true);
+  embed.addField("Node.js", process.version, true);
   return embed;
 }
 export const rtlInvite: CommandInviteTexts = {
