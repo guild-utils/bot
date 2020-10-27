@@ -1,56 +1,19 @@
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
 import { MainParserContext, SpecialInfo } from "@guild-utils/command-parser";
-import { CommandSchema, RateLimitScope } from "@guild-utils/command-schema";
+import { CommandSchema } from "@guild-utils/command-schema";
 import { Client, Message, MessageEmbed } from "discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
 import { MonitorBase } from "monitor-discord.js";
 import { Executor, executorFromMessage } from "protocol_util-djs";
-import { ResetTime } from "rate-limit";
 import { getLangType } from "../../util/get-lang";
-import { RateLimitEntrys, RateLimitLangDescription } from "./rateLimit";
-async function checkSchema(
-  schema: CommandSchema,
-  repo: BasicBotConfigRepository,
-  guild: string | undefined
-): Promise<boolean> {
-  if (guild) {
-    const disabledCommands = await repo.getDisabledCommands(guild);
-    if (disabledCommands.has(schema.name)) {
-      return false;
-    }
-  }
-  return true;
-}
-async function checkRateLimit(
-  message: Message,
-  limitsRaw: RateLimitEntrys | undefined
-): Promise<[RateLimitLangDescription, number] | undefined> {
-  const limits = limitsRaw ?? [];
-  const m: Record<RateLimitScope, unknown> = {
-    channel: message.channel.id,
-    guild: message.guild?.id ?? message.channel.id,
-    member: (message.guild?.id ?? message.channel.id) + "." + message.author.id,
-    user: message.author.id,
-  };
-  const r = await Promise.all(
-    limits.map(
-      async ([scp, lang, mgr]): Promise<
-        [RateLimitLangDescription, [boolean, number]]
-      > => {
-        return [lang, await mgr.consume(m[scp])];
-      }
-    )
-  );
-  const fr = r.filter(([, [e]]) => !e);
-  if (fr.length === 0) {
-    return undefined;
-  }
-  return fr
-    .map(([lang, [, rt]]): [RateLimitLangDescription, ResetTime] => [lang, rt])
-    .reduce((a, e) => {
-      return a[1] > e[1] ? a : e;
-    });
-}
+import { checkRateLimit, checkSchema } from "../../util/command-processor";
+import { RateLimitEntrys } from "../../util/rate-limit";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PromiseReturnType<F extends (...args: any[]) => any> = ReturnType<
+  F
+> extends Promise<infer T>
+  ? T
+  : never;
 export type CommandHandlerResponses = {
   commandDisabled: (
     name: string,
@@ -65,21 +28,22 @@ export type CommandResolver = (
 ) =>
   | [CommandBase, CommandSchema | undefined, RateLimitEntrys | undefined]
   | undefined;
+export type ParserType = (
+  content: string,
+  ctx: MainParserContext
+) => Promise<
+  | [
+      string,
+      unknown[],
+      Record<string, unknown>,
+      CommandContext,
+      SpecialInfo | undefined
+    ]
+  | undefined
+>;
 export default class extends MonitorBase {
   constructor(
-    private readonly parser: (
-      content: string,
-      ctx: MainParserContext
-    ) => Promise<
-      | [
-          string,
-          unknown[],
-          Record<string, unknown>,
-          CommandContext,
-          SpecialInfo | undefined
-        ]
-      | undefined
-    >,
+    private readonly parser: ParserType,
     private readonly commandResolver: CommandResolver,
     private readonly repo: BasicBotConfigRepository,
     private readonly responses: (lang: string) => CommandHandlerResponses,
@@ -96,23 +60,18 @@ export default class extends MonitorBase {
   }
   private mentionPrefix?: RegExp;
   async run(message: Message): Promise<void> {
+    const res = async () =>
+      this.responses(await this.getLang(message.guild?.id));
     if (!this.mentionPrefix) {
       return;
     }
-    let r:
-      | [
-          string,
-          unknown[],
-          Record<string, unknown>,
-          CommandContext,
-          SpecialInfo | undefined
-        ]
-      | undefined;
+    const parser = this.parser;
+    let r: PromiseReturnType<typeof parser>;
     const prefix = message.guild?.id
       ? (await this.repo.getPrefix(message.guild.id)) ?? this.prefix
       : this.prefix;
     try {
-      r = await this.parser(message.content, {
+      r = await parser(message.content, {
         guild: message.guild?.id,
         user: message.author.id,
         prefix,
@@ -131,10 +90,7 @@ export default class extends MonitorBase {
     const [rk, pos, opt, ctx, si] = r;
     if (si?.isDefault && this.mentionPrefix.test(ctx.prefix)) {
       await message.channel.send(
-        this.responses(await this.getLang(message.guild?.id)).remindPrefix(
-          prefix,
-          executorFromMessage(message)
-        )
+        (await res()).remindPrefix(prefix, executorFromMessage(message))
       );
       return;
     }
@@ -146,14 +102,10 @@ export default class extends MonitorBase {
     if (schema) {
       if (!(await checkSchema(schema, this.repo, message.guild?.id))) {
         await message.channel.send(
-          this.responses(await this.getLang(message.guild?.id)).commandDisabled(
-            schema.name,
-            ctx.prefix,
-            {
-              user: message.author,
-              member: message.member,
-            }
-          )
+          (await res()).commandDisabled(schema.name, ctx.prefix, {
+            user: message.author,
+            member: message.member,
+          })
         );
         return;
       }
@@ -172,10 +124,7 @@ export default class extends MonitorBase {
       if (e instanceof Error) {
         console.error(e);
         await message.channel.send(
-          this.responses(await this.getLang(message.guild?.id)).internalError(
-            e,
-            executorFromMessage(message)
-          )
+          (await res()).internalError(e, executorFromMessage(message))
         );
       }
     }

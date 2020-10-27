@@ -1,6 +1,6 @@
 import { ColorResolvable, MessageEmbed, TextChannel } from "discord.js";
 import { Client } from "discord.js";
-import { InstanceState } from "../instanceState";
+import { InstanceState } from "../util/instance-state";
 import { GUJ_LAUNCH_CHANNEL } from "../bootstrap/env";
 
 export default function (

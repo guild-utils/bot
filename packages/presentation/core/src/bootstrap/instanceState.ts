@@ -1,5 +1,5 @@
 import { DependencyContainer } from "tsyringe";
-import { InstanceState } from "../instanceState";
+import { InstanceState } from "../util/instance-state";
 import { MessageEmbed, TextChannel, Client, ColorResolvable } from "discord.js";
 import { GUJ_LAUNCH_CHANNEL, GUJ_GRACEFUL_SHUTDOWN_TIME } from "./env";
 

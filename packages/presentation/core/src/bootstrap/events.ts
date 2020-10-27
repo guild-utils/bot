@@ -2,7 +2,7 @@ import { Client, ColorResolvable } from "discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
 import { MonitorRunner } from "monitor-discord.js";
 import Engine from "../text2speech/engine";
-import { InstanceState } from "../instanceState";
+import { InstanceState } from "../util/instance-state";
 import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
 import forUpdatePrefix_guildMemberUpdate from "../events-v2/forUpdatePrefix-guildMemberUpdate";
 import forShowInvite_onceReady from "../events-v2/forShowInvite-onceReady";
