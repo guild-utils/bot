@@ -23,10 +23,11 @@ import { initDatabase } from "./bootstrap/mongo";
 import * as ENV from "./bootstrap/env";
 import { CacheTextToSpeechTargetChannelDataStore } from "repository_cache-guild-tts-target-channels";
 import { MongoTextToSpeechTargetChannelDataStore } from "repository_mongo-guild-tts-target-channels";
-import { initCommandSystem } from "./bootstrap/commands";
+import { defineSchema, initCommandSystem } from "./bootstrap/commands";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
 import { MonitorRunner } from "monitor-discord.js";
+import { CommandSchema } from "@guild-utils/command-schema";
 
 const permissions = new Permissions()
   .add(Permissions.FLAGS.SEND_MESSAGES)
@@ -80,15 +81,21 @@ async function main() {
     ENV.GUJ_THEME_COLOR
   );
   const getLang = getLangBase(basicBotConfig, language);
+  const schema = defineSchema(() => discordClient);
+  const commandNames = new Set<string>(
+    Object.values(schema)
+      .filter((e): e is CommandSchema => !!e)
+      .map((e) => e.name)
+  );
   const { parser, resolver } = initCommandSystem(
     container,
-    () => discordClient,
     {
+      schema,
       color: ENV.GUJ_THEME_COLOR,
       configurate: configurateUsecaseCore(
         basicBotConfig,
         createConfigPermissionChecker(discordClient),
-        new Set(),
+        commandNames,
         {
           disabledCommands: [],
           language,
@@ -99,6 +106,7 @@ async function main() {
       ttsDataStore,
       ttsEngine,
       voiceConfig: voiceConfig,
+      botConfig: basicBotConfig,
     },
     {
       color: ENV.GUJ_THEME_COLOR,
