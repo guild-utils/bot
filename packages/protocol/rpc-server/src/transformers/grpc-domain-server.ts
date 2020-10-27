@@ -1,5 +1,5 @@
 import * as GRPC from "protocol_protos/config_pb";
-import * as Domain from "domain_configs";
+import * as Domain from "domain_voice-configs";
 
 export class ResponseTransformer {
   transformDictionary(from: Domain.Dictionary): GRPC.Dictionary {
@@ -43,6 +43,7 @@ export class ResponseTransformer {
     r.setVolume(from.volume);
     r.setKind(from.kind);
     r.setReadname(from.readName ?? "");
+    r.setTone(from.tone);
     r.setSpeed(from.speed);
     r.setDictionary(this.transformDictionary(from.dictionary));
     r.setMaxreadlimit(from.maxReadLimit);

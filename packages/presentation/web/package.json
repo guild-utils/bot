@@ -6,7 +6,7 @@
     "lint": "eslint --ext ts,tsx src --fix",
     "test:lint": "eslint --ext ts,tsx src",
     "dev": "next dev",
-    "build": "next build && next export",
+    "build": "next build && next export && node sitemap.js",
     "start": "next start"
   },
   "dependencies": {
@@ -14,16 +14,17 @@
     "eslint-plugin-react": "^7.20.5",
     "html-to-react": "^1.4.3",
     "lodash.clone": "^4.5.0",
-    "next": "9.5.2",
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "next": "9.5.5",
+    "react": "17.0.1",
+    "react-dom": "17.0.1"
   },
   "devDependencies": {
-    "@fullhuman/postcss-purgecss": "^2.3.0",
+    "@fullhuman/postcss-purgecss": "^3.0.0",
     "@types/react": "^16.9.44",
     "@types/styled-components": "^5.1.2",
     "babel-plugin-macros": "^2.8.0",
     "babel-plugin-styled-components": "^1.11.1",
+    "nextjs-sitemap-generator": "^1.1.1",
     "postcss-import": "^12.0.1",
     "protocol_command-data-common": "^1.0.0",
     "styled-components": "^5.1.1",

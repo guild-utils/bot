@@ -4,3 +4,4 @@ export const text2speechDictionary = ["speech", "dictionary"];
 export const text2speechDictionaryBefore = ["speech", "dictionaryB"];
 export const text2speechDictionaryAfter = ["speech", "dictionaryA"];
 export const text2speechMaxReadLimit = ["speech", "maxReadLimit"];
+export const text2speechRandomizer = ["speech", "randomizer"];
