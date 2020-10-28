@@ -25,6 +25,7 @@ import {
   CommandResolver,
   defineConfCommandSchema,
   initConfCommand,
+  commandFromSchema,
 } from "presentation_core";
 import { DependencyContainer } from "tsyringe";
 export function defineSchema(
@@ -107,7 +108,10 @@ export function initCommandSystem(
     commandsToMapWithNameAndAlias(infoValue),
     ...commandsToMapWithName(infoValue)
   );
-  const configurateValue = configureCategoryValue(injection.schema, ctx);
+  const configurateValue = [
+    ...configureCategoryValue(injection.schema, ctx),
+    commandFromSchema(injection.schema.conf, "Configurate", ctx),
+  ];
   const confCat = configurateCategory(
     ctx.color,
     commandsToMapWithNameAndAlias(configurateValue),
