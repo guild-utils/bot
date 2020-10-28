@@ -1,17 +1,4 @@
-FROM alpine:3.12 AS build-jumanpp
-RUN apk add --no-cache build-base cmake protobuf-dev protoc libexecinfo-dev
- 
-COPY packages/util/jumanpp-2.0.0-rc3 /usr/app/builder
-
-WORKDIR /usr/app/builder
-
-RUN find ./ -type f -print | xargs chmod 777 \
-    &&mkdir build \
-    &&cd build \
-    &&cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
-    && make install -j
-
+FROM guildutils/jumanpp:latest AS jumanpp
 FROM node:14-alpine AS runtime
 
 WORKDIR /usr/app
@@ -41,8 +28,8 @@ ENV HTS_VOICE_DELTA /usr/app/packages/util/open-jtalk/htsvoice/VoiceDelta.htsvoi
 ENV KUROMOJI_DIC_PATH /usr/app/packages/util/kuromoji-js/dict
 ENV JUMANPP_PATH /usr/local/bin/jumanpp
 
-COPY --from=build-jumanpp /usr/local/bin/jumanpp /usr/local/bin/jumanpp
-COPY --from=build-jumanpp /usr/local/libexec/jumanpp /usr/local/libexec/jumanpp
+COPY --from=jumanpp /usr/local/bin/jumanpp /usr/local/bin/jumanpp
+COPY --from=jumanpp /usr/local/libexec/jumanpp /usr/local/libexec/jumanpp
 COPY packages/util/open-jtalk/htsvoice ./packages/util/open-jtalk/htsvoice
 COPY packages/util/kuromoji-js/dict /usr/app/packages/util/kuromoji-js/dict
 COPY lerna.json ./
