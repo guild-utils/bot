@@ -1,5 +1,11 @@
 import { ContextError, PermissionError } from "@guild-utils/command-schema";
-import { Message, MessageEmbed } from "discord.js";
+import {
+  DMChannel,
+  Message,
+  MessageEmbed,
+  NewsChannel,
+  TextChannel,
+} from "discord.js";
 import {
   ConfigurateUsecaseResultType,
   ConfigurateUsecaseResultTypeSingle,
@@ -39,14 +45,7 @@ export function buildTargetAndExecutor(
     },
   };
 }
-export type UpdateResultResponses = {
-  single: (
-    result: ConfigurateUsecaseResultTypeSingle,
-    target: string,
-    exec: Executor,
-    nick: string,
-    avatar?: string
-  ) => MessageEmbed;
+export type ErrorHandlerResponses = {
   permissionError: (
     error: PermissionError,
     target: string,
@@ -68,6 +67,15 @@ export type UpdateResultResponses = {
     exec: Executor
   ) => MessageEmbed;
 };
+export type UpdateResultResponses = {
+  single: (
+    result: ConfigurateUsecaseResultTypeSingle,
+    target: string,
+    exec: Executor,
+    nick: string,
+    avatar?: string
+  ) => MessageEmbed;
+} & ErrorHandlerResponses;
 async function buildResponseFromUpdateResultMulti(
   results: ConfigurateUsecaseResultTypeSingle[],
   responses: UpdateResultResponses,
@@ -187,17 +195,50 @@ export async function updateConfig(
     ).forEach((e) => console.log(e.reason));
     return;
   } catch (e) {
-    if (e instanceof PermissionError) {
-      await message.channel.send(responses.permissionError(e, target, exec));
+    if (await handleError(e, message.channel, responses, target, exec)) {
       return;
     }
-    if (e instanceof ContextError) {
-      await message.channel.send(responses.contextError(e, target, exec));
+    throw e;
+  }
+}
+export async function handleError(
+  e: unknown,
+  channel: TextChannel | NewsChannel | DMChannel,
+  responses: ErrorHandlerResponses,
+  target: string,
+  exec: Executor
+): Promise<boolean> {
+  if (e instanceof PermissionError) {
+    await channel.send(responses.permissionError(e, target, exec));
+    return true;
+  }
+  if (e instanceof ContextError) {
+    await channel.send(responses.contextError(e, target, exec));
+    return true;
+  }
+  if (e instanceof InvalidKeyError) {
+    await channel.send(responses.invalidKeyError(e, target, exec));
+    return true;
+  }
+  if (e instanceof InvalidValueError) {
+    await channel.send(responses.invalidValueError(e, target, exec));
+    return true;
+  }
+  return false;
+}
+export async function getEnviroment(
+  action: () => Promise<void>,
+  channel: TextChannel | NewsChannel | DMChannel,
+  responses: ErrorHandlerResponses,
+  target: string,
+  exec: Executor
+): Promise<void> {
+  try {
+    await action();
+  } catch (e) {
+    if (await handleError(e, channel, responses, target, exec)) {
       return;
     }
-    if (e instanceof InvalidKeyError) {
-      await message.channel.send(responses.contextError(e, target, exec));
-      return;
-    }
+    throw e;
   }
 }

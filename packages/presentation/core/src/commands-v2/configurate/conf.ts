@@ -6,11 +6,13 @@ import {
   ConfigurateUsecaseResultType,
   TargetType,
 } from "protocol_configurate-usecase";
+import { executorFromMessage } from "protocol_util-djs";
 import { getLangType } from "../../util/get-lang";
 import { buildResponseWithSingleKey } from "./get";
 import {
   buildTargetAndExecutor,
   ConfigCommandCommonOption,
+  getEnviroment,
   updateConfig,
   UpdateResultResponses,
 } from "./util";
@@ -40,14 +42,22 @@ export abstract class CommandConfBase implements CommandBase {
     const { executor } = buildTargetAndExecutor(message, option);
     const actType = ctx.runningCommand[1];
     if (actType === "get") {
-      const r = await this.usecase.get(target, key, executor);
-      await message.channel.send(
-        buildResponseWithSingleKey(key, r, {
-          color: this.color,
-          member: message.member,
-          user: message.author,
-          timestamp: Date.now(),
-        })
+      await getEnviroment(
+        async () => {
+          const r = await this.usecase.get(target, key, executor);
+          await message.channel.send(
+            buildResponseWithSingleKey(key, r, {
+              color: this.color,
+              member: message.member,
+              user: message.author,
+              timestamp: Date.now(),
+            })
+          );
+        },
+        message.channel,
+        this.responses(await this.getLang(message.guild?.id)),
+        key,
+        executorFromMessage(message)
       );
       return;
     }
