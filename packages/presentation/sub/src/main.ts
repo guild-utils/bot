@@ -136,4 +136,7 @@ async function main() {
   });
   await discordClient.login(token);
 }
-main().catch(console.log);
+main().catch((e) => {
+  console.error(e);
+  process.exit(-1);
+});

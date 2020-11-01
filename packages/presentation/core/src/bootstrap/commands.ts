@@ -214,7 +214,7 @@ export function initCoreCommands(
   });
   return {
     add: new CommandAdd(configurate, u, getLang),
-    get: new CommandGet(configurate, color),
+    get: new CommandGet(configurate, color, u, getLang),
     invite: new CommandInvite(
       color,
       commandTextSupplier({
