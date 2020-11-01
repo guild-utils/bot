@@ -7,8 +7,15 @@ import {
 import {
   createEmbedWithMetaData,
   CreateEmbedWithMetaDataOpt,
+  executorFromMessage,
 } from "protocol_util-djs";
-import { buildTargetAndExecutor, ConfigCommandCommonOption } from "./util";
+import { getLangType } from "../../util/get-lang";
+import {
+  buildTargetAndExecutor,
+  ConfigCommandCommonOption,
+  ErrorHandlerResponses,
+  getEnviroment,
+} from "./util";
 function addEntryIfExists(
   embed: MessageEmbed,
   ek: keyof GetResponseType,
@@ -40,7 +47,9 @@ export function buildResponseWithSingleKey(
 export class CommandGet implements CommandBase {
   constructor(
     private readonly usecase: ConfigurateUsecase,
-    private readonly color: ColorResolvable
+    private readonly color: ColorResolvable,
+    private readonly responses: (lang: string) => ErrorHandlerResponses,
+    private readonly getLang: getLangType
   ) {}
   async run(
     message: Message,
@@ -48,14 +57,22 @@ export class CommandGet implements CommandBase {
     option: ConfigCommandCommonOption
   ): Promise<void> {
     const { target, executor } = buildTargetAndExecutor(message, option);
-    const r = await this.usecase.get(target, key, executor);
-    await message.channel.send(
-      buildResponseWithSingleKey(key, r, {
-        color: this.color,
-        member: message.member,
-        user: message.author,
-        timestamp: Date.now(),
-      })
+    await getEnviroment(
+      async () => {
+        const r = await this.usecase.get(target, key, executor);
+        await message.channel.send(
+          buildResponseWithSingleKey(key, r, {
+            color: this.color,
+            member: message.member,
+            user: message.author,
+            timestamp: Date.now(),
+          })
+        );
+      },
+      message.channel,
+      this.responses(await this.getLang(message.guild?.id)),
+      key,
+      executorFromMessage(message)
     );
   }
 }

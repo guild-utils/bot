@@ -18,8 +18,8 @@ export function RateLimitLangJaJP(
       ...executorFromMessage(m),
       color: color,
     })
-      .setTitle("レートリミット")
-      .setDescription("レートリミットに到達しました。")
+      .setTitle("コマンドレートリミット")
+      .setDescription(`コマンドのレートリミットに到達しました。`)
       .addField(
         "クールダウン",
         String(Math.floor((rt - Date.now()) / 1000)) + "秒"

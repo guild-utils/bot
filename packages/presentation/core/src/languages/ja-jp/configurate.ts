@@ -146,7 +146,7 @@ export function rtlUpdate(color: ColorResolvable): UpdateResultResponses {
         ...exec,
       })
         .setTitle("存在しないキー")
-        .setDescription("このキーは存在しません。");
+        .setDescription(`キー「${err.supplied}」は存在しません。`);
     },
     invalidValueError: (err, t, exec) => {
       return createEmbedWithMetaData({

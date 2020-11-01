@@ -1,13 +1,14 @@
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
 import { MainParserContext, SpecialInfo } from "@guild-utils/command-parser";
-import { CommandSchema } from "@guild-utils/command-schema";
+import { CommandSchema, RateLimitEntry } from "@guild-utils/command-schema";
 import { Client, Message, MessageEmbed } from "discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
 import { MonitorBase } from "monitor-discord.js";
 import { Executor, executorFromMessage } from "protocol_util-djs";
 import { getLangType } from "../../util/get-lang";
 import { checkRateLimit, checkSchema } from "../../util/command-processor";
-import { RateLimitEntrys } from "../../util/rate-limit";
+import { createRateLimitEntrys, RateLimitEntrys } from "../../util/rate-limit";
+import { ResetTime } from "rate-limit";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PromiseReturnType<F extends (...args: any[]) => any> = ReturnType<
   F
@@ -22,6 +23,11 @@ export type CommandHandlerResponses = {
   ) => MessageEmbed;
   internalError: (error: Error, exec: Executor) => MessageEmbed;
   remindPrefix: (prefix: string, exec: Executor) => MessageEmbed;
+  globalRateLimitReached: (
+    e: RateLimitEntry,
+    rt: ResetTime,
+    message: Message
+  ) => MessageEmbed;
 };
 export type CommandResolver = (
   k: string
@@ -42,6 +48,7 @@ export type ParserType = (
   | undefined
 >;
 export default class extends MonitorBase {
+  private readonly globalRateLimits: RateLimitEntrys;
   constructor(
     private readonly parser: ParserType,
     private readonly commandResolver: CommandResolver,
@@ -57,6 +64,15 @@ export default class extends MonitorBase {
       ignoreWebhooks: true,
       ignoreEdits: true,
     });
+    const x: RateLimitEntry[] = [
+      ["user", 3, 1 * 1000],
+      ["user", 30, 30 * 1000],
+      ["guild", 50, 1000],
+    ];
+    this.globalRateLimits = createRateLimitEntrys(
+      new Set(x),
+      (lang) => responses(lang).globalRateLimitReached
+    );
   }
   private mentionPrefix?: RegExp;
   async run(message: Message): Promise<void> {
@@ -111,7 +127,10 @@ export default class extends MonitorBase {
       }
     }
     try {
-      const crl = await checkRateLimit(message, rateLimits);
+      const crl = await checkRateLimit(message, [
+        ...(rateLimits ?? []),
+        ...this.globalRateLimits,
+      ]);
       if (crl != undefined) {
         const [desc, rt] = crl;
         await message.channel.send(
