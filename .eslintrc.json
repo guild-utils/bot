@@ -6,7 +6,6 @@
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"plugin:prettier/recommended",
 		"prettier/@typescript-eslint"
-		//"klasa/eslint-ts"
 	],
 	"plugins": [
 		"@typescript-eslint"
@@ -22,6 +21,8 @@
 		"es6": true
 	},
 	"rules": {
-		"@typescript-eslint/prefer-regexp-exec": "off"
+		"@typescript-eslint/prefer-regexp-exec": "off",
+		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": "off"
 	}
 }
