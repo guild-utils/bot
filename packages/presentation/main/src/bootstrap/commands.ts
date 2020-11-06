@@ -12,31 +12,35 @@ import {
   voiceCategoryValue,
   voiceCategory,
   commandFromSchema,
-  defineConfCommandSchema,
   initConfCommand,
-  CoreCommands,
   InitConfCommandArg,
   CommandResolver,
   commandTextSupplier,
 } from "presentation_core";
 import {
   categoryWords,
-  defineMainCommandSchema,
   initMainCommands,
   MainCommandOptions,
-  MainCommands,
 } from "./main-commands";
 import { CommandSchema } from "@guild-utils/command-schema";
 import { Client } from "discord.js";
 import { CommandBase } from "@guild-utils/command-base";
 import {
-  defineCoreCommandSchema,
   initCoreCommands,
   createCommandCollectionWithAlias,
   commandsToMapWithNameAndAlias,
   RateLimitLangJaJP,
   RateLimitEntrys,
 } from "presentation_core";
+import {
+  CoreCommands,
+  defineConfCommandSchema,
+  defineCoreCommandSchema,
+} from "protocol_command-schema-core-bootstrap";
+import {
+  defineMainCommandSchema,
+  MainCommands,
+} from "protocol_command-schema-main-bootstrap";
 export function initCommands(
   coreCommandOptions: CoreCommandOptions,
   mainCommandOptions: MainCommandOptions,

@@ -1,0 +1,35 @@
+{
+  "name": "protocol_command-schema-main-bootstrap",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "tignear",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "eslint --ext ts src --fix",
+    "test:lint": "eslint --ext ts src",
+    "build": "tsc -p ."
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5",
+    "typescript": "^4.0.2",
+    "discord.js": "^12.3.1"
+  },
+  "engines": {
+    "node": ">=8.6.0"
+  },
+  "private": "true",
+  "dependencies": {
+    "protocol_command-schema-main": "^1.0.0",
+    "protocol_command-schema-core-bootstrap": "^1.0.0",
+    "languages_command-main": "^1.0.0"
+  }
+}

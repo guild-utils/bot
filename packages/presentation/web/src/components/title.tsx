@@ -3,7 +3,7 @@ import tw from "tailwind.macro";
 import Head from "next/head";
 import React from "react";
 const Title = styled.h1`
-  ${tw`text-2xl my-2`}
+  ${tw`text-2xl my-2 font-bold`}
 `;
 type Props = {
   children: string;

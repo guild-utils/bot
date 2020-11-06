@@ -2,9 +2,7 @@ import { CommandBase } from "@guild-utils/command-base";
 import { ConfigurateUsecase } from "protocol_configurate-usecase";
 import { CommandSet } from "../commands-v2/configurate/set";
 import { CommandSchema, RateLimitEntry } from "@guild-utils/command-schema";
-import * as Schemas from "protocol_command-schema-core";
-import * as SchemaJa from "languages_command-core/ja-jp";
-import { Client, ColorResolvable, Message, MessageEmbed } from "discord.js";
+import { ColorResolvable, Message, MessageEmbed } from "discord.js";
 import { CommandAdd } from "../commands-v2/configurate/add";
 import { CommandGet } from "../commands-v2/configurate/get";
 import { CommandInvite } from "../commands-v2/info/invite";
@@ -33,11 +31,7 @@ import {
 } from "../commands-v2/configurate/conf";
 import { createEmbedWithMetaData } from "protocol_util-djs";
 import { createRateLimitEntrys, RateLimitEntrys } from "../util/rate-limit";
-export function schemaTextSupplier<T>(
-  obj: Record<string, T>
-): (lang: string, ctx?: Schemas.Context) => T {
-  return (lang) => obj[lang];
-}
+import { CoreCommands } from "protocol_command-schema-core-bootstrap";
 export function commandTextSupplier<T>(
   obj: Record<string, T>
 ): (lang: string) => T {
@@ -54,157 +48,6 @@ export type CoreCommandOptions = {
   getLang: getLangType;
 };
 
-export type CoreCommands =
-  | "add"
-  | "get"
-  | "invite"
-  | "ping"
-  | "remove"
-  | "reset"
-  | "set"
-  | "stats"
-  | "help"
-  | "info"
-  | "applied-voice-config"
-  | "end-channel"
-  | "end"
-  | "skip"
-  | "start";
-export function defineCoreCommandSchema(
-  client: () => Client
-): Record<CoreCommands, CommandSchema> {
-  return {
-    add: Schemas.commandAdd(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandAdd,
-      }),
-      client
-    ),
-    get: Schemas.commandGet(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandGet,
-      }),
-      client
-    ),
-    invite: Schemas.commandInvite(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandInvite,
-      })
-    ),
-    ping: Schemas.commandPing(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandPing,
-      })
-    ),
-    remove: Schemas.commandRemove(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandRemove,
-      }),
-      client
-    ),
-    reset: Schemas.commandReset(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandReset,
-      }),
-      client
-    ),
-    set: Schemas.commandSet(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandSet,
-      }),
-      client
-    ),
-    stats: Schemas.commandStats(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandStats,
-      })
-    ),
-    info: Schemas.commandInfo(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandInfo,
-      })
-    ),
-    help: Schemas.commandHelp(
-      (lang, ctx): Record<"command" | "key", Schemas.DescriptionData> => {
-        switch (lang) {
-          case "ja_JP":
-            return SchemaJa.commandHelp(ctx);
-          default:
-            throw new TypeError();
-        }
-      }
-    ),
-    "applied-voice-config": Schemas.commandAppliedVoiceConfig(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandAppliedVoiceConfig,
-      }),
-      client
-    ),
-    "end-channel": Schemas.commandEndChannel(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandEndChannel,
-      })
-    ),
-    end: Schemas.commandEnd(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandEnd,
-      })
-    ),
-    skip: Schemas.commandSkip(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandSkip,
-      })
-    ),
-    start: Schemas.commandStart(
-      schemaTextSupplier({
-        ja_JP: SchemaJa.commandStart,
-      })
-    ),
-  };
-}
-export function defineConfCommandSchema(
-  use: Record<"guild" | "member" | "user", boolean>,
-  client: () => Client
-): Record<string, CommandSchema | undefined> {
-  return Object.assign(
-    {},
-    use.member
-      ? {
-          memconf: Schemas.commandMemconf(
-            schemaTextSupplier({
-              ja_JP: SchemaJa.commandConf("メンバー設定を扱うコマンドです。"),
-            })
-          ),
-          "memconf.member": Schemas.commandMemconfMember(
-            schemaTextSupplier({
-              ja_JP: SchemaJa.commandConf(
-                "メンバー設定を扱うコマンドです。他のメンバーの設定を編集することもできます。"
-              ),
-            }),
-            client
-          ),
-        }
-      : {},
-    use.guild
-      ? {
-          conf: Schemas.commandConf(
-            schemaTextSupplier({
-              ja_JP: SchemaJa.commandConf("サーバー設定を扱うコマンドです。"),
-            })
-          ),
-        }
-      : {},
-    use.user
-      ? {
-          uconf: Schemas.commandUserconf(
-            schemaTextSupplier({
-              ja_JP: SchemaJa.commandConf("ユーザー設定を扱うコマンドです。"),
-            })
-          ),
-        }
-      : {}
-  );
-}
 export function initCoreCommands(
   injection: CoreCommandOptions
 ): Record<CoreCommands, CommandBase> {
@@ -365,7 +208,7 @@ export function initCoreCommands(
     ),
   };
 }
-export type ConfCommands = "memconf" | "memconf.member" | "conf" | "uconf";
+export type ConfCommands = "memconf" | "memconf.member" | "conf" | "userconf";
 export type InitConfCommandArg = {
   usecase: ConfigurateUsecase;
   color: ColorResolvable;
@@ -399,7 +242,7 @@ export function initConfCommand(
       : {},
     use.user
       ? {
-          uconf: new CommandUserconf(usecase, u, color, getLang),
+          userconf: new CommandUserconf(usecase, u, color, getLang),
         }
       : {}
   );

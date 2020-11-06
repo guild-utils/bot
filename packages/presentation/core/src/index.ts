@@ -7,12 +7,8 @@ export { initInstanceState } from "./bootstrap/instanceState";
 export {
   commandTextSupplier,
   createCommandCollectionWithAlias,
-  defineCoreCommandSchema,
   initCoreCommands,
   CoreCommandOptions,
-  CoreCommands,
-  schemaTextSupplier,
-  defineConfCommandSchema,
   ConfCommands,
   InitConfCommandArg,
   initConfCommand,
@@ -30,7 +26,6 @@ export {
   infoCategory,
   infoCategoryValue,
   rootCategory,
-  usageFromSchema,
 } from "./bootstrap/help";
 export { buildParser } from "./util/parser";
 export { InstanceState } from "./util/instance-state";
