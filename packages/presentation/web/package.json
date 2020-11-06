@@ -26,9 +26,13 @@
     "babel-plugin-styled-components": "^1.11.1",
     "nextjs-sitemap-generator": "^1.1.1",
     "postcss-import": "^12.0.1",
-    "protocol_command-data-common": "^1.0.0",
     "styled-components": "^5.1.1",
     "tailwind.macro": "^1.0.0-alpha.10",
-    "tailwindcss": "^1.6.0"
+    "tailwindcss": "^1.6.0",
+    "protocol_command-schema-core": "^1.0.0",
+    "protocol_command-schema-main": "^1.0.0",
+    "protocol_command-schema-core-bootstrap": "^1.0.0",
+    "protocol_command-schema-main-bootstrap": "^1.0.0",
+    "domain_meta": "^1.0.0"
   }
 }

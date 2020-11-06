@@ -11,7 +11,6 @@ import {
   configurateCategory,
   configureCategoryValue,
   createCommandCollectionWithAlias,
-  defineCoreCommandSchema,
   infoCategory,
   infoCategoryValue,
   initCoreCommands,
@@ -23,10 +22,13 @@ import {
   RateLimitLangJaJP,
   RateLimitEntrys,
   CommandResolver,
-  defineConfCommandSchema,
   initConfCommand,
   commandFromSchema,
 } from "presentation_core";
+import {
+  defineConfCommandSchema,
+  defineCoreCommandSchema,
+} from "protocol_command-schema-core-bootstrap";
 import { DependencyContainer } from "tsyringe";
 export function defineSchema(
   client: () => Client

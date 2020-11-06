@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import tw from "tailwind.macro";
-import { ww } from "protocol_command-data-common";
 import FAQ from "../faq";
-
+import { VoiceKindArray } from "domain_meta";
 const ConfigureDescKey = styled.span`
   &::after {
     content: ":";
@@ -44,7 +43,7 @@ const HowToConfigureVoiceSettings: React.FC = () => {
       <ConfigureDesc name="kind">
         声の種類です。現在使用可能なものは以下の通りです。
         <VoiceKindList>
-          {ww.VoiceKindArray.map((e) => (
+          {VoiceKindArray.map((e) => (
             <VoiceKindEntry key={e}>{e}</VoiceKindEntry>
           ))}
         </VoiceKindList>

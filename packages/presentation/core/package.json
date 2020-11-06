@@ -11,6 +11,7 @@
     "protocol_command-schema-core": "^1.0.0",
     "protocol_configurate-usecase": "^1.0.0",
     "protocol_util-djs": "^1.0.0",
+    "protocol_command-schema-core-bootstrap": "^1.0.0",
     "string-replace-async": "^2.0.0",
     "usecase_text2speech": "^1.0.0",
     "usecase_text2speech-grpc": "^1.0.0",
