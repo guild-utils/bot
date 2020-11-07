@@ -5,7 +5,7 @@ const purgecss = [
       "./pages/**/*.{js,jsx,ts,tsx}",
       "./components/**/*.{js,jsx,ts,tsx}",
     ], // eslint-disable-next-line
-    whitelist:[
+    safelist:[
       "bg-gray-800","text-gray-200","container"
     ],
     defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
