@@ -45,8 +45,8 @@ type SubCommandsProps = {
   category: string;
   prefix: string;
 };
-const SubCommandsHead = styled.h3`
-  ${tw`font-medium`}
+const SubCommandsHead = styled.h2`
+  ${tw`font-semibold`}
 `;
 const SubCommandsInner = styled.div`
   ${tw`m-2`}
@@ -80,16 +80,18 @@ type ArgumentsProps = {
   children: CommandSchema;
   prefix: string;
 };
-const ArgumentsHead = styled.h3`
-  ${tw`font-medium`}
+const ArgumentsHead = styled.h2`
+  ${tw`font-semibold`}
 `;
 const ArgumentsInner = styled.div`
   ${tw`m-2`}
 `;
-const ArgumentElement = styled.div``;
+const ArgumentElement = styled.div`
+  ${tw`my-1`}
+`;
 const ArgumentHead = styled.span``;
-const ArgumentName = styled.h4`
-  ${tw`inline-block`}
+const ArgumentName = styled.h3`
+  ${tw`inline-block font-semibold`}
 `;
 const ArgumentDesc = styled.div``;
 const ArgumentTypeS = styled.span``;
