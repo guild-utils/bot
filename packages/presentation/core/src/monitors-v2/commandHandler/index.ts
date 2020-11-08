@@ -9,6 +9,8 @@ import { getLangType } from "../../util/get-lang";
 import { checkRateLimit, checkSchema } from "../../util/command-processor";
 import { createRateLimitEntrys, RateLimitEntrys } from "../../util/rate-limit";
 import { ResetTime } from "rate-limit";
+import { CommandLogger } from "../../loggers";
+const Logger = CommandLogger.child({ type: "handler" });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PromiseReturnType<F extends (...args: any[]) => any> = ReturnType<
   F
@@ -96,13 +98,13 @@ export default class extends MonitorBase {
         channelType: message.channel.type,
       });
     } catch (e) {
-      console.error(e);
+      Logger.error(e);
       return;
     }
     if (!r) {
       return;
     }
-    console.log(r);
+    Logger.info(r);
     const [rk, pos, opt, ctx, si] = r;
     if (si?.isDefault && this.mentionPrefix.test(ctx.prefix)) {
       await message.channel.send(
@@ -140,8 +142,8 @@ export default class extends MonitorBase {
       }
       await impl.run(message, pos, opt, ctx);
     } catch (e) {
+      Logger.error(e);
       if (e instanceof Error) {
-        console.error(e);
         await message.channel.send(
           (await res()).internalError(e, executorFromMessage(message))
         );

@@ -1,5 +1,6 @@
 import { Client, GuildMember, PartialGuildMember } from "discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
+import { BotLogger } from "../loggers";
 const regex = /［【\[(.*)\]】］.*/;
 export default function (
   client: Client,
@@ -24,6 +25,6 @@ export default function (
     );
   };
   client.on("guildMemberUpdate", (oldMember, newMember) => {
-    f(newMember).catch(console.log);
+    f(newMember).catch((e) => BotLogger.error(e));
   });
 }

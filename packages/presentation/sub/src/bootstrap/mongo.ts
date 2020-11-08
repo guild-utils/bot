@@ -1,4 +1,5 @@
 import { MongoClientOptions, MongoClient, Db } from "mongodb";
+import { BotLogger } from "presentation_core";
 export type Options = {
   connectionString?: string;
   user?: string;
@@ -28,7 +29,7 @@ export async function initDatabase(opt: Options): Promise<Db> {
       connection.user ? `${connection.user}:${connection.password!}@` : ""
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     }${connection.host!}:${connection.port!}/${connection.db!}`;
-  console.log(connectionString);
+  BotLogger.info("Connectiong to database: %s", connectionString);
   const options: MongoClientOptions = Object.assign(
     {},
     connection.options || {},

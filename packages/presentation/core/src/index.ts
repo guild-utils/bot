@@ -4,6 +4,8 @@ import Engine from "./text2speech/engine";
 import { initEngineAndKuromoji } from "./bootstrap/engine";
 export { getLangType, getLang } from "./util/get-lang";
 export { initInstanceState } from "./bootstrap/instanceState";
+export { BotLogger, CommandLogger } from "./loggers";
+export { MonitorRunnerWithLog } from "./util/monitor-runner-with-log";
 export {
   commandTextSupplier,
   createCommandCollectionWithAlias,

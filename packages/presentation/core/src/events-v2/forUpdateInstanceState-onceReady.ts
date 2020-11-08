@@ -2,6 +2,7 @@ import { ColorResolvable, MessageEmbed, TextChannel } from "discord.js";
 import { Client } from "discord.js";
 import { InstanceState } from "../util/instance-state";
 import { GUJ_LAUNCH_CHANNEL } from "../bootstrap/env";
+import { BotLogger } from "../loggers";
 
 export default function (
   client: Client,
@@ -18,6 +19,6 @@ export default function (
     await (channel as TextChannel).send(embed);
   }
   client.once("ready", (): void => {
-    f().catch(console.log);
+    f().catch((e) => BotLogger.error(e));
   });
 }

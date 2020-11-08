@@ -1,6 +1,7 @@
 import { Client, VoiceState } from "discord.js";
 import Engine from "../text2speech/engine";
 import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
+import { BotLogger } from "../loggers";
 
 export default function (
   client: Client,
@@ -35,6 +36,6 @@ export default function (
     vc.leave();
   }
   client.on("voiceStateUpdate", (old, cur) => {
-    run(old, cur).catch(console.log);
+    run(old, cur).catch((e) => BotLogger.error(e));
   });
 }

@@ -1,4 +1,5 @@
 import { Client, MessageReaction, PartialUser, User } from "discord.js";
+import { BotLogger } from "presentation_core";
 import { Gui } from "../gui/common";
 
 export default function (client: Client, controllers: Gui[]): void {
@@ -10,9 +11,9 @@ export default function (client: Client, controllers: Gui[]): void {
     controllers.forEach((e) => e.emitReaction(reaction, user));
   }
   client.on("messageReactionAdd", (reaction, rawuser) => {
-    run(reaction, rawuser).catch(console.log);
+    run(reaction, rawuser).catch((e) => BotLogger.error(e));
   });
   client.on("messageReactionRemove", (reaction, rawuser) => {
-    run(reaction, rawuser).catch(console.log);
+    run(reaction, rawuser).catch((e) => BotLogger.error(e));
   });
 }

@@ -10,6 +10,7 @@ import request = require("superagent");
 import { Stream } from "stream";
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
 import {
+  CommandLogger,
   getLangType,
   SenderPermissionError,
   subCommandProcessor,
@@ -17,6 +18,7 @@ import {
 } from "presentation_core";
 import { Executor, executorFromMessage } from "protocol_util-djs";
 import { MANAGEMENT } from "protocol_command-schema-core";
+const Logger = CommandLogger.child({ command: "dictionary" });
 type DeepUnknown<T> = {
   [K in keyof T]: T[K] extends Record<string, unknown>
     ? T[K] extends unknown[]
@@ -124,7 +126,7 @@ export class DictionaryCommand implements CommandBase {
   }
   async import(msg: Message): Promise<void> {
     try {
-      msg.channel.startTyping().catch(console.log);
+      msg.channel.startTyping().catch((e) => Logger.warn(e));
       const file = [...msg.attachments][0][1].attachment;
 
       const jsonStr = isReadable(file)
@@ -191,8 +193,8 @@ export class DictionaryCommand implements CommandBase {
         )
       );
     } catch (e) {
+      Logger.error(e);
       msg.channel.stopTyping();
-      console.log(e);
       throw e;
     }
   }
