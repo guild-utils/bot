@@ -16,7 +16,11 @@ export type Props = {
   prefix: string;
 };
 import Navigation from "../../components/commands/navigation";
-
+import styled from "styled-components";
+import tw from "tailwind.macro";
+const CommandWrapper = styled.div`
+  ${tw`my-2`}
+`;
 const Main: React.FC<Props> = ({
   name,
   prefix,
@@ -35,19 +39,20 @@ const Main: React.FC<Props> = ({
       {summary}
       {Object.values(value).map((e) => {
         return (
-          <Command
-            category={name}
-            key={e.name}
-            prefix={prefix}
-            badge={[
-              <MBadge key="m"></MBadge>,
-              ...(mainOnlyCommands.has(e.name)
-                ? []
-                : [<SBadge key="s"></SBadge>]),
-            ]}
-          >
-            {e}
-          </Command>
+          <CommandWrapper key={e.name}>
+            <Command
+              category={name}
+              prefix={prefix}
+              badge={[
+                <MBadge key="m"></MBadge>,
+                ...(mainOnlyCommands.has(e.name)
+                  ? []
+                  : [<SBadge key="s"></SBadge>]),
+              ]}
+            >
+              {e}
+            </Command>
+          </CommandWrapper>
         );
       })}
     </Layout>
