@@ -168,7 +168,7 @@ async function main() {
       .map((e) => e.name)
   );
   const pc = createConfigPermissionChecker(client);
-  BotLogger.info("CommandNames: %s", commandNames);
+  BotLogger.info(commandNames, "CommandNames");
   const usecase = layeredConfigureUsecase([
     configurateUsecaseCore(basicBotConfig, pc, commandNames, {
       language: "ja_JP",

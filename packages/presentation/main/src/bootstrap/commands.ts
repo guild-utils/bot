@@ -197,7 +197,7 @@ export function initCommandSystem(
       ja_JP: RateLimitLangJaJP(ctx.color),
     })
   );
-  BotLogger.info(`Command Collection Size: ${collection.size}`);
+  BotLogger.info(collection.size, `Command Collection Size`);
   const parser = initCommandParser(container, Object.values(schema));
   const resolver = initCommandResolver(container, collection);
   return { parser, resolver };

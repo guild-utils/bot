@@ -12,7 +12,9 @@ export function initEngineAndKuromoji(
     kuromoji
       .builder({ dicPath: process.env["KUROMOJI_DIC_PATH"] })
       .build((err, tokenizer) => {
-        BotLogger.error(err);
+        if (err) {
+          BotLogger.error(err, "bootstrapping kurmoji.js");
+        }
         container.register("kuromoji", { useValue: tokenizer });
         const engine = new Engine(
           process.env["OPEN_JTALK_BIN"]!,

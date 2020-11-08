@@ -7,6 +7,7 @@ import {
 import { Message } from "discord.js";
 import { BasicBotConfigRepository } from "domain_guild-configs";
 import { ResetTime } from "rate-limit";
+import { CommandDisabledError } from "../errors/command-disabled-error";
 import { RateLimitEntrys, RateLimitLangDescription } from "./rate-limit";
 async function checkAuthoritySingle(
   k: string,
@@ -59,19 +60,20 @@ export async function checkSchema(
   schema: CommandSchema,
   repo: BasicBotConfigRepository,
   guild: string | undefined
-): Promise<boolean> {
+): Promise<void> {
   if (guild) {
     const disabledCommands = await repo.getDisabledCommands(guild);
     if (disabledCommands.has(schema.name)) {
-      return false;
+      throw new CommandDisabledError();
     }
   }
-  return true;
 }
 export async function checkRateLimit(
   message: Message,
   limitsRaw: RateLimitEntrys | undefined
-): Promise<[RateLimitLangDescription, number] | undefined> {
+): Promise<
+  [RateLimitLangDescription, number, RateLimitEntrys[number]] | undefined
+> {
   const limits = limitsRaw ?? [];
   const m: Record<RateLimitScope, unknown> = {
     channel: message.channel.id,
@@ -81,10 +83,13 @@ export async function checkRateLimit(
   };
   const r = await Promise.all(
     limits.map(
-      async ([scp, lang, mgr]): Promise<
-        [RateLimitLangDescription, [boolean, number]]
+      async (
+        entry
+      ): Promise<
+        [RateLimitLangDescription, [boolean, number], RateLimitEntrys[number]]
       > => {
-        return [lang, await mgr.consume(m[scp])];
+        const [scp, lang, mgr] = entry;
+        return [lang, await mgr.consume(m[scp]), entry];
       }
     )
   );
@@ -93,7 +98,11 @@ export async function checkRateLimit(
     return undefined;
   }
   return fr
-    .map(([lang, [, rt]]): [RateLimitLangDescription, ResetTime] => [lang, rt])
+    .map(([lang, [, rt], entry]): [
+      RateLimitLangDescription,
+      ResetTime,
+      RateLimitEntrys[number]
+    ] => [lang, rt, entry])
     .reduce((a, e) => {
       return a[1] > e[1] ? a : e;
     });

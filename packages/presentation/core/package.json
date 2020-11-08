@@ -16,7 +16,8 @@
     "usecase_text2speech": "^1.0.0",
     "usecase_text2speech-grpc": "^1.0.0",
     "rate-limit":"^1.0.0",
-    "bunyan":"^1.8.14"
+    "bunyan":"^1.8.14",
+    "@google-cloud/logging-bunyan": "^3.0.1"
   },
   "devDependencies": {
     "@types/kuromoji": "^0.1.0",

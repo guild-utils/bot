@@ -15,7 +15,9 @@ export function initInstanceState(
   });
   process.on("SIGTERM", () => {
     BotLogger.info("SIGTERM");
-    handleSigterm(client, state, color).catch((e) => BotLogger.error(e));
+    handleSigterm(client, state, color).catch((e) =>
+      BotLogger.error(e, "handleSigterm")
+    );
   });
   return state;
 }

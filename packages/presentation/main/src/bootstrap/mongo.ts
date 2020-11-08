@@ -29,7 +29,7 @@ export async function initDatabase(opt: Options): Promise<Db> {
       connection.user ? `${connection.user}:${connection.password!}@` : ""
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     }${connection.host!}:${connection.port!}/${connection.db!}`;
-  BotLogger.info("Connecting to database: %s", connectionString);
+  BotLogger.info(connectionString, "Connecting to database");
   const options: MongoClientOptions = Object.assign(
     {},
     connection.options || {},
