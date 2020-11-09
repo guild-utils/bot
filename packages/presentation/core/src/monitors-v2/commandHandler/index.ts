@@ -9,6 +9,10 @@ import { getLangType } from "../../util/get-lang";
 import { checkRateLimit, checkSchema } from "../../util/command-processor";
 import { createRateLimitEntrys, RateLimitEntrys } from "../../util/rate-limit";
 import { ResetTime } from "rate-limit";
+import { CommandLogger } from "../../loggers";
+import { discordContextFromMessage } from "../../util/logging";
+import { CommandDisabledError } from "../../errors/command-disabled-error";
+const Logger = CommandLogger.child({ type: "handler" });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PromiseReturnType<F extends (...args: any[]) => any> = ReturnType<
   F
@@ -21,7 +25,7 @@ export type CommandHandlerResponses = {
     prefix: string,
     exec: Executor
   ) => MessageEmbed;
-  internalError: (error: Error, exec: Executor) => MessageEmbed;
+  internalError: (error: unknown, exec: Executor) => MessageEmbed;
   remindPrefix: (prefix: string, exec: Executor) => MessageEmbed;
   globalRateLimitReached: (
     e: RateLimitEntry,
@@ -64,13 +68,13 @@ export default class extends MonitorBase {
       ignoreWebhooks: true,
       ignoreEdits: true,
     });
-    const x: RateLimitEntry[] = [
+    const globalRateLimitEntryArray: RateLimitEntry[] = [
       ["user", 3, 1 * 1000],
       ["user", 30, 30 * 1000],
       ["guild", 50, 1000],
     ];
     this.globalRateLimits = createRateLimitEntrys(
-      new Set(x),
+      new Set(globalRateLimitEntryArray),
       (lang) => responses(lang).globalRateLimitReached
     );
   }
@@ -95,14 +99,21 @@ export default class extends MonitorBase {
         mentionPrefix: this.mentionPrefix,
         channelType: message.channel.type,
       });
-    } catch (e) {
-      console.error(e);
+    } catch (e: unknown) {
+      Logger.error(
+        {
+          err: e,
+          ctx: discordContextFromMessage(message),
+          content: message.content,
+        },
+        "parser error"
+      );
       return;
     }
     if (!r) {
       return;
     }
-    console.log(r);
+    Logger.info(r);
     const [rk, pos, opt, ctx, si] = r;
     if (si?.isDefault && this.mentionPrefix.test(ctx.prefix)) {
       await message.channel.send(
@@ -112,40 +123,101 @@ export default class extends MonitorBase {
     }
     const resolved = this.commandResolver(rk);
     if (!resolved) {
+      Logger.warn(
+        {
+          parser: {
+            key: rk,
+            pos,
+            opt,
+            ctx,
+            si,
+          },
+        },
+        "command not resolvable"
+      );
       return;
     }
     const [impl, schema, rateLimits] = resolved;
     if (schema) {
-      if (!(await checkSchema(schema, this.repo, message.guild?.id))) {
-        await message.channel.send(
-          (await res()).commandDisabled(schema.name, ctx.prefix, {
-            user: message.author,
-            member: message.member,
-          })
+      try {
+        await checkSchema(schema, this.repo, message.guild?.id);
+      } catch (e: unknown) {
+        Logger.warn(
+          {
+            err: e,
+            ctx: discordContextFromMessage(message),
+          },
+          "checkSchema failed"
         );
+        if (e instanceof CommandDisabledError) {
+          await message.channel.send(
+            (await res()).commandDisabled(schema.name, ctx.prefix, {
+              user: message.author,
+              member: message.member,
+            })
+          );
+        }
         return;
       }
     }
+    const rl = [...(rateLimits ?? []), ...this.globalRateLimits];
     try {
-      const crl = await checkRateLimit(message, [
-        ...(rateLimits ?? []),
-        ...this.globalRateLimits,
-      ]);
+      const crl = await checkRateLimit(message, rl);
       if (crl != undefined) {
-        const [desc, rt] = crl;
+        const [desc, rt, entry] = crl;
+        Logger.warn(
+          {
+            ctx: discordContextFromMessage(message),
+            debugInfo: entry[3],
+          },
+          "a user exceeded the rate limit."
+        );
         await message.channel.send(
           desc(await this.getLang(message.guild?.id))(rt, message)
         );
         return;
       }
+    } catch (e: unknown) {
+      Logger.error(
+        {
+          err: e,
+          ctx: discordContextFromMessage(message),
+          rateLimits: rl,
+        },
+        "an error occurred while checking rate limits."
+      );
+    }
+    try {
       await impl.run(message, pos, opt, ctx);
-    } catch (e) {
-      if (e instanceof Error) {
-        console.error(e);
-        await message.channel.send(
-          (await res()).internalError(e, executorFromMessage(message))
-        );
-      }
+      Logger.info(
+        {
+          ctx: discordContextFromMessage(message),
+          content: message.content,
+          args: {
+            positional: pos,
+            optinal: opt,
+            context: ctx,
+          },
+        },
+        "command success"
+      );
+    } catch (e: unknown) {
+      Logger.error(
+        {
+          err: e,
+          ctx: discordContextFromMessage(message),
+          content: message.content,
+          args: {
+            positional: pos,
+            optinal: opt,
+            context: ctx,
+          },
+        },
+        "an error occurred while running the command."
+      );
+      await message.channel.send(
+        (await res()).internalError(e, executorFromMessage(message))
+      );
     }
   }
   init(client: Client): void {

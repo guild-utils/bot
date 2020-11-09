@@ -13,30 +13,12 @@ import {
   HelpEntry,
 } from "../commands-v2/info/help";
 import * as RtlJa from "../languages/ja-jp";
-import { commandTextSupplier, CoreCommands } from "./commands";
-export function usageFromSchemaBody(schema: CommandSchema): string {
-  const args = schema.positionalArgumentCollection
-    .map(([name, typ, opt]) => {
-      if (opt.variable) {
-        return `[...${name}]:${typ.name}`;
-      }
-      if (opt.optional) {
-        return `(${name}):${typ.name}`;
-      } else {
-        return `<${name}>:${typ.name}`;
-      }
-    })
-    .join(" ");
-  return `${schema.name}${args.length === 0 ? "" : " " + args}`;
-}
-export function usageFromSchema(schema: CommandSchema, prefix: string): string {
-  const subcommandsUsage = schema.subCommands.map(
-    ([s]) => `${prefix}${schema.name} ${usageFromSchemaBody(s)}`
-  );
-  const args = usageFromSchemaBody(schema);
-  const entire = `${prefix}${args}`;
-  return [entire, ...subcommandsUsage].join("\n");
-}
+import { commandTextSupplier } from "./commands";
+import {
+  CoreCommands,
+  usageFromSchema,
+} from "protocol_command-schema-core-bootstrap";
+
 export type CommandFromSchemaCtx = {
   defaultPrefix: string;
   color: ColorResolvable;
@@ -55,11 +37,24 @@ export function commandFromSchema(
 ): Command {
   const desc = (lang: string) => (ctx: HelpCommandCotext) =>
     schema.options.descriptionResolver(lang, {
-      enviromnet: "discord",
+      environment: "discord",
       runningCommand: ctx.runningCommand,
       defaultPrefix: gctx.defaultPrefix,
       prefix: ctx.prefix,
     });
+  const subCommands = new Map(
+    schema.subCommands
+      .map(([e]): [CommandSchema, Command] => [
+        e,
+        commandFromSchema(e, category, gctx),
+      ])
+      .flatMap(([s, c]): [string, Command][] =>
+        [s.name, ...(s.options.alias ?? [])].map((n): [string, Command] => [
+          n,
+          c,
+        ])
+      )
+  );
   return {
     type: "command",
     value: schema,
@@ -67,7 +62,7 @@ export function commandFromSchema(
     embed: (lang) => (ctx) => {
       const ggctx: Context = {
         defaultPrefix: gctx.defaultPrefix,
-        enviromnet: "discord",
+        environment: "discord",
         prefix: ctx.prefix,
         runningCommand: ctx.runningCommand,
       };
@@ -111,6 +106,7 @@ export function commandFromSchema(
         )
         .addField("Category", category, true);
     },
+    resolveSubCommand: (key) => subCommands.get(key),
   };
 }
 export function commandsToMapWithNameAndAlias(

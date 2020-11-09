@@ -12,31 +12,38 @@ import {
   voiceCategoryValue,
   voiceCategory,
   commandFromSchema,
-  defineConfCommandSchema,
   initConfCommand,
-  CoreCommands,
   InitConfCommandArg,
   CommandResolver,
   commandTextSupplier,
+  CommandLogger,
+  BotLogger,
 } from "presentation_core";
 import {
   categoryWords,
-  defineMainCommandSchema,
   initMainCommands,
   MainCommandOptions,
-  MainCommands,
 } from "./main-commands";
 import { CommandSchema } from "@guild-utils/command-schema";
 import { Client } from "discord.js";
 import { CommandBase } from "@guild-utils/command-base";
 import {
-  defineCoreCommandSchema,
   initCoreCommands,
   createCommandCollectionWithAlias,
   commandsToMapWithNameAndAlias,
   RateLimitLangJaJP,
   RateLimitEntrys,
 } from "presentation_core";
+import {
+  CoreCommands,
+  defineConfCommandSchema,
+  defineCoreCommandSchema,
+} from "protocol_command-schema-core-bootstrap";
+import {
+  defineMainCommandSchema,
+  MainCommands,
+} from "protocol_command-schema-main-bootstrap";
+const Logger = CommandLogger.child({ type: "resolver" });
 export function initCommands(
   coreCommandOptions: CoreCommandOptions,
   mainCommandOptions: MainCommandOptions,
@@ -73,7 +80,7 @@ function initCommandResolver(
   >
 ): CommandResolver {
   const resolverFunc = (k: string) => {
-    console.log("resolver:", k);
+    Logger.info(k);
     const resolvers = [collection];
     for (const resolver of resolvers) {
       const cmdBase = resolver.get(k);
@@ -190,7 +197,7 @@ export function initCommandSystem(
       ja_JP: RateLimitLangJaJP(ctx.color),
     })
   );
-  console.log(`Command Collection Size: ${collection.size}`);
+  BotLogger.info(collection.size, `Command Collection Size`);
   const parser = initCommandParser(container, Object.values(schema));
   const resolver = initCommandResolver(container, collection);
   return { parser, resolver };

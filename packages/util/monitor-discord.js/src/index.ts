@@ -21,7 +21,7 @@ export abstract class MonitorBase implements Monitor {
   abstract run(message: Message): Promise<unknown>;
 }
 
-export class MonitorRunner {
+export abstract class MonitorRunner {
   constructor(private readonly monitors: Set<Monitor>) {}
   edit(newMsg: Message): void {
     const self = newMsg.client.user;
@@ -42,7 +42,7 @@ export class MonitorRunner {
       try {
         m.init(client);
       } catch (e) {
-        console.log(e);
+        this.onError(e);
       }
     });
   }
@@ -54,9 +54,10 @@ export class MonitorRunner {
     if (o.ignoreWebhooks && msg.webhookID != null) return;
     if (o.ignoreEdits && (msg.editedTimestamp || msg.editedAt)) return;
     try {
-      monitor.run(msg).catch(console.log);
+      monitor.run(msg).catch((err) => this.onError(err));
     } catch (e) {
-      console.log(e);
+      this.onError(e);
     }
   }
+  abstract onError(err: unknown): void;
 }

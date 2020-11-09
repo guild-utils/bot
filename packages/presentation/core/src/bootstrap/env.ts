@@ -8,3 +8,5 @@ export const GUJ_GRACEFUL_SHUTDOWN_TIME = process.env[
 ]
   ? Number(process.env["GUJ_GRACEFUL_SHUTDOWN_TIME"])
   : 20;
+export const KUBE_NODE_NAME = process.env["KUBE_NODE_NAME"];
+export const KUBE_POD_NAME = process.env["KUBE_POD_NAME"];

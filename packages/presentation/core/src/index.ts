@@ -4,15 +4,13 @@ import Engine from "./text2speech/engine";
 import { initEngineAndKuromoji } from "./bootstrap/engine";
 export { getLangType, getLang } from "./util/get-lang";
 export { initInstanceState } from "./bootstrap/instanceState";
+export { BotLogger, CommandLogger } from "./loggers";
+export { MonitorRunnerWithLog } from "./util/monitor-runner-with-log";
 export {
   commandTextSupplier,
   createCommandCollectionWithAlias,
-  defineCoreCommandSchema,
   initCoreCommands,
   CoreCommandOptions,
-  CoreCommands,
-  schemaTextSupplier,
-  defineConfCommandSchema,
   ConfCommands,
   InitConfCommandArg,
   initConfCommand,
@@ -30,7 +28,6 @@ export {
   infoCategory,
   infoCategoryValue,
   rootCategory,
-  usageFromSchema,
 } from "./bootstrap/help";
 export { buildParser } from "./util/parser";
 export { InstanceState } from "./util/instance-state";

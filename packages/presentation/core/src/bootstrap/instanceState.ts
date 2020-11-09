@@ -2,6 +2,7 @@ import { DependencyContainer } from "tsyringe";
 import { InstanceState } from "../util/instance-state";
 import { MessageEmbed, TextChannel, Client, ColorResolvable } from "discord.js";
 import { GUJ_LAUNCH_CHANNEL, GUJ_GRACEFUL_SHUTDOWN_TIME } from "./env";
+import { BotLogger } from "../loggers";
 
 export function initInstanceState(
   container: DependencyContainer,
@@ -13,8 +14,10 @@ export function initInstanceState(
     useValue: state,
   });
   process.on("SIGTERM", () => {
-    console.log("SIGTERM");
-    handleSigterm(client, state, color).catch(console.log);
+    BotLogger.info("SIGTERM");
+    handleSigterm(client, state, color).catch((e) =>
+      BotLogger.error(e, "handleSigterm")
+    );
   });
   return state;
 }
@@ -32,18 +35,18 @@ export async function handleSigterm(
   if (instanceState.state === "terminating") {
     embed.addField("New", "terminated");
     await (channel as TextChannel).send(embed);
-    console.log("graceful shutdown");
+    BotLogger.info("graceful shutdown");
     client.once("disconnect", () => {
       process.exit(0);
     });
-    console.log("graceful shutdown");
+    BotLogger.info("graceful shutdown");
     client.destroy();
     process.exit();
   } else {
     instanceState.setState("terminating");
     embed.addField("New", "terminating");
     setTimeout(() => {
-      console.log("not graceful shutdown");
+      BotLogger.info("not graceful shutdown");
       client.destroy();
       process.exit();
     }, GUJ_GRACEFUL_SHUTDOWN_TIME * 1000);

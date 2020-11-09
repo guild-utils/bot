@@ -178,10 +178,8 @@ export class Usecase implements Domain.Usecase {
       );
       randomizerVersion = v1v2Boundary < joinedTimestamp ? "v2" : "v1";
     }
-    console.log(randomizerVersion);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
     const randomizer = randomizerSupplier({ user });
-    console.log(randomizer, randomizer.name);
     const gws: [
       RandomizerReturnType | LayeredVoiceConfig | undefined,
       string

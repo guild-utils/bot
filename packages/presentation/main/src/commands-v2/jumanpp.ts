@@ -2,12 +2,14 @@ import { CommandBase } from "@guild-utils/command-base";
 import { execFile } from "child_process";
 import { Message } from "discord.js";
 import { encodeStream } from "iconv-lite";
+import { CommandLogger } from "presentation_core";
 import * as ENV from "../bootstrap/env";
 function toFullWidth(elm: string) {
   return elm.replace(/[A-Za-z0-9!-~]/g, function (s) {
     return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
   });
 }
+const Logger = CommandLogger.child({ command: "jumanpp" });
 export class JumanppCommand implements CommandBase {
   public async run(msg: Message, [text]: [string]): Promise<void> {
     await msg.channel.send("```" + (await this.spawn(text)) + "```");
@@ -19,9 +21,13 @@ export class JumanppCommand implements CommandBase {
         ENV.JUMANPP_PATH!,
         [],
         (error, stdout, stderr) => {
-          console.log(error);
-          console.log(stdout);
-          console.log(stderr);
+          if (error) {
+            Logger.error({
+              error,
+              stdout,
+              stderr,
+            });
+          }
           resolve(stdout);
         }
       );
@@ -29,7 +35,7 @@ export class JumanppCommand implements CommandBase {
       if (charset) {
         const conv = encodeStream(charset);
         conv.on("error", (...args) => {
-          console.log(args);
+          Logger.error(args);
         });
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         conv.pipe(cp.stdin!);
@@ -40,7 +46,7 @@ export class JumanppCommand implements CommandBase {
       }
       cp.stdin?.end();
       cp.stdin?.on("error", (err) => {
-        console.log(err);
+        Logger.error(err);
       });
     });
   }

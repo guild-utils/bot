@@ -22,6 +22,7 @@ export interface Command {
   type: "command";
   embed: (lang: string) => (ctx: HelpCommandCotext) => MessageEmbed;
   summary: (lang: string) => (ctx: HelpCommandCotext) => string;
+  resolveSubCommand: (key: string) => Command | undefined;
   value: CommandSchema;
 }
 export interface DeepEntry {
@@ -100,9 +101,19 @@ export class CommandHelp implements CommandBase {
           );
           return;
         }
-        case "command":
+        case "command": {
+          const nk = key[processingKeyIndex + 1];
+          const resolved = nk
+            ? processingEntry.resolveSubCommand(nk)
+            : undefined;
+          if (resolved) {
+            await processEntry(resolved, processingKeyIndex + 1, key);
+            return;
+          }
           await msg.channel.send(processingEntry.embed(lang)(hctx));
           return;
+        }
+
         case "documentation":
           await msg.channel.send(processingEntry.embed(lang)(hctx));
           return;

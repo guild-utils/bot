@@ -1,6 +1,6 @@
 {
-  "name": "command-schema",
-  "version": "0.0.1",
+  "name": "protocol_command-schema-core-bootstrap",
+  "version": "1.0.0",
   "license": "MIT",
   "author": "tignear",
   "main": "./dist/index.js",
@@ -21,11 +21,14 @@
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5",
     "typescript": "^4.0.2",
-    "boost-ts": "^2.1.0"
+    "discord.js": "^12.3.1"
   },
   "engines": {
     "node": ">=8.6.0"
   },
   "private": "true",
-  "dependencies": {}
+  "dependencies": {
+    "protocol_command-schema-core": "^1.0.0",
+    "languages_command-core": "^1.0.0"
+  }
 }

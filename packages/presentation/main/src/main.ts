@@ -3,7 +3,6 @@ import "reflect-metadata";
 import "abort-controller/polyfill";
 import { Usecase as AppliedVoiceConfigResolver } from "protocol_configs-klasa";
 import { MongoDictionaryRepository } from "repository_mongodb-dictionary";
-import { config as dotenv } from "dotenv";
 import { container } from "tsyringe";
 import { config, token } from "./config";
 import initRpcServer from "./bootstrap/grpc";
@@ -14,7 +13,11 @@ import {
   initBADictionaryGui,
   GuiTexts,
 } from "./bootstrap/dictionary-gui";
-import { initInstanceState, initText2Speech } from "presentation_core";
+import {
+  initInstanceState,
+  initText2Speech,
+  MonitorRunnerWithLog,
+} from "presentation_core";
 import * as ENV from "./bootstrap/env";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
@@ -37,7 +40,6 @@ import {
 } from "./usecases/configurate";
 import { createMonitor } from "./bootstrap/monitors";
 import { initEvents } from "./bootstrap/events";
-import { MonitorRunner } from "monitor-discord.js";
 import {
   createInviteLink,
   getLang as getLangBase,
@@ -45,11 +47,7 @@ import {
 } from "presentation_core";
 import { Gui } from "./gui/common";
 import { CommandSchema } from "@guild-utils/command-schema";
-const result = dotenv();
-if (result) {
-  console.log(result.parsed);
-}
-
+import { BotLogger } from "presentation_core";
 const permissions = new Permissions()
   .add(Permissions.FLAGS.SEND_MESSAGES)
   .add(Permissions.FLAGS.VIEW_CHANNEL)
@@ -170,7 +168,7 @@ async function main() {
       .map((e) => e.name)
   );
   const pc = createConfigPermissionChecker(client);
-  console.log("CommandNames:", commandNames);
+  BotLogger.info(commandNames, "CommandNames");
   const usecase = layeredConfigureUsecase([
     configurateUsecaseCore(basicBotConfig, pc, commandNames, {
       language: "ja_JP",
@@ -242,7 +240,7 @@ async function main() {
     parser,
     getLang,
   });
-  const monitorRunner = new MonitorRunner(monitors);
+  const monitorRunner = new MonitorRunnerWithLog(monitors);
   initEvents(client, {
     basicBotConfig: basicBotConfig,
     color: ENV.GUJ_THEME_COLOR,
@@ -256,6 +254,6 @@ async function main() {
   await client.login(token);
 }
 main().catch((e) => {
-  console.error(e);
+  BotLogger.fatal(e);
   process.exit(-1);
 });
