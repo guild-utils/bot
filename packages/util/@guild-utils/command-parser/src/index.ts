@@ -40,7 +40,6 @@ export function buildYargsParser(
                 : `[${name}]`
             )),
       ].join(" ");
-      console.log(csr);
       const r = a.command(csr, "");
       return r;
     }, instance)
@@ -175,7 +174,6 @@ export function buildMainParser(
     if (!arr) {
       return;
     }
-    console.log(r);
     const initialCommandString = arr.shift();
     if (!initialCommandString) {
       return r["default"]
@@ -208,7 +206,6 @@ export function buildMainParser(
       ctx,
       [initialCommandString]
     );
-    console.log(positional);
     return [
       commandString,
       positional,

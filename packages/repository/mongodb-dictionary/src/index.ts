@@ -291,7 +291,6 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
         upsert: true,
       }
     );
-    console.log(r.value?.speech?.dictionary);
     const from = r.value?.speech?.dictionary?.entry;
     if (!from) {
       return undefined;

@@ -2,6 +2,7 @@ import { InstanceState } from "../util/instance-state";
 import { GUJ_LAUNCH_CHANNEL } from "../bootstrap/env";
 import { ColorResolvable, Message, MessageEmbed } from "discord.js";
 import { MonitorBase } from "monitor-discord.js";
+import { BotLogger } from "../loggers";
 export default class extends MonitorBase {
   constructor(
     private instanceState: InstanceState,
@@ -45,7 +46,7 @@ export default class extends MonitorBase {
       embed.addField("New", "terminated");
       embed.setColor(this.color);
       await message.channel.send(embed);
-      console.log("graceful shutdown");
+      BotLogger.info("graceful shutdown");
       message.client.destroy();
       process.exit();
     }

@@ -24,6 +24,7 @@ import {
   CommandResolver,
   initConfCommand,
   commandFromSchema,
+  BotLogger,
 } from "presentation_core";
 import {
   defineConfCommandSchema,
@@ -149,7 +150,7 @@ export function initCommandSystem(
       ja_JP: RateLimitLangJaJP(ctx.color),
     })
   );
-  console.log(`Command Collection Size: ${collection.size}`);
+  BotLogger.info(collection.size, `Command Collection Size`);
   const parser = initCommandParser(container, Object.values(injection.schema));
   const resolver = initCommandResolver(container, collection);
   return { parser, resolver };

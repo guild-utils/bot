@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guj-bots-common-config
+data:
+  GUILD_UTILS_J_PROVIDER : mongodb
+  GUJ_MIXER_RPC_SERVER : guj-mixer:50051
+  GUJ_MIXER_KEYS : /keys
+  NODE_ENV : production
+  GUJ_USE_GOOGLE_STACKDRIVER : "true"
+  GOOGLE_APPLICATION_CREDENTIALS: /guj-bots-sa-cred/gcp-credentials.json
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,6 +32,9 @@ spec:
       - name: guj-main
         image: tignear/guj-main:local-dev
         imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: guj-bots-common-config
         env:
         - name: GUILD_UTILS_J_MAIN_DISCORD_TOKEN
           valueFrom:
@@ -28,33 +43,38 @@ spec:
               key: main
         - name: MONGO_DB
           value: main
-        - name: GUILD_UTILS_J_PROVIDER
-          value: mongodb
         - name: MONGO_CONNECTION
           valueFrom:
             secretKeyRef:
               name: mongo-connection
               key: main
-        - name: GUJ_MIXER_RPC_SERVER
-          value: guj-mixer:50051
         - name: GUJ_DEFAULT_PREFIX
           value: $
-        - name: GUJ_MIXER_KEYS
-          value: /keys
-        - name: NODE_ENV
-          value: production
         - name: GUJ_LAUNCH_CHANNEL
           valueFrom:
             secretKeyRef: 
               name: discord-token
               key: launch-channel
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: KUBE_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         volumeMounts:
         - name: keys
           mountPath: /keys
+        - name: guj-bots-sa-cred
+          mountPath: /guj-bots-sa-cred
       volumes:
       - name: keys
         configMap:
           name: client-keys
+      - name: guj-bots-sa-cred
+        secret:
+          secretName: guj-bots-sa-cred
 ---
 apiVersion: v1
 kind: Service
@@ -92,6 +112,9 @@ spec:
       - name: guj-sub
         image: tignear/guj-sub:local-dev
         imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: guj-bots-common-config
         env:
         - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
           valueFrom:
@@ -109,24 +132,31 @@ spec:
           value: sub1
         - name: GUILD_UTILS_J_RPC_SERVER
           value: guj-main:50051
-        - name: GUJ_MIXER_RPC_SERVER
-          value: guj-mixer:50051
-        - name: GUJ_MIXER_KEYS
-          value: /keys
-        - name: NODE_ENV
-          value: production
         - name: GUJ_LAUNCH_CHANNEL
           valueFrom:
             secretKeyRef: 
               name: discord-token
               key: launch-channel
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: KUBE_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         volumeMounts:
         - name: keys
           mountPath: /keys
+        - name: guj-bots-sa-cred
+          mountPath: /guj-bots-sa-cred
       volumes:
       - name: keys
         configMap:
           name: client-keys
+      - name: guj-bots-sa-cred
+        secret:
+          secretName: guj-bots-sa-cred      
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -150,6 +180,9 @@ spec:
       - name: guj-sub
         image: tignear/guj-sub:local-dev
         imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: guj-bots-common-config
         env:
         - name: GUILD_UTILS_J_SUB_DISCORD_TOKEN
           valueFrom:
@@ -169,23 +202,30 @@ spec:
           value: guj-main:50051
         - name: GUJ_DEFAULT_PREFIX
           value: $,
-        - name: GUJ_MIXER_RPC_SERVER
-          value: guj-mixer:50051
         - name: GUJ_THEME_COLOR
           value: "0xFF420E"
-        - name: GUJ_MIXER_KEYS
-          value: /keys
-        - name: NODE_ENV
-          value: production
         - name: GUJ_LAUNCH_CHANNEL
           valueFrom:
             secretKeyRef: 
               name: discord-token
               key: launch-channel
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: KUBE_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         volumeMounts:
         - name: keys
           mountPath: /keys
+        - name: guj-bots-sa-cred
+          mountPath: /guj-bots-sa-cred
       volumes:
       - name: keys
         configMap:
           name: client-keys
+      - name: guj-bots-sa-cred
+        secret:
+          secretName: guj-bots-sa-cred

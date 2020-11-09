@@ -78,9 +78,12 @@ export class CachedBasicConfigRepository
   ): Promise<Domain.UpdateResult<string | undefined>> {
     const res = await this.base.setPrefix(guild, prefix);
     if (res.type === "ok") {
-      this.cache.setPrefix(guild, res.after, (e) =>
-        this.load(e).catch(console.log)
-      );
+      await new Promise((resolve, reject) => {
+        this.cache.setPrefix(guild, res.after, (e) =>
+          this.load(e).catch((err) => reject(err))
+        );
+        resolve();
+      });
     }
     return res;
   }
@@ -93,9 +96,12 @@ export class CachedBasicConfigRepository
   ): Promise<Domain.UpdateResult<Languages, Languages>> {
     const res = await this.base.setLanguage(guild, language);
     if (res.type === "ok") {
-      this.cache.setLanguage(guild, res.after, (e) =>
-        this.load(e).catch(console.log)
-      );
+      await new Promise((resolve, reject) => {
+        this.cache.setLanguage(guild, res.after, (e) =>
+          this.load(e).catch((err) => reject(err))
+        );
+        resolve();
+      });
     }
     return res;
   }
@@ -108,9 +114,12 @@ export class CachedBasicConfigRepository
   ): Promise<Domain.UpdateResult<Set<string>, Set<string>>> {
     const res = await this.base.setDisabledCommands(guild, key);
     if (res.type === "ok") {
-      this.cache.setDisabledCommands(guild, res.after, (e) =>
-        this.load(e).catch(console.log)
-      );
+      await new Promise((resolve, reject) => {
+        this.cache.setDisabledCommands(guild, res.after, (e) =>
+          this.load(e).catch((err) => reject(err))
+        );
+        resolve();
+      });
     }
     return res;
   }
@@ -120,9 +129,12 @@ export class CachedBasicConfigRepository
   ): Promise<Domain.UpdateResult<Set<string>, Set<string>>> {
     const res = await this.base.addDisabledCommands(guild, key);
     if (res.type === "ok") {
-      this.cache.setDisabledCommands(guild, res.after, (e) =>
-        this.load(e).catch(console.log)
-      );
+      await new Promise((resolve, reject) => {
+        this.cache.setDisabledCommands(guild, res.after, (e) =>
+          this.load(e).catch((err) => reject(err))
+        );
+        resolve();
+      });
     }
     return res;
   }
@@ -132,9 +144,12 @@ export class CachedBasicConfigRepository
   ): Promise<Domain.UpdateResult<Set<string>, Set<string>>> {
     const res = await this.base.removeDisabledCommands(guild, key);
     if (res.type === "ok") {
-      this.cache.setDisabledCommands(guild, res.after, (e) =>
-        this.load(e).catch(console.log)
-      );
+      await new Promise((resolve, reject) => {
+        this.cache.setDisabledCommands(guild, res.after, (e) =>
+          this.load(e).catch((err) => reject(err))
+        );
+        resolve();
+      });
     }
     return res;
   }
