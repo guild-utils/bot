@@ -1,5 +1,5 @@
 export type Context = {
-  enviromnet: "web" | "discord";
+  environment: "web" | "discord";
   prefix?: string;
   defaultPrefix: string;
   runningCommand?: string[];

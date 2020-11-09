@@ -1,6 +1,7 @@
 import { Client, MessageReaction, PartialUser, User } from "discord.js";
+import { BotLogger } from "presentation_core";
 import { Gui } from "../gui/common";
-
+const Logger = BotLogger.child({ event: "forGui" });
 export default function (client: Client, controllers: Gui[]): void {
   client.on("message", (message) => {
     controllers.forEach((e) => e.emitMessage(message));
@@ -10,9 +11,11 @@ export default function (client: Client, controllers: Gui[]): void {
     controllers.forEach((e) => e.emitReaction(reaction, user));
   }
   client.on("messageReactionAdd", (reaction, rawuser) => {
-    run(reaction, rawuser).catch(console.log);
+    run(reaction, rawuser).catch((e) => Logger.error(e, "messageReactionAdd"));
   });
   client.on("messageReactionRemove", (reaction, rawuser) => {
-    run(reaction, rawuser).catch(console.log);
+    run(reaction, rawuser).catch((e) =>
+      Logger.error(e, "messageReactionRemove")
+    );
   });
 }

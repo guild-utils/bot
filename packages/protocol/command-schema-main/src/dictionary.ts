@@ -103,8 +103,8 @@ export function commandSimpleDictionary(
     descriptionResolver: computeLanguage(f, "entry"),
     variable: true,
   });
-  const insertSchema = new CommandSchema("add", {
-    descriptionResolver: computeLanguage(f, "add"),
+  const insertSchema = new CommandSchema("insert", {
+    descriptionResolver: computeLanguage(f, "insert"),
     runIn,
   })
     .positional("index", new AT_Integer(), {

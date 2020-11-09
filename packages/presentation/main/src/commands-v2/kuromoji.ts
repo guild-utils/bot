@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
 import * as kuromoji from "kuromoji";
-import { autoInjectable, inject } from "tsyringe";
 import { CommandBase } from "@guild-utils/command-base";
 
 function toFullWidth(elm: string) {
@@ -8,10 +7,8 @@ function toFullWidth(elm: string) {
     return String.fromCharCode(s.charCodeAt(0) + 0xfee0);
   });
 }
-@autoInjectable()
 export class KuromojiCommand implements CommandBase {
   constructor(
-    @inject("kuromoji")
     private readonly tokenizer: kuromoji.Tokenizer<kuromoji.IpadicFeatures>
   ) {}
   public async run(msg: Message, [text]: [string]): Promise<void> {

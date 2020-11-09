@@ -14,7 +14,7 @@ import {
   TextChannel,
   Permissions,
 } from "discord.js";
-import { getLangType } from "presentation_core";
+import { BotLogger, getLangType } from "presentation_core";
 export type CtxBase<Page> = {
   pages: Page[][];
   help: boolean;
@@ -66,7 +66,7 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
         await target.edit(embed);
       }
     }
-    run().catch(console.log);
+    run().catch((e) => BotLogger.error(e));
   });
   list.use("Next", (ev, { emit }) => {
     emit("Page", { ...ev, no: ev.context.currentPage + 1 });
@@ -99,7 +99,7 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
         )
       );
     }
-    run().catch(console.log);
+    run().catch((e) => BotLogger.error(e));
   });
   list.use("Timeout", ({ target }, { emit }) => {
     const { abortController } = ctxs.contexts.contexts.get(target.id) ?? {};
@@ -118,11 +118,11 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
       return;
     }
     if (permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
-      target.reactions.removeAll().catch(console.log);
+      target.reactions.removeAll().catch((e) => BotLogger.error(e));
     } else {
-      Promise.all(target.reactions.cache.map((e) => e.users.remove(me))).catch(
-        console.log
-      );
+      Promise.all(
+        target.reactions.cache.map((e) => e.users.remove(me))
+      ).catch((e) => BotLogger.error(e));
     }
   });
 
@@ -148,7 +148,7 @@ export function createPagination<Ctx extends CtxBase<Page>, Page>(
       emit("Schedule", { target });
       context.abortController = undefined;
     }
-    run().catch(console.log);
+    run().catch((e) => BotLogger.error(e));
   });
   return list;
 }

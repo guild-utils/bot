@@ -1,20 +1,28 @@
-import { DescriptionData } from "protocol_command-schema-core";
+import { Context, DescriptionData } from "protocol_command-schema-core";
 const parsingTextSummary = "解析するテキストを与えます。";
-export const commandJumanpp: Record<"command" | "text", DescriptionData> = {
+export const commandJumanpp: (
+  ctx: Context
+) => Record<"command" | "text", DescriptionData> = (ctx) => ({
   command: {
     summary:
-      "[jumanpp](https://github.com/ku-nlp/jumanpp#what-is-juman)で構文解析を行います。",
+      ctx.environment === "discord"
+        ? "[jumanpp](https://github.com/ku-nlp/jumanpp#what-is-juman)で構文解析を行います。"
+        : "kuromojiで構文解析を行います。",
   },
   text: {
     summary: parsingTextSummary,
   },
-};
-export const commandKuromoji: Record<"command" | "text", DescriptionData> = {
+});
+export const commandKuromoji: (
+  ctx: Context
+) => Record<"command" | "text", DescriptionData> = (ctx) => ({
   command: {
     summary:
-      "[kuromoji](https://github.com/takuyaa/kuromoji.js#kuromojijs)で構文解析を行います。",
+      ctx.environment === "discord"
+        ? "[kuromoji](https://github.com/takuyaa/kuromoji.js#kuromojijs)で構文解析を行います。"
+        : "kuromojiで構文解析を行います。",
   },
   text: {
     summary: parsingTextSummary,
   },
-};
+});

@@ -4,5 +4,6 @@
         "types": ["node", "discord.js"],
         "outDir": "./dist",
         "rootDir": "./src",
+        "target": "es2018"
     }
 }

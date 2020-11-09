@@ -4,6 +4,7 @@ import Document, {
   Head,
   Main,
   NextScript,
+  Html,
 } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 
@@ -37,7 +38,7 @@ export default class extends Document {
   }
   render(): JSX.Element {
     return (
-      <html lang="ja">
+      <Html lang="ja">
         <Head>
           <link rel="icon" type="image/webp" href="/main-icon.webp"></link>
         </Head>
@@ -45,7 +46,7 @@ export default class extends Document {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }

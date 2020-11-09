@@ -175,7 +175,7 @@ export function commandConfBase(
         .positional("key", new AT_String(), {
           descriptionResolver: computeLanguage(f, "key"),
         })
-        .positional("value", new AT_SimpleArray(new AT_String()), {
+        .positional("value", new AT_String(), {
           descriptionResolver: computeLanguage(f, "value"),
         })
     )
@@ -216,7 +216,7 @@ export function commandConfBase(
         .positional("key", new AT_String(), {
           descriptionResolver: computeLanguage(f, "key"),
         })
-        .positional("value", new AT_SimpleArray(new AT_String()), {
+        .positional("value", new AT_String(), {
           descriptionResolver: computeLanguage(f, "value"),
         })
     );
@@ -313,7 +313,7 @@ export function commandMemconfMember(
         .positional("key", new AT_String(), {
           descriptionResolver: computeLanguage(f, "key"),
         })
-        .positional("value", new AT_SimpleArray(new AT_String()), {
+        .positional("value", new AT_String(), {
           descriptionResolver: computeLanguage(f, "value"),
         })
     )
@@ -368,7 +368,7 @@ export function commandMemconfMember(
         .positional("key", new AT_String(), {
           descriptionResolver: computeLanguage(f, "key"),
         })
-        .positional("value", new AT_SimpleArray(new AT_String()), {
+        .positional("value", new AT_String(), {
           descriptionResolver: computeLanguage(f, "value"),
         })
     );
