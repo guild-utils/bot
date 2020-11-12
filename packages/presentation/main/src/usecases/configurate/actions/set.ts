@@ -15,6 +15,7 @@ import {
   ExecutorType,
   TargetType,
 } from "protocol_configurate-usecase";
+import { MainConfigurateKeys } from "../keys";
 import { Repositorys, UpdateEnv } from "../util";
 type MakeFloatLayeredPropSetterKeyType =
   | "setAllpass"
@@ -285,7 +286,7 @@ export default function (
   const makeFloatLayeredPropSetter: (
     k: MakeFloatLayeredPropSetterKeyType
   ) => SetFunction = (k) => makeFloatLayeredPropSetterProcess(k, env);
-  const m: Record<string, SetFunction> = {
+  const m: Record<MainConfigurateKeys, SetFunction> = {
     "speech.readName": setSpeechReadName,
     readName: setSpeechReadName,
     "speech.maxReadLimit": setSpeechMaxReadLimit,

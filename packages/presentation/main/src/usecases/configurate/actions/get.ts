@@ -9,6 +9,7 @@ import {
   GetResponseType,
   TargetType,
 } from "protocol_configurate-usecase";
+import { MainConfigurateKeys } from "../keys";
 import { Repositorys } from "../util";
 type RepresentsTargetType = {
   guild?: string | undefined;
@@ -113,7 +114,7 @@ export default function (
   const getRandomizer = build(makePropGetterMUG, "randomizer");
   const makeLayeredPropGetter = (k: keyof LayeredVoiceConfig) =>
     build(makePropGetterMU, k);
-  const m: Record<string, GetFunction> = {
+  const m: Record<MainConfigurateKeys, GetFunction> = {
     "speech.readName": getSpeechReadName,
     readName: getSpeechReadName,
     "speech.maxReadLimit": getSpeechMaxReadLimit,
