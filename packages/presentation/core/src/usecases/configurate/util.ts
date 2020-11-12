@@ -38,9 +38,7 @@ export function wrapVisualArr<T extends UpdateResult<unknown[]>>(): (
       : e.length === 0
       ? "[]"
       : "[" +
-        e
-          .map((k) => (k == null ? "-" : `\`\`${Object.toString.call(k)}\`\``))
-          .join(",") +
+        e.map((k) => (k == null ? "-" : `\`\`${String(k)}\`\``)).join(",") +
         "]"
   );
 }
@@ -54,7 +52,7 @@ export function wrapVisualSet<T extends UpdateResult<Set<unknown>>>(): (
       ? "[]"
       : "[" +
         [...e]
-          .map((k) => (k == null ? "-" : `\`\`${Object.toString.call(k)}\`\``))
+          .map((k) => (k == null ? "-" : `\`\`${String(k)}\`\``))
           .join(",") +
         "]"
   );

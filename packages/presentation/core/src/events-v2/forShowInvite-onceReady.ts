@@ -5,7 +5,11 @@ export default function (client: Client, inviteLink: string): void {
     BotLogger.info(
       {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        loggedInAs: client.user!,
+        loggedInAs: {
+          userId: client.user?.id,
+          userName: client.user?.username,
+          userDiscriminator: client.user?.discriminator,
+        },
         inviteLink,
       },
       "ready!"

@@ -69,13 +69,13 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
         upsert: true,
       }
     );
-    const rr = r.value?.prefix;
     if (!r.ok) {
       throw new RepositoryError(
         "mongo repository setPrefix failed.",
         r.lastErrorObject
       );
     }
+    const rr = r.value?.prefix;
     return {
       type: rr === prefix ? "same" : "ok",
       before: rr,

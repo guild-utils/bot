@@ -28,7 +28,7 @@ export interface Command {
 export interface DeepEntry {
   type: "deep";
   visual: "command" | "category" | "documentation";
-  more: (key?: string) => HelpEntry;
+  more: (key?: string) => HelpEntry | undefined;
   summary: (lang: string) => (ctx: HelpCommandCotext) => string;
 }
 export interface Documentation {

@@ -101,3 +101,6 @@ export {
   subCommandProcessor,
   SubCommandProcessor,
 } from "./util/command-processor";
+export { KeysDeepEntry, keyInfoMap, KeyInfoRecord } from "./documents/keys";
+export { coreKeys } from "./documents/keys/core";
+export { initProcessErrorHandler } from "./bootstrap/handleError";
