@@ -7,7 +7,6 @@ data:
   GUJ_MIXER_RPC_SERVER : guj-mixer:50051
   GUJ_MIXER_KEYS : /keys
   NODE_ENV : production
-  GUJ_USE_GOOGLE_STACKDRIVER : "true"
   GOOGLE_APPLICATION_CREDENTIALS: /guj-bots-sa-cred/gcp-credentials.json
 ---
 apiVersion: apps/v1
