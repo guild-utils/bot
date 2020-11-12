@@ -26,7 +26,14 @@ export default function (
     },
     disabledCommands: async (t, exec) => {
       const guild = await check(t, exec);
-      return { guild: await basicBotConfig.getDisabledCommands(guild) };
+      return {
+        guild:
+          "[" +
+          [...(await basicBotConfig.getDisabledCommands(guild))]
+            .map((e) => "``" + e + "``")
+            .join(",") +
+          "]",
+      };
     },
   };
   return getWithRecord(mapping);
