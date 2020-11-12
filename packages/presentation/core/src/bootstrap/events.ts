@@ -12,6 +12,8 @@ import forAutoDisconnect_voiceStateUpdate from "../events-v2/forAutoDisconnect-v
 import forMonitor_message from "../events-v2/forMonitor-message";
 import forMonitor_messageUpdate from "../events-v2/forMonitor-messageUpdate";
 import forMonitor_onceReady from "../events-v2/forMonitor-onceReady";
+import forErrorHandling_error from "../events-v2/forErrorHandling-error";
+
 export type InitCoreEventsEnv = {
   basicBotConfig: BasicBotConfigRepository;
   instanceState: InstanceState;
@@ -30,4 +32,5 @@ export function initCoreEvents(client: Client, env: InitCoreEventsEnv): void {
   forMonitor_message(client, env.monitorRunner);
   forMonitor_messageUpdate(client, env.monitorRunner);
   forMonitor_onceReady(client, env.monitorRunner);
+  forErrorHandling_error(client);
 }

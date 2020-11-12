@@ -196,6 +196,9 @@ export default class {
       this.waitQueue.set(cid, queue2);
       this.playNext(conn).catch((err) => Logger.error(err));
     });
+    dispatcher.on("error", (err) => {
+      Logger.error(err, "dispatcher");
+    });
   }
   // eslint-disable-next-line @typescript-eslint/require-await
   async unregister(conn: VoiceConnection | undefined | null): Promise<void> {

@@ -17,6 +17,7 @@ import {
   initCoreEvents,
   createInviteLink,
   MonitorRunnerWithLog,
+  initProcessErrorHandler,
 } from "presentation_core";
 import { config, token } from "./config";
 import { Client, Permissions } from "discord.js";
@@ -29,6 +30,7 @@ import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
 import { CommandSchema } from "@guild-utils/command-schema";
 
+initProcessErrorHandler();
 const permissions = new Permissions()
   .add(Permissions.FLAGS.SEND_MESSAGES)
   .add(Permissions.FLAGS.VIEW_CHANNEL)
