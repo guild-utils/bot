@@ -47,7 +47,8 @@ import {
 } from "presentation_core";
 import { Gui } from "./gui/common";
 import { CommandSchema } from "@guild-utils/command-schema";
-import { BotLogger } from "presentation_core";
+import { BotLogger, initProcessErrorHandler } from "presentation_core";
+initProcessErrorHandler();
 const permissions = new Permissions()
   .add(Permissions.FLAGS.SEND_MESSAGES)
   .add(Permissions.FLAGS.VIEW_CHANNEL)
