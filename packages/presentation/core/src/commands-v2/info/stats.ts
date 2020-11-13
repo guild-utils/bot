@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import { CommandBase } from "@guild-utils/command-base";
 import { getLangType } from "../../util/get-lang";
+import { BUILD_DATE } from "../../bootstrap/env";
 
 export class CommandStats implements CommandBase {
   constructor(
@@ -19,6 +20,7 @@ export class CommandStats implements CommandBase {
         guilds: number;
         channels: number;
         color: ColorResolvable;
+        buildDate: string;
       },
       b: { user: User; member?: GuildMember | null }
     ) => MessageEmbed,
@@ -50,6 +52,7 @@ export class CommandStats implements CommandBase {
           channels: channels || client.channels.cache.size,
           guilds: guilds || client.guilds.cache.size,
           color: this.color,
+          buildDate: BUILD_DATE,
         },
         {
           user: message.author,
