@@ -17,6 +17,7 @@ import {
   HelpEntry,
 } from "../../commands-v2/info/help";
 import { buildCategoryDescription, createCategoryFields } from "../util";
+import { BUILD_DATE, KUBE_NODE_NAME, KUBE_POD_NAME } from "../../bootstrap/env";
 
 export function statsEmbed(
   {
@@ -25,14 +26,12 @@ export function statsEmbed(
     guilds,
     channels,
     color,
-    buildDate,
   }: {
     memory: number;
     uptimeInMs: number;
     guilds: number;
     channels: number;
     color: ColorResolvable;
-    buildDate: string;
   },
   { user, member }: { user: User; member?: GuildMember | null }
 ): MessageEmbed {
@@ -48,7 +47,10 @@ export function statsEmbed(
   embed.addField("チャンネル数", String(channels) + "チャンネル", true);
   embed.addField("Discord.js", discordVersion, true);
   embed.addField("Node.js", process.version, true);
-  embed.addField("ビルド日時", buildDate);
+  embed.addField("ビルド日時", BUILD_DATE);
+  embed.addField("Pod", KUBE_POD_NAME);
+  embed.addField("Node", KUBE_NODE_NAME);
+
   return embed;
 }
 export const rtlInvite: CommandInviteTexts = {
