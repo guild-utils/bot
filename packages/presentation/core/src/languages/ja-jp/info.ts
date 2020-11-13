@@ -25,12 +25,14 @@ export function statsEmbed(
     guilds,
     channels,
     color,
+    buildDate,
   }: {
     memory: number;
     uptimeInMs: number;
     guilds: number;
     channels: number;
     color: ColorResolvable;
+    buildDate: string;
   },
   { user, member }: { user: User; member?: GuildMember | null }
 ): MessageEmbed {
@@ -46,6 +48,7 @@ export function statsEmbed(
   embed.addField("チャンネル数", String(channels) + "チャンネル", true);
   embed.addField("Discord.js", discordVersion, true);
   embed.addField("Node.js", process.version, true);
+  embed.addField("ビルド日時", buildDate);
   return embed;
 }
 export const rtlInvite: CommandInviteTexts = {
