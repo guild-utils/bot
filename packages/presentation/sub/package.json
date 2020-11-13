@@ -24,7 +24,8 @@
     "sound-mixing-proto": "^1.0.0",
     "tsyringe": "^4.1.0",
     "usecase_text2speech": "^1.0.0",
-    "bunyan": "^1.8.14"
+    "bunyan": "^1.8.14",
+    "erlpack":"^0.1.3"
   },
   "devDependencies": {
     "@types/kuromoji": "^0.1.0",
