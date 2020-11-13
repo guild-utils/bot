@@ -9,7 +9,6 @@ import {
   GetResponseType,
   TargetType,
 } from "protocol_configurate-usecase";
-import { MainConfigurateKeys } from "../keys";
 import { Repositorys } from "../util";
 type RepresentsTargetType = {
   guild?: string | undefined;
@@ -92,6 +91,36 @@ function representsTarget(
   }
   return t;
 }
+function objectToKVEntryString(
+  obj: Record<string, string | number | undefined | boolean> | undefined
+): string | undefined {
+  if (obj == null) {
+    return;
+  }
+  return Object.entries(obj)
+    .map(([k, v]) => {
+      return v == null ? `**${k}** : -` : `**${k}** : ${String(v)}`;
+    })
+    .join("\n");
+}
+function speech(repo: Repositorys, unused: string) {
+  return async (t: RepresentsTargetType): Promise<GetResponseType> => {
+    const guild = t.member
+      ? objectToKVEntryString(await repo.memberVoiceConfig.get(t.member))
+      : undefined;
+    const user = t.user
+      ? objectToKVEntryString(await repo.userVoiceConfig.get(t.user))
+      : undefined;
+    const member = t.guild
+      ? objectToKVEntryString(await repo.guildVoiceConfig.get(t.guild))
+      : undefined;
+    return {
+      guild,
+      member,
+      user,
+    };
+  };
+}
 type PropGetter<K> = (
   repo: Repositorys,
   k: K
@@ -114,7 +143,7 @@ export default function (
   const getRandomizer = build(makePropGetterMUG, "randomizer");
   const makeLayeredPropGetter = (k: keyof LayeredVoiceConfig) =>
     build(makePropGetterMU, k);
-  const m: Record<MainConfigurateKeys, GetFunction> = {
+  const m: Record<string, GetFunction> = {
     "speech.readName": getSpeechReadName,
     readName: getSpeechReadName,
     "speech.maxReadLimit": getSpeechMaxReadLimit,
@@ -137,6 +166,7 @@ export default function (
     "speech.volume": makeLayeredPropGetter("volume"),
     kind: makeLayeredPropGetter("kind"),
     "speech.kind": makeLayeredPropGetter("kind"),
+    speech: build(speech, ""),
   };
   return getWithRecord(m);
 }
