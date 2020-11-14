@@ -18,6 +18,7 @@ import {
   createInviteLink,
   MonitorRunnerWithLog,
   initProcessErrorHandler,
+  initSystemMetrics,
 } from "presentation_core";
 import { config, token } from "./config";
 import { Client, Permissions } from "discord.js";
@@ -31,6 +32,8 @@ import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
 import { CommandSchema } from "@guild-utils/command-schema";
 
 initProcessErrorHandler();
+initSystemMetrics();
+
 const permissions = new Permissions()
   .add(Permissions.FLAGS.SEND_MESSAGES)
   .add(Permissions.FLAGS.VIEW_CHANNEL)

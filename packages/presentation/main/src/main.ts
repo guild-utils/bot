@@ -44,11 +44,13 @@ import {
   createInviteLink,
   getLang as getLangBase,
   createConfigPermissionChecker,
+  initSystemMetrics,
 } from "presentation_core";
 import { Gui } from "./gui/common";
 import { CommandSchema } from "@guild-utils/command-schema";
 import { BotLogger, initProcessErrorHandler } from "presentation_core";
 initProcessErrorHandler();
+initSystemMetrics();
 const permissions = new Permissions()
   .add(Permissions.FLAGS.SEND_MESSAGES)
   .add(Permissions.FLAGS.VIEW_CHANNEL)
