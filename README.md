@@ -1,5 +1,5 @@
 # Guild Utils J [![Maintainability](https://api.codeclimate.com/v1/badges/7efee648848d0961d200/maintainability)](https://codeclimate.com/github/guild-utils/bot/maintainability)
-klasaで作られています。
+ごく普通の読み上げbotです。
 
 ## How to run
 kubernetesを使います。
@@ -30,8 +30,8 @@ kubectl apply -f deploy-bots.yaml
 - 読み上げ設定ガチャ。
 - 読み上げ設定プリセット。(コマンド一つで声を変えれるように)
 - DMでの音声生成。
-- Embed Viewによる表示。
-- CI
+- Embed Viewによる表示。☑
+- CI☑
 - 読み上げ時間の制限
 ## v2
 - OpenJTalkを改造してjumanppを用いて喋るようにする。

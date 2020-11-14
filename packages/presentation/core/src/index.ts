@@ -104,3 +104,4 @@ export {
 export { KeysDeepEntry, keyInfoMap, KeyInfoRecord } from "./documents/keys";
 export { coreKeys } from "./documents/keys/core";
 export { initProcessErrorHandler } from "./bootstrap/handleError";
+export { initSystemMetrics } from "./bootstrap/systemMetrics";

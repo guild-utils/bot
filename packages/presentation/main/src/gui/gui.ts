@@ -205,9 +205,7 @@ export function initializeGui<
     next();
   });
   gui.use(MessageCheck, (ev, { next }) => {
-    ev.checking = ev.checking.sort(
-      (a, b) => a[0].createdTimestamp - b[0].createdTimestamp
-    );
+    ev.checking.sort((a, b) => a[0].createdTimestamp - b[0].createdTimestamp);
     next();
   });
   gui.use(MessageCheck, (ev, { emit }) => {

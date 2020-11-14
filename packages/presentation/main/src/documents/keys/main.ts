@@ -183,6 +183,36 @@ function maxReadLimit(
     aliases: [`speech.${k}`],
   };
 }
+function speech(
+  color: ColorResolvable,
+  defaultPrefix: string
+): KeyInfoRecord[string] {
+  const k = "speech";
+  return {
+    embed: commandTextSupplier({
+      ja_JP: (ctx: HelpCommandCotext) => {
+        return createEmbedWithMetaData({
+          color,
+          ...ctx.executor,
+        })
+          .setTitle(k)
+          .setDescription(`読み上げ設定を一覧として確認するためのキーです。`)
+          .addField(
+            "get",
+            `読み上げ設定の確認を行います。\n` +
+              `${ctx.prefix ?? defaultPrefix}get ${k}`
+          );
+      },
+    }),
+    summary: commandTextSupplier({
+      ja_JP: (ctx: HelpCommandCotext) => {
+        return `読み上げ設定を一覧として確認するためのキーです。\n${
+          ctx.prefix ?? defaultPrefix
+        }help keys ${k}で詳細を確認できます。`;
+      },
+    }),
+  };
+}
 const isLayered = "この設定はレイヤー構造となっています。";
 export function mainKeys(
   color: ColorResolvable,
@@ -213,7 +243,7 @@ export function mainKeys(
     readName: entry(
       "readName",
       "にゃー",
-      "ニックネームとメンションをどのように読み上げるかの設定です。",
+      "ユーザー設定とメンバー設定ではニックネームとメンションをどのように読み上げるかの設定です。\nサーバー設定では発言者の名前を読み上げるかの設定です。",
       "ニックネームとメンションをどのように読み上げるかの設定です。\n" +
         isLayered
     )(color, defaultPrefix),
@@ -246,5 +276,6 @@ export function mainKeys(
     randomizer: randomizer(color, defaultPrefix),
     maxVolume: maxVolume(color, defaultPrefix),
     maxReadLimit: maxReadLimit(color, defaultPrefix),
+    speech: speech(color, defaultPrefix),
   };
 }
