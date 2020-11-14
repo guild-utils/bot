@@ -28,6 +28,7 @@ export abstract class MonitorRunner {
     if (!self) {
       return;
     }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.monitors.forEach((m) => this.mayRunMonitor(newMsg, m, self));
   }
   create(newMsg: Message): void {
@@ -35,6 +36,7 @@ export abstract class MonitorRunner {
     if (!self) {
       return;
     }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.monitors.forEach((m) => this.mayRunMonitor(newMsg, m, self));
   }
   init(client: Client): void {
@@ -46,7 +48,11 @@ export abstract class MonitorRunner {
       }
     });
   }
-  private mayRunMonitor(msg: Message, monitor: Monitor, self: ClientUser) {
+  private async mayRunMonitor(
+    msg: Message,
+    monitor: Monitor,
+    self: ClientUser
+  ): Promise<void> {
     const o = monitor.options;
     if (o.ignoreBots && msg.author.bot) return;
     if (o.ignoreSelf && msg.author === self) return;
@@ -54,7 +60,7 @@ export abstract class MonitorRunner {
     if (o.ignoreWebhooks && msg.webhookID != null) return;
     if (o.ignoreEdits && (msg.editedTimestamp || msg.editedAt)) return;
     try {
-      monitor.run(msg).catch((err) => this.onError(err));
+      await monitor.run(msg);
     } catch (e) {
       this.onError(e);
     }
