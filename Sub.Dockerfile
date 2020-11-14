@@ -2,6 +2,8 @@ FROM node:14-alpine AS runtime-sub
 
 WORKDIR /usr/app
 RUN apk add --no-cache --virtual .ojt git
+RUN apk add --no-cache --virtual .gyp python make g++
+
 RUN yarn global add pm2 lerna
 
 ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
@@ -67,7 +69,7 @@ COPY packages/presentation/core/package.json ./packages/presentation/core/packag
 COPY packages/presentation/sub/package.json ./packages/presentation/sub/package.json
 COPY packages/languages/command-core/package.json ./packages/languages/command-core/package.json
 
-RUN lerna bootstrap && apk del .ojt
+RUN lerna bootstrap && apk del .ojt  && apk del .gyp
 
 COPY .eslintrc.json ./
 COPY packages/util/sound-mixing-proto ./packages/util/sound-mixing-proto

@@ -22,9 +22,9 @@ function addEntryIfExists(
   res: GetResponseType
 ): void {
   const map = {
-    guild: "server",
-    user: "user",
-    member: "member",
+    guild: "🇸erver",
+    user: "🇺ser",
+    member: "🇲ember",
   };
   if (!(ek in res)) {
     return;
