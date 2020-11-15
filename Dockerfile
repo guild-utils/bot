@@ -3,8 +3,8 @@ FROM node:14-alpine AS runtime
 
 WORKDIR /usr/app
 RUN apk add --no-cache --virtual .ojt git
+RUN apk add --no-cache --virtual .gyp python make g++
 RUN yarn global add pm2 lerna
-
 
 ENV HTS_VOICE_NORMAL /usr/app/packages/util/open-jtalk/htsvoice/hts_voice_nitech_jp_atr503_m001-1.05/nitech_jp_atr503_m001.htsvoice
 ENV HTS_VOICE_ANGRY /usr/app/packages/util/open-jtalk/htsvoice/htsvoice-tohoku-f01-master/tohoku-f01-angry.htsvoice
@@ -41,6 +41,7 @@ COPY packages/domains/game-event/package.json ./packages/domains/game-event/pack
 COPY packages/domains/guild-configs/package.json ./packages/domains/guild-configs/package.json
 COPY packages/domains/guild-tts-target-channels/package.json ./packages/domains/guild-tts-target-channels/package.json
 COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
+COPY packages/domains/repository-error/package.json ./packages/domains/repository-error/package.json
 COPY packages/domains/voice-configs/package.json ./packages/domains/voice-configs/package.json
 COPY packages/domains/voice-configs-write/package.json ./packages/domains/voice-configs-write/package.json
 COPY packages/domains/meta/package.json ./packages/domains/meta/package.json
@@ -68,14 +69,15 @@ COPY packages/repository/mongodb-dictionary/package.json ./packages/repository/m
 COPY packages/repository/mongodb-guild-configs/package.json ./packages/repository/mongodb-guild-configs/package.json
 COPY packages/repository/mongodb-guild-tts-target-channels/package.json ./packages/repository/mongodb-guild-tts-target-channels/package.json
 COPY packages/repository/mongodb-voice-configs/package.json ./packages/repository/mongodb-voice-configs/package.json
-COPY packages/protocol/command-data-common/package.json ./packages/protocol/command-data-common/package.json
 COPY packages/protocol/shared-config/package.json ./packages/protocol/shared-config/package.json
 COPY packages/protocol/configs-klasa/package.json ./packages/protocol/configs-klasa/package.json
 COPY packages/protocol/protos/package.json ./packages/protocol/protos/package.json
 COPY packages/protocol/rpc-server/package.json ./packages/protocol/rpc-server/package.json
 COPY packages/protocol/configurate-usecase/package.json ./packages/protocol/configurate-usecase/package.json
 COPY packages/protocol/command-schema-core/package.json ./packages/protocol/command-schema-core/package.json
+COPY packages/protocol/command-schema-core-bootstrap/package.json ./packages/protocol/command-schema-core-bootstrap/package.json
 COPY packages/protocol/command-schema-main/package.json ./packages/protocol/command-schema-main/package.json
+COPY packages/protocol/command-schema-main-bootstrap/package.json ./packages/protocol/command-schema-main-bootstrap/package.json
 COPY packages/protocol/util-djs/package.json ./packages/protocol/util-djs/package.json
 COPY packages/presentation/guild-config-adapter/package.json ./packages/presentation/guild-config-adapter/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
@@ -83,7 +85,7 @@ COPY packages/presentation/main/package.json ./packages/presentation/main/packag
 COPY packages/languages/command-core/package.json ./packages/languages/command-core/package.json
 COPY packages/languages/command-main/package.json ./packages/languages/command-main/package.json
 
-RUN  lerna bootstrap && apk del .ojt
+RUN  lerna bootstrap && apk del .ojt && apk del .gyp
 
 COPY .eslintrc.json ./
 COPY packages/domains/command-data ./packages/domains/command-data
@@ -91,6 +93,7 @@ COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/guild-configs ./packages/domains/guild-configs
 COPY packages/domains/guild-tts-target-channels ./packages/domains/guild-tts-target-channels
 COPY packages/domains/text2speech ./packages/domains/text2speech
+COPY packages/domains/repository-error ./packages/domains/repository-error
 COPY packages/domains/voice-configs ./packages/domains/voice-configs
 COPY packages/domains/voice-configs-write ./packages/domains/voice-configs-write
 COPY packages/domains/meta ./packages/domains/meta
@@ -118,14 +121,15 @@ COPY packages/repository/mongodb-dictionary ./packages/repository/mongodb-dictio
 COPY packages/repository/mongodb-guild-configs ./packages/repository/mongodb-guild-configs
 COPY packages/repository/mongodb-guild-tts-target-channels ./packages/repository/mongodb-guild-tts-target-channels
 COPY packages/repository/mongodb-voice-configs ./packages/repository/mongodb-voice-configs
-COPY packages/protocol/command-data-common ./packages/protocol/command-data-common
 COPY packages/protocol/shared-config ./packages/protocol/shared-config
 COPY packages/protocol/configs-klasa ./packages/protocol/configs-klasa
 COPY packages/protocol/protos ./packages/protocol/protos
 COPY packages/protocol/rpc-server ./packages/protocol/rpc-server
 COPY packages/protocol/configurate-usecase ./packages/protocol/configurate-usecase
 COPY packages/protocol/command-schema-core ./packages/protocol/command-schema-core
+COPY packages/protocol/command-schema-core-bootstrap ./packages/protocol/command-schema-core-bootstrap
 COPY packages/protocol/command-schema-main ./packages/protocol/command-schema-main
+COPY packages/protocol/command-schema-main-bootstrap ./packages/protocol/command-schema-main-bootstrap
 COPY packages/protocol/util-djs ./packages/protocol/util-djs
 COPY packages/presentation/guild-config-adapter ./packages/presentation/guild-config-adapter
 COPY packages/presentation/core ./packages/presentation/core

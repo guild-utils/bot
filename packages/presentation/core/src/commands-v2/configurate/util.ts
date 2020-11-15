@@ -15,7 +15,8 @@ import {
   TargetType,
 } from "protocol_configurate-usecase";
 import { Executor } from "protocol_util-djs";
-
+import { CommandLogger } from "../../loggers";
+const Logger = CommandLogger.child({ command: "configure" });
 export type ConfigCommandCommonOption = {
   member: string | boolean;
   user: boolean;
@@ -192,7 +193,7 @@ export async function updateConfig(
     );
     r.filter(
       (e): e is PromiseRejectedResult => e.status === "rejected"
-    ).forEach((e) => console.log(e.reason));
+    ).forEach((e) => Logger.error(e.reason));
     return;
   } catch (e) {
     if (await handleError(e, message.channel, responses, target, exec)) {

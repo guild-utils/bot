@@ -20,6 +20,7 @@ export type MongoCollectionType = {
   } | null;
 };
 import $ from "mongo-dot-notation";
+import { RepositoryError } from "domain_repository-error";
 class MongoLayeredVoiceConfigRepositoryInternal
   implements LayeredVoiceConfigRepository<string> {
   constructor(private readonly collection: Collection<MongoCollectionType>) {}
@@ -136,10 +137,7 @@ class MongoLayeredVoiceConfigRepositoryInternal
     const rvr = r.value?.speech;
     const rv = (rvr ? rvr[k] : undefined) as T | undefined;
     if (!r.ok) {
-      console.log(r.lastErrorObject);
-      return {
-        type: "error",
-      };
+      throw new RepositoryError(`set${k} is failed`, r.lastErrorObject);
     }
     return {
       type: rv === v ? "same" : "ok",
@@ -226,10 +224,7 @@ class MongoLayeredVoiceConfigRepositoryInternal
       };
     }
     if (!r.result.ok) {
-      console.log(r);
-      return {
-        type: "error",
-      };
+      throw new RepositoryError(`setIfNotChanged is failed`, r);
     }
     return {
       type: "ok",
@@ -257,7 +252,6 @@ MongoMemberLayeredVoiceConfigRepository.prototype = Object.fromEntries(
   Object.getOwnPropertyNames(
     MongoLayeredVoiceConfigRepositoryInternal.prototype
   ).map((name) => {
-    console.log("mongo:", name);
     return [
       name,
       function (

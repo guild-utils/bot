@@ -1,5 +1,6 @@
 import * as Domain from "domain_voice-configs";
 import { Collection } from "mongodb";
+import { RepositoryError } from "../../../domains/repository-error/dist";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function recurseObject<R>(obj: any): R {
   if (obj === null) {
@@ -153,7 +154,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
     return r.after;
   }
   async removeAll(guild: string): Promise<void> {
-    await this.guilds.updateOne(
+    const r = await this.guilds.updateOne(
       {
         id: guild,
       },
@@ -163,6 +164,9 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
         },
       }
     );
+    if (!r.result.ok) {
+      throw new RepositoryError("removeAll Failed", undefined);
+    }
   }
 
   private async removeBase(
@@ -206,6 +210,9 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
         upsert: true,
       }
     );
+    if (!r.ok) {
+      throw new RepositoryError("removeBase Failed", r.lastErrorObject);
+    }
     const entry = r.value?.speech?.dictionary?.entry;
     if (!entry) {
       return undefined;
@@ -238,6 +245,9 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
         upsert: true,
       }
     );
+    if (!r.ok) {
+      throw new RepositoryError("removeMain Failed", r.lastErrorObject);
+    }
     const obj = r.value?.speech?.dictionary?.main;
     if (!obj) {
       return undefined;
@@ -291,7 +301,9 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
         upsert: true,
       }
     );
-    console.log(r.value?.speech?.dictionary);
+    if (!r.ok) {
+      throw new RepositoryError("updateBase Failed", r.lastErrorObject);
+    }
     const from = r.value?.speech?.dictionary?.entry;
     if (!from) {
       return undefined;
@@ -363,7 +375,7 @@ export class MongoDictionaryRepository implements Domain.DictionaryRepository {
     if (r.result.ok) {
       return recurseObject(entry);
     }
-    throw new Error("appendBase failed");
+    throw new RepositoryError("appendBase failed", undefined);
   }
   async appendAfter(
     guild: string,

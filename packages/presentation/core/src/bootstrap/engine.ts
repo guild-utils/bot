@@ -3,6 +3,7 @@ import { DependencyContainer } from "tsyringe";
 import * as kuromoji from "kuromoji";
 import Engine from "../text2speech/engine";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
+import { BotLogger } from "../loggers";
 export function initEngineAndKuromoji(
   container: DependencyContainer,
   mixer: IMixerClient | undefined
@@ -11,7 +12,9 @@ export function initEngineAndKuromoji(
     kuromoji
       .builder({ dicPath: process.env["KUROMOJI_DIC_PATH"] })
       .build((err, tokenizer) => {
-        console.log(err);
+        if (err) {
+          BotLogger.error(err, "bootstrapping kurmoji.js");
+        }
         container.register("kuromoji", { useValue: tokenizer });
         const engine = new Engine(
           process.env["OPEN_JTALK_BIN"]!,

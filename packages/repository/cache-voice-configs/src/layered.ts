@@ -163,7 +163,6 @@ CacheMemberLayeredVoiceConfigRepository.prototype = Object.fromEntries(
   Object.getOwnPropertyNames(
     CacheLayeredVoiceConfigRepositoryInternal.prototype
   ).map((name) => {
-    console.log("cache:", name);
     return [
       name,
       function (

@@ -16,6 +16,12 @@ import {
   InitConfCommandArg,
   CommandResolver,
   commandTextSupplier,
+  CommandLogger,
+  BotLogger,
+  KeysDeepEntry,
+  coreKeys,
+  keyInfoMap,
+  HelpEntry,
 } from "presentation_core";
 import {
   categoryWords,
@@ -41,6 +47,9 @@ import {
   defineMainCommandSchema,
   MainCommands,
 } from "protocol_command-schema-main-bootstrap";
+import { createEmbedWithMetaData } from "protocol_util-djs";
+import { mainKeys } from "../documents/keys/main";
+const Logger = CommandLogger.child({ type: "resolver" });
 export function initCommands(
   coreCommandOptions: CoreCommandOptions,
   mainCommandOptions: MainCommandOptions,
@@ -77,7 +86,7 @@ function initCommandResolver(
   >
 ): CommandResolver {
   const resolverFunc = (k: string) => {
-    console.log("resolver:", k);
+    Logger.info(k);
     const resolvers = [collection];
     for (const resolver of resolvers) {
       const cmdBase = resolver.get(k);
@@ -139,6 +148,22 @@ export function initCommandSystem(
     commandsToMapWithNameAndAlias(infoValue),
     ...commandsToMapWithName(infoValue)
   );
+  const coreKeysRes = keyInfoMap({
+    ...coreKeys(ctx.color, ctx.defaultPrefix),
+    ...mainKeys(ctx.color, ctx.defaultPrefix),
+  });
+  const keysDeepEntry = new KeysDeepEntry(
+    coreKeysRes[0],
+    coreKeysRes[1],
+    () => (cctx) =>
+      createEmbedWithMetaData({
+        color: ctx.color,
+        ...cctx.executor,
+      })
+        .setTitle("keys")
+        .setDescription("設定コマンドで用いるキーについてのドキュメントです。"),
+    ctx.defaultPrefix
+  );
   const configurateValueCore = configureCategoryValue(coreSchema, ctx);
 
   const configurateValue = [
@@ -147,11 +172,16 @@ export function initCommandSystem(
       .filter((e): e is CommandSchema => e != null)
       .map((e) => commandFromSchema(e, "Configurate", ctx)),
   ];
-  const confCat = configurateCategory(
-    ctx.color,
+  const configurateCategoryArgs: [
+    Map<string, HelpEntry>,
+    Map<string, HelpEntry>,
+    Map<string, HelpEntry>
+  ] = [
     commandsToMapWithNameAndAlias(configurateValue),
-    ...commandsToMapWithName(configurateValue)
-  );
+    ...commandsToMapWithName(configurateValue),
+  ];
+  configurateCategoryArgs.forEach((e) => e.set("keys", keysDeepEntry));
+  const confCat = configurateCategory(ctx.color, ...configurateCategoryArgs);
   const voiceValue = voiceCategoryValue(coreSchema, ctx);
   const voiceCat = voiceCategory(
     ctx.color,
@@ -178,6 +208,7 @@ export function initCommandSystem(
     ...voiceValue,
     ...wordsValue,
   ]);
+  helpReolverCommands.set("keys", keysDeepEntry);
   const flatten = new Map([...helpReolverCommands, ...rootValue]);
   const command = initCommands(
     Object.assign({}, partialCoreCommandOptions, {
@@ -194,7 +225,7 @@ export function initCommandSystem(
       ja_JP: RateLimitLangJaJP(ctx.color),
     })
   );
-  console.log(`Command Collection Size: ${collection.size}`);
+  BotLogger.info(collection.size, `Command Collection Size`);
   const parser = initCommandParser(container, Object.values(schema));
   const resolver = initCommandResolver(container, collection);
   return { parser, resolver };

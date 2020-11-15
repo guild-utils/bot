@@ -16,6 +16,9 @@ import {
   createCoreMonitor,
   initCoreEvents,
   createInviteLink,
+  MonitorRunnerWithLog,
+  initProcessErrorHandler,
+  initSystemMetrics,
 } from "presentation_core";
 import { config, token } from "./config";
 import { Client, Permissions } from "discord.js";
@@ -26,8 +29,10 @@ import { MongoTextToSpeechTargetChannelDataStore } from "repository_mongo-guild-
 import { defineSchema, initCommandSystem } from "./bootstrap/commands";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
-import { MonitorRunner } from "monitor-discord.js";
 import { CommandSchema } from "@guild-utils/command-schema";
+
+initProcessErrorHandler();
+initSystemMetrics();
 
 const permissions = new Permissions()
   .add(Permissions.FLAGS.SEND_MESSAGES)
@@ -132,7 +137,7 @@ async function main() {
     engine: ttsEngine,
     instanceState,
     inviteLink: createInviteLink(application, permissions),
-    monitorRunner: new MonitorRunner(monitors),
+    monitorRunner: new MonitorRunnerWithLog(monitors),
   });
   await discordClient.login(token);
 }

@@ -24,11 +24,17 @@ import {
   CommandResolver,
   initConfCommand,
   commandFromSchema,
+  BotLogger,
+  coreKeys,
+  keyInfoMap,
+  KeysDeepEntry,
+  HelpEntry,
 } from "presentation_core";
 import {
   defineConfCommandSchema,
   defineCoreCommandSchema,
 } from "protocol_command-schema-core-bootstrap";
+import { createEmbedWithMetaData } from "protocol_util-djs";
 import { DependencyContainer } from "tsyringe";
 export function defineSchema(
   client: () => Client
@@ -110,15 +116,33 @@ export function initCommandSystem(
     commandsToMapWithNameAndAlias(infoValue),
     ...commandsToMapWithName(infoValue)
   );
+  const coreKeysRes = keyInfoMap(coreKeys(ctx.color, ctx.defaultPrefix));
+  const keysDeepEntry = new KeysDeepEntry(
+    coreKeysRes[0],
+    coreKeysRes[1],
+    () => (cctx) =>
+      createEmbedWithMetaData({
+        color: ctx.color,
+        ...cctx.executor,
+      })
+        .setTitle("keys")
+        .setDescription("設定コマンドで用いるキーについてのドキュメントです。"),
+    ctx.defaultPrefix
+  );
   const configurateValue = [
     ...configureCategoryValue(injection.schema, ctx),
     commandFromSchema(injection.schema.conf, "Configurate", ctx),
   ];
-  const confCat = configurateCategory(
-    ctx.color,
+  const configurateCategoryArgs: [
+    Map<string, HelpEntry>,
+    Map<string, HelpEntry>,
+    Map<string, HelpEntry>
+  ] = [
     commandsToMapWithNameAndAlias(configurateValue),
-    ...commandsToMapWithName(configurateValue)
-  );
+    ...commandsToMapWithName(configurateValue),
+  ];
+  configurateCategoryArgs.forEach((e) => e.set("keys", keysDeepEntry));
+  const confCat = configurateCategory(ctx.color, ...configurateCategoryArgs);
   const voiceValue = voiceCategoryValue(injection.schema, ctx);
   const voiceCat = voiceCategory(
     ctx.color,
@@ -135,6 +159,7 @@ export function initCommandSystem(
     ...configurateValue,
     ...voiceValue,
   ]);
+  helpReolverCommands.set("keys", keysDeepEntry);
   const flatten = new Map([...helpReolverCommands, ...rootValue]);
   const command = initCommand(
     Object.assign({}, injection, {
@@ -149,7 +174,7 @@ export function initCommandSystem(
       ja_JP: RateLimitLangJaJP(ctx.color),
     })
   );
-  console.log(`Command Collection Size: ${collection.size}`);
+  BotLogger.info(collection.size, `Command Collection Size`);
   const parser = initCommandParser(container, Object.values(injection.schema));
   const resolver = initCommandResolver(container, collection);
   return { parser, resolver };

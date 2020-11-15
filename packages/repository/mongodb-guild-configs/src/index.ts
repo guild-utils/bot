@@ -4,6 +4,7 @@ import {
   languages,
   UpdateResult,
 } from "domain_guild-configs";
+import { RepositoryError } from "domain_repository-error";
 import { Collection } from "mongodb";
 
 export type RepositoryCollectionType = {
@@ -68,11 +69,13 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
         upsert: true,
       }
     );
-    const rr = r.value?.prefix;
     if (!r.ok) {
-      console.log(r.lastErrorObject);
-      throw new Error("mongo repository setPrefix failed.");
+      throw new RepositoryError(
+        "mongo repository setPrefix failed.",
+        r.lastErrorObject
+      );
     }
+    const rr = r.value?.prefix;
     return {
       type: rr === prefix ? "same" : "ok",
       before: rr,
@@ -103,13 +106,18 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
         upsert: true,
       }
     );
-    const rr = r.value?.language;
-    if (!rr) {
-      console.log(r.lastErrorObject);
-      throw new Error("mongo repository setLanguage failed.");
+    if (!r.ok) {
+      throw new RepositoryError(
+        "mongo repository setLanguage failed.",
+        r.lastErrorObject
+      );
     }
-    const before = Object.keys(languages).includes(rr)
-      ? (rr as keyof typeof languages)
+    const rr = r.value?.language;
+
+    const before = rr
+      ? Object.keys(languages).includes(rr)
+        ? (rr as keyof typeof languages)
+        : this.defaultV.language
       : this.defaultV.language;
     return {
       type: rr === language ? "same" : "ok",
@@ -141,8 +149,10 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
     );
     const rr = r.value?.disabledCommands;
     if (!r.ok) {
-      console.log(r.lastErrorObject);
-      throw new Error("mongo repository addDisabledCommands failed.");
+      throw new RepositoryError(
+        "mongo repository setDisabledCommands failed.",
+        r.lastErrorObject
+      );
     }
     const before = new Set(rr);
     return {
@@ -171,8 +181,10 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
     );
     const rr = r.value?.disabledCommands;
     if (!r.ok) {
-      console.log(r.lastErrorObject);
-      throw new Error("mongo repository addDisabledCommands failed.");
+      throw new RepositoryError(
+        "mongo repository addDisabledCommands failed.",
+        r.lastErrorObject
+      );
     }
     const before = new Set(rr);
     return {
@@ -199,6 +211,12 @@ export class MongoBasicBotConfigRepository implements BasicBotConfigRepository {
         upsert: true,
       }
     );
+    if (!r.ok) {
+      throw new RepositoryError(
+        "mongo repository removeDisabledCommands failed.",
+        r.lastErrorObject
+      );
+    }
     const rr = r.value?.disabledCommands;
     const before = new Set(rr ?? this.defaultV.disabledCommands);
     const after = new Set(before);

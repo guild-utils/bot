@@ -4,10 +4,12 @@ import { RateLimit, ResetTime } from "rate-limit";
 export type RateLimitLangDescription = (
   lang: string
 ) => (resetTime: ResetTime, msg: Message) => MessageEmbed;
+export type RateLimitDebugInfo = unknown;
 export type RateLimitEntrys = [
   RateLimitScope,
   RateLimitLangDescription,
-  RateLimit<unknown>
+  RateLimit<unknown>,
+  RateLimitDebugInfo
 ][];
 export function createRateLimitEntrys(
   entrySet: Set<RateLimitEntry>,
@@ -29,6 +31,11 @@ export function createRateLimitEntrys(
           (k, now: number): Promise<[number, number]> =>
             Promise.resolve([cnt, now + interval])
         ),
+        {
+          scope: t,
+          count: cnt,
+          interval,
+        },
       ];
     }
   );

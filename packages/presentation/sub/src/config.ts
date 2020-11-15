@@ -10,6 +10,9 @@ export function config(): ClientOptions {
         Intents.FLAGS.GUILDS |
         Intents.FLAGS.GUILD_VOICE_STATES,
     },
+    messageCacheLifetime: 60 * 10, //10min
+    messageSweepInterval: 60, //1minc
+    messageEditHistoryMaxSize: 0,
   };
 }
 const rawtoken = process.env["GUILD_UTILS_J_SUB_DISCORD_TOKEN"];

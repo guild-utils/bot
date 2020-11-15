@@ -21,13 +21,14 @@ export abstract class MonitorBase implements Monitor {
   abstract run(message: Message): Promise<unknown>;
 }
 
-export class MonitorRunner {
+export abstract class MonitorRunner {
   constructor(private readonly monitors: Set<Monitor>) {}
   edit(newMsg: Message): void {
     const self = newMsg.client.user;
     if (!self) {
       return;
     }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.monitors.forEach((m) => this.mayRunMonitor(newMsg, m, self));
   }
   create(newMsg: Message): void {
@@ -35,6 +36,7 @@ export class MonitorRunner {
     if (!self) {
       return;
     }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.monitors.forEach((m) => this.mayRunMonitor(newMsg, m, self));
   }
   init(client: Client): void {
@@ -42,11 +44,15 @@ export class MonitorRunner {
       try {
         m.init(client);
       } catch (e) {
-        console.log(e);
+        this.onError(e);
       }
     });
   }
-  private mayRunMonitor(msg: Message, monitor: Monitor, self: ClientUser) {
+  private async mayRunMonitor(
+    msg: Message,
+    monitor: Monitor,
+    self: ClientUser
+  ): Promise<void> {
     const o = monitor.options;
     if (o.ignoreBots && msg.author.bot) return;
     if (o.ignoreSelf && msg.author === self) return;
@@ -54,9 +60,10 @@ export class MonitorRunner {
     if (o.ignoreWebhooks && msg.webhookID != null) return;
     if (o.ignoreEdits && (msg.editedTimestamp || msg.editedAt)) return;
     try {
-      monitor.run(msg).catch(console.log);
+      await monitor.run(msg);
     } catch (e) {
-      console.log(e);
+      this.onError(e);
     }
   }
+  abstract onError(err: unknown): void;
 }

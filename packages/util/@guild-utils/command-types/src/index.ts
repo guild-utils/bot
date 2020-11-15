@@ -67,7 +67,6 @@ export class AT_String extends Base<typeof stringSymbol, string> {
   name = "string";
   // eslint-disable-next-line @typescript-eslint/require-await
   async resolve(v: unknown): Promise<string> {
-    console.log(v, typeof v);
     switch (typeof v) {
       case "string":
         return v;

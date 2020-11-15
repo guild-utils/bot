@@ -14,9 +14,11 @@ export function CommandHandlerJaJP(
       createEmbedWithMetaData({
         ...exec,
         color: color,
-      }).setDescription(
-        `コマンド「${k}」は無効化されています。\n\`\`${prefix} conf remove disabledCommands ${k}\`\`を実行することで有効化できます。`
-      ),
+      })
+        .setTitle("無効化されたコマンド")
+        .setDescription(
+          `コマンド「${k}」は無効化されています。\n以下のコマンドを実行することで有効化できます。\n\n${prefix}conf remove disabledCommands ${k}`
+        ),
     internalError: (err, exec) => {
       return createEmbedWithMetaData({
         ...exec,

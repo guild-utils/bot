@@ -1,5 +1,6 @@
 import { VoiceChannel } from "discord.js";
 import { Client } from "discord.js";
+import { BotLogger } from "../loggers";
 
 export default function (client: Client): void {
   async function run(): Promise<void> {
@@ -13,11 +14,11 @@ export default function (client: Client): void {
           );
         })
         .map((e) => {
-          return (e as VoiceChannel).join().catch(console.log);
+          return (e as VoiceChannel).join().catch((e) => BotLogger.error(e));
         })
     );
   }
   client.on("ready", (): void => {
-    run().catch(console.log);
+    run().catch((e) => BotLogger.error(e));
   });
 }

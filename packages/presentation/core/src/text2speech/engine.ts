@@ -11,6 +11,7 @@ import { Dictionary } from "domain_voice-configs";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { VoiceHandle } from "domain_text2speech";
 import { VoiceKindType } from "domain_meta";
+import { EngineLogger as Logger } from "../loggers";
 export type Opt = OpenJTalkOptions<VoiceKindType> & {
   readName?: string;
   dictionary: Dictionary;
@@ -80,7 +81,7 @@ export default class {
 
     entry.prepare = hnd.prepare(text);
     if (queue.length === 0) {
-      this.playNext(conn).catch(console.log);
+      this.playNext(conn).catch((err) => Logger.error(err));
     }
   }
 
@@ -175,7 +176,7 @@ export default class {
       const queue2 = [...queue];
       queue2.shift();
       this.waitQueue.set(cid, queue2);
-      this.playNext(conn).catch(console.log);
+      this.playNext(conn).catch((err) => Logger.error(err));
       return;
     }
     const dispatcher = conn.play(stream, {
@@ -190,10 +191,13 @@ export default class {
       const sf = queue2.shift();
       if (sf) {
         const hnd = sf.hnd;
-        hnd.close().catch(console.log);
+        hnd.close().catch((err) => Logger.error(err));
       }
       this.waitQueue.set(cid, queue2);
-      this.playNext(conn).catch(console.log);
+      this.playNext(conn).catch((err) => Logger.error(err));
+    });
+    dispatcher.on("error", (err) => {
+      Logger.error(err, "dispatcher");
     });
   }
   // eslint-disable-next-line @typescript-eslint/require-await
