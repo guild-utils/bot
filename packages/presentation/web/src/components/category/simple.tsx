@@ -33,7 +33,7 @@ const ChildCommand: React.FC<{ children: string; category: string }> = ({
   );
 };
 const ChildCommandsElement = styled.div`
-  ${tw`m-2 flex`}
+  ${tw`m-2`}
 `;
 const ChildCommands: React.FC<{ children: string[]; category: string }> = ({
   children,
