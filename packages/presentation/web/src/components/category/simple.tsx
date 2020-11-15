@@ -16,7 +16,7 @@ const Name: React.FC<{ children: string }> = (ctx) => {
   );
 };
 const Button = styled.a`
-  ${tw`bg-transparent hover:bg-yellow-700 text-yellow-600 font-semibold hover:text-gray-400 mx-1 py-1 px-2 border border-yellow-600 hover:border-transparent rounded`}
+  ${tw`mb-1 inline-block bg-transparent hover:bg-yellow-700 text-yellow-600 font-semibold hover:text-gray-400 mx-1 py-1 px-2 border border-yellow-600 hover:border-transparent rounded`}
 `;
 const Summary = styled.div`
   ${tw``}
@@ -33,7 +33,7 @@ const ChildCommand: React.FC<{ children: string; category: string }> = ({
   );
 };
 const ChildCommandsElement = styled.div`
-  ${tw`m-2`}
+  ${tw`m-2 flex`}
 `;
 const ChildCommands: React.FC<{ children: string[]; category: string }> = ({
   children,
