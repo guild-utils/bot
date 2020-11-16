@@ -1,8 +1,7 @@
 {
   "name": "rate-limit",
   "main": "./dist/index.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/moment-timezone": "^0.5.13",
     "@types/node": "^14.0.26",
