@@ -19,9 +19,9 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "domain_repository-error": "^1.0.0",
     "domain_voice-configs-write": "^1.0.0",
-    "mongo-dot-notation": "^2.0.0",
-    "domain_repository-error": "^1.0.0"
+    "mongo-dot-notation": "^2.0.0"
   },
   "peerDependencies": {
     "mongodb": "^3.6.0"
