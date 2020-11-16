@@ -3,7 +3,7 @@ import {
   LayeredVoiceConfig,
   UpdateResult,
   VoiceKindType,
-  Randomizer,
+  RandomizerTypeLayered,
 } from "domain_voice-configs-write";
 
 class CacheLayeredVoiceConfigRepositoryInternal
@@ -111,11 +111,12 @@ class CacheLayeredVoiceConfigRepositoryInternal
 
   async setRandomizer(
     layerKey: string,
-    v: keyof typeof Randomizer | undefined
-  ): Promise<UpdateResult<keyof typeof Randomizer | undefined>> {
+    v: RandomizerTypeLayered | undefined
+  ): Promise<UpdateResult<RandomizerTypeLayered | undefined>> {
     const r = await this.upstream.setRandomizer(layerKey, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(layerKey);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.cache.set(layerKey, Object.assign({}, cv, { randomizer: r.after }));
     }
     return r;

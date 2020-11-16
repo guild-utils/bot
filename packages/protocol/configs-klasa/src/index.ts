@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as Domain from "domain_voice-configs";
 import {
   GuildVoiceConfigRepository,
   LayeredVoiceConfigRepository,
   LayeredVoiceConfig,
+  RandomizerTypeGuild,
+  RandomizerTypeLayered,
 } from "domain_voice-configs-write";
 import { randomizers, RandomizerReturnType } from "./randomizer";
 const v1v2Boundary = 1598886000000; //2020/09/01 00:00:00 UTC+9
@@ -117,7 +122,32 @@ export class Usecase implements Domain.Usecase {
     );
     return [value, provider];
   }
-
+  async parseRandomizerString(
+    guild: string,
+    user: string,
+    randomizerString: RandomizerTypeGuild | RandomizerTypeLayered | undefined
+  ): Promise<{ version: "v1" | "v2"; seed: string }> {
+    if (!randomizerString) {
+      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
+        guild
+      );
+      return {
+        version: v1v2Boundary < joinedTimestamp ? "v2" : "v1",
+        seed: user,
+      };
+    }
+    const version: "v1" | "v2" = randomizerString.slice(0, 2) as "v1" | "v2";
+    if (version === "v1" || randomizerString[2] !== ".") {
+      return {
+        version,
+        seed: user,
+      };
+    }
+    return {
+      version,
+      seed: randomizerString.slice(3),
+    };
+  }
   async appliedVoiceConfig(
     guild: string,
     user: string,
@@ -129,15 +159,13 @@ export class Usecase implements Domain.Usecase {
       this.userVoiceConfig.get(user),
       this.guildVoiceConfig.get(guild),
     ]);
-    let randomizerVersion = select([mss, uss, gvc], "randomizer", undefined);
-    if (!randomizerVersion) {
-      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
-        guild
-      );
-      randomizerVersion = v1v2Boundary < joinedTimestamp ? "v2" : "v1";
-    }
+    const randomizerString = select([mss, uss, gvc], "randomizer", undefined);
+    const {
+      version: randomizerVersion,
+      seed,
+    } = await this.parseRandomizerString(guild, user, randomizerString);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
-    const randomizer = randomizerSupplier({ user }).get();
+    const randomizer = randomizerSupplier({ seed }).get();
     const allpass = select([mss, uss, randomizer], "allpass", undefined);
     const gws = [mss, uss, randomizer];
     return {
@@ -171,15 +199,13 @@ export class Usecase implements Domain.Usecase {
     ]);
     const ms: [LayeredVoiceConfig | undefined, string] = [mss, "member"];
     const us: [LayeredVoiceConfig | undefined, string] = [uss, "user"];
-    let randomizerVersion = select([mss, uss, gvc], "randomizer", undefined);
-    if (!randomizerVersion) {
-      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
-        guild
-      );
-      randomizerVersion = v1v2Boundary < joinedTimestamp ? "v2" : "v1";
-    }
+    const randomizerString = select([mss, uss, gvc], "randomizer", undefined);
+    const {
+      version: randomizerVersion,
+      seed,
+    } = await this.parseRandomizerString(guild, user, randomizerString);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
-    const randomizer = randomizerSupplier({ user });
+    const randomizer = randomizerSupplier({ seed });
     const gws: [
       RandomizerReturnType | LayeredVoiceConfig | undefined,
       string

@@ -31,8 +31,8 @@ class RandomizerV1 {
 }
 class RandomizerV2 {
   private readonly obj: RandomizerReturnType;
-  constructor(user: string) {
-    const i = BigInt(user);
+  constructor(seed: string) {
+    const i = BigInt(seed);
     const h = Number(BigInt.asUintN(32, i >> 32n));
     const l = Number(BigInt.asUintN(32, i));
     const r = new XorShift([0, 0, h, l]);
@@ -68,5 +68,5 @@ class RandomizerV2 {
 }
 export const randomizers = {
   v1: (): RandomizerV1 => new RandomizerV1(),
-  v2: ({ user }: { user: string }): RandomizerV2 => new RandomizerV2(user),
+  v2: ({ seed }: { seed: string }): RandomizerV2 => new RandomizerV2(seed),
 };

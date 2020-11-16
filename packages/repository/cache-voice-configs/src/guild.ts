@@ -2,6 +2,7 @@ import {
   GuildVoiceConfigRepository,
   GuildVoiceConfig,
   UpdateResult,
+  RandomizerTypeGuild,
 } from "domain_voice-configs-write";
 
 export class CacheGuildVoiceConfigRepository
@@ -62,11 +63,12 @@ export class CacheGuildVoiceConfigRepository
   }
   async setRandomizer(
     guild: string,
-    v: "v1" | "v2" | undefined
-  ): Promise<UpdateResult<"v1" | "v2" | undefined>> {
+    v: RandomizerTypeGuild | undefined
+  ): Promise<UpdateResult<RandomizerTypeGuild | undefined>> {
     const r = await this.upstream.setRandomizer(guild, v);
     if (r.type === "ok" && r.after) {
       const cv = this.cache.get(guild);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.cache.set(guild, Object.assign({}, cv, { randomizer: r.after }));
     }
     return r;
