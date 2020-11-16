@@ -49,7 +49,6 @@ COPY packages/domains/guild-tts-target-channels/package.json ./packages/domains/
 COPY packages/domains/guild-configs/package.json ./packages/domains/guild-configs/package.json
 COPY packages/domains/text2speech/package.json ./packages/domains/text2speech/package.json
 COPY packages/domains/voice-configs/package.json ./packages/domains/voice-configs/package.json
-COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
 COPY packages/domains/guild-configs/package.json ./packages/domains/guild-configs/package.json
 COPY packages/repository/cache-guild-configs/package.json ./packages/repository/cache-guild-configs/package.json
 COPY packages/repository/mongodb-guild-configs/package.json ./packages/repository/mongodb-guild-configs/package.json
@@ -58,13 +57,11 @@ COPY packages/repository/mongodb-guild-tts-target-channels/package.json ./packag
 COPY packages/usecase/text2speech/package.json ./packages/usecase/text2speech/package.json
 COPY packages/usecase/text2speech-grpc/package.json ./packages/usecase/text2speech-grpc/package.json
 COPY packages/protocol/configurate-usecase/package.json ./packages/protocol/configurate-usecase/package.json
-COPY packages/protocol/shared-config/package.json ./packages/protocol/shared-config/package.json
 COPY packages/protocol/protos/package.json ./packages/protocol/protos/package.json
 COPY packages/protocol/rpc-client/package.json ./packages/protocol/rpc-client/package.json
 COPY packages/protocol/command-schema-core/package.json ./packages/protocol/command-schema-core/package.json
 COPY packages/protocol/command-schema-core-bootstrap/package.json ./packages/protocol/command-schema-core-bootstrap/package.json
 COPY packages/protocol/util-djs/package.json ./packages/protocol/util-djs/package.json
-COPY packages/presentation/guild-config-adapter/package.json ./packages/presentation/guild-config-adapter/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/sub/package.json ./packages/presentation/sub/package.json
 COPY packages/languages/command-core/package.json ./packages/languages/command-core/package.json
@@ -86,7 +83,6 @@ COPY packages/domains/guild-tts-target-channels ./packages/domains/guild-tts-tar
 COPY packages/domains/guild-configs ./packages/domains/guild-configs
 COPY packages/domains/text2speech ./packages/domains/text2speech
 COPY packages/domains/voice-configs ./packages/domains/voice-configs
-COPY packages/domains/command-data ./packages/domains/command-data
 COPY packages/repository/cache-guild-configs ./packages/repository/cache-guild-configs
 COPY packages/repository/mongodb-guild-configs ./packages/repository/mongodb-guild-configs
 COPY packages/repository/cache-guild-tts-target-channels ./packages/repository/cache-guild-tts-target-channels
@@ -94,13 +90,11 @@ COPY packages/repository/mongodb-guild-tts-target-channels ./packages/repository
 COPY packages/usecase/text2speech ./packages/usecase/text2speech
 COPY packages/usecase/text2speech-grpc ./packages/usecase/text2speech-grpc
 COPY packages/protocol/configurate-usecase ./packages/protocol/configurate-usecase
-COPY packages/protocol/shared-config ./packages/protocol/shared-config
 COPY packages/protocol/protos ./packages/protocol/protos
 COPY packages/protocol/rpc-client ./packages/protocol/rpc-client
 COPY packages/protocol/command-schema-core ./packages/protocol/command-schema-core
 COPY packages/protocol/command-schema-core-bootstrap ./packages/protocol/command-schema-core-bootstrap
 COPY packages/protocol/util-djs ./packages/protocol/util-djs
-COPY packages/presentation/guild-config-adapter ./packages/presentation/guild-config-adapter
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/sub ./packages/presentation/sub
 COPY packages/languages/command-core ./packages/languages/command-core
