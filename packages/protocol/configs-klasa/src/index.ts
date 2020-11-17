@@ -11,6 +11,8 @@ import {
 } from "domain_voice-configs-write";
 import { randomizers, RandomizerReturnType } from "./randomizer";
 const v1v2Boundary = 1598886000000; //2020/09/01 00:00:00 UTC+9
+const v2v3Boundary = 1605711600000; //2020/11/19 00:00:00 UTC+9
+
 function select<
   T extends Record<string, unknown>,
   U extends keyof T,
@@ -126,26 +128,38 @@ export class Usecase implements Domain.Usecase {
     guild: string,
     user: string,
     randomizerString: RandomizerTypeGuild | RandomizerTypeLayered | undefined
-  ): Promise<{ version: "v1" | "v2"; seed: string }> {
+  ): Promise<{ version: "v1" | "v2" | "v3"; seed: string; force?: boolean }> {
     if (!randomizerString) {
       const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
         guild
       );
       return {
-        version: v1v2Boundary < joinedTimestamp ? "v2" : "v1",
+        version:
+          v1v2Boundary < joinedTimestamp
+            ? v2v3Boundary < joinedTimestamp
+              ? "v3"
+              : "v2"
+            : "v1",
         seed: user,
       };
     }
-    const version: "v1" | "v2" = randomizerString.slice(0, 2) as "v1" | "v2";
-    if (version === "v1" || randomizerString[2] !== ".") {
+    const version: "v1" | "v2" | "v3" = randomizerString.slice(0, 2) as
+      | "v1"
+      | "v2"
+      | "v3";
+    if (version === "v1" || version === "v2" || randomizerString[2] !== ".") {
       return {
         version,
         seed: user,
       };
     }
+    const [seed, flags]: (string | undefined)[] = randomizerString
+      .slice(3)
+      .split(".");
     return {
       version,
-      seed: randomizerString.slice(3),
+      seed: seed ?? user,
+      force: flags?.includes("f"),
     };
   }
   async appliedVoiceConfig(
@@ -163,11 +177,12 @@ export class Usecase implements Domain.Usecase {
     const {
       version: randomizerVersion,
       seed,
+      force,
     } = await this.parseRandomizerString(guild, user, randomizerString);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
     const randomizer = randomizerSupplier({ seed }).get();
-    const allpass = select([mss, uss, randomizer], "allpass", undefined);
-    const gws = [mss, uss, randomizer];
+    const gws = force ? [mss, randomizer] : [mss, uss, randomizer];
+    const allpass = select(gws, "allpass", undefined);
     return {
       dictionary: await this.dictionary(guild),
       kind: select(gws, "kind"),
@@ -197,15 +212,19 @@ export class Usecase implements Domain.Usecase {
       this.memberVoiceConfig.get([guild, user]),
       this.userVoiceConfig.get(user),
     ]);
-    const ms: [LayeredVoiceConfig | undefined, string] = [mss, "member"];
-    const us: [LayeredVoiceConfig | undefined, string] = [uss, "user"];
     const randomizerString = select([mss, uss, gvc], "randomizer", undefined);
     const {
       version: randomizerVersion,
       seed,
+      force,
     } = await this.parseRandomizerString(guild, user, randomizerString);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
     const randomizer = randomizerSupplier({ seed });
+    const ms: [LayeredVoiceConfig | undefined, string] = [mss, "member"];
+    const us: [LayeredVoiceConfig | undefined, string] = [
+      force ? undefined : uss,
+      "user",
+    ];
     const gws: [
       RandomizerReturnType | LayeredVoiceConfig | undefined,
       string

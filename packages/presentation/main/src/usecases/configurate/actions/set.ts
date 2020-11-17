@@ -179,31 +179,38 @@ function validateRandomizerStringGuild(v: unknown): v is RandomizerTypeGuild {
   if (v === "v2") {
     return true;
   }
+  if (v === "v3") {
+    return true;
+  }
   return false;
 }
 function validateRandomizerStringLayered(
   v: unknown
 ): v is RandomizerTypeLayered {
   //v1
-  if (v === "v1") {
+  //v2
+  if (v === "v1" || v === "v2") {
     return true;
   }
   if (typeof v !== "string") {
     return false;
   }
-  if (v.slice(0, 2) !== "v2") {
+  if (v.slice(0, 2) !== "v3") {
     return false;
   }
-  //v2
+  //v3
   if (v[2] === undefined) {
     return true;
   }
-  //v2.uint64
+  //v3.uint64
   if (v[2] !== ".") {
     return false;
   }
   const max64bit = 1n << 64n;
-  const seedString = v.slice(3);
+  const [seedString, flags]: (string | undefined)[] = v.slice(3).split(".");
+  if (!seedString || seedString.length === 0) {
+    return false;
+  }
   //Creating a BigInt that is too big will result in an error
   if (String(max64bit).length < seedString.length) {
     return false;
@@ -224,7 +231,10 @@ function validateRandomizerStringLayered(
   if (seedInt < 0n || seedInt > BigInt(max64bit)) {
     return false;
   }
-  return true;
+  if (flags == null || /f/.test(flags)) {
+    return true;
+  }
+  return false;
 }
 async function setRandomizerProcess(
   t: TargetType,
