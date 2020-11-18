@@ -34,7 +34,7 @@ export class CacheGuildVoiceConfigRepository
   ): Promise<UpdateResult<boolean | undefined>> {
     const r = await this.upstream.setReadName(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
       this.cache.set(guild, Object.assign({}, cv, { readName: r.after }));
     }
     return r;
@@ -45,7 +45,7 @@ export class CacheGuildVoiceConfigRepository
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setMaxReadLimit(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
       this.cache.set(guild, Object.assign({}, cv, { maxReadLimit: r.after }));
     }
     return r;
@@ -56,7 +56,7 @@ export class CacheGuildVoiceConfigRepository
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setMaxVolume(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
       this.cache.set(guild, Object.assign({}, cv, { maxVolume: r.after }));
     }
     return r;
@@ -67,7 +67,7 @@ export class CacheGuildVoiceConfigRepository
   ): Promise<UpdateResult<RandomizerTypeGuild | undefined>> {
     const r = await this.upstream.setRandomizer(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.cache.set(guild, Object.assign({}, cv, { randomizer: r.after }));
     }
