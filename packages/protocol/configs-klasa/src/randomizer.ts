@@ -72,7 +72,12 @@ class RandomizerV3 {
     const i = BigInt(seed);
     const h = Number(BigInt.asUintN(32, i >> 32n));
     const l = Number(BigInt.asUintN(32, i));
-    const r = new XorShift([0, 0, h, l]);
+    const r = new XorShift([
+      (h >> 16) | (l << 16),
+      (h << 16) | (l >> 16),
+      h,
+      l,
+    ]);
     for (let i = 0; i < 50; ++i) {
       r.randomint();
     }
