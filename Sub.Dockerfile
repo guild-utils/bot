@@ -1,4 +1,4 @@
-FROM node:14-alpine AS runtime-sub
+FROM node:14.15.1-alpine AS runtime-sub
 
 WORKDIR /usr/app
 RUN apk add --no-cache --virtual .ojt git
