@@ -1,5 +1,5 @@
 FROM guildutils/jumanpp:latest AS jumanpp
-FROM node:14-alpine AS runtime
+FROM node:14.15.1-alpine AS runtime
 
 WORKDIR /usr/app
 RUN apk add --no-cache --virtual .ojt git
