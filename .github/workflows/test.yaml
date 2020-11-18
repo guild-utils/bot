@@ -16,7 +16,7 @@ jobs:
       - name: install lerna
         run: |
           yarn global add lerna
-          echo "::add-path::$(yarn global bin)"
+          echo "$(yarn global bin)" >> $GITHUB_PATH
       - name: bootstrap
         run: lerna bootstrap
       - name: build
