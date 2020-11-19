@@ -1,7 +1,0 @@
-{
-  "name": "member",
-  "version": "1.0.0",
-  "main": "../dist/guild_member_settings_keys.js",
-  "types": "../dist/guild_member_settings_keys.d.ts",
-  "license": "MIT"
-}

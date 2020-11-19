@@ -1,5 +1,5 @@
 FROM guildutils/jumanpp:latest AS jumanpp
-FROM node:14-alpine AS runtime
+FROM node:14.15.1-alpine AS runtime
 
 WORKDIR /usr/app
 RUN apk add --no-cache --virtual .ojt git
@@ -36,7 +36,6 @@ COPY lerna.json ./
 COPY tsconfig.json ./
 COPY package.json ./
 COPY yarn.lock ./
-COPY packages/domains/command-data/package.json ./packages/domains/command-data/package.json
 COPY packages/domains/game-event/package.json ./packages/domains/game-event/package.json
 COPY packages/domains/guild-configs/package.json ./packages/domains/guild-configs/package.json
 COPY packages/domains/guild-tts-target-channels/package.json ./packages/domains/guild-tts-target-channels/package.json
@@ -69,7 +68,6 @@ COPY packages/repository/mongodb-dictionary/package.json ./packages/repository/m
 COPY packages/repository/mongodb-guild-configs/package.json ./packages/repository/mongodb-guild-configs/package.json
 COPY packages/repository/mongodb-guild-tts-target-channels/package.json ./packages/repository/mongodb-guild-tts-target-channels/package.json
 COPY packages/repository/mongodb-voice-configs/package.json ./packages/repository/mongodb-voice-configs/package.json
-COPY packages/protocol/shared-config/package.json ./packages/protocol/shared-config/package.json
 COPY packages/protocol/configs-klasa/package.json ./packages/protocol/configs-klasa/package.json
 COPY packages/protocol/protos/package.json ./packages/protocol/protos/package.json
 COPY packages/protocol/rpc-server/package.json ./packages/protocol/rpc-server/package.json
@@ -79,7 +77,6 @@ COPY packages/protocol/command-schema-core-bootstrap/package.json ./packages/pro
 COPY packages/protocol/command-schema-main/package.json ./packages/protocol/command-schema-main/package.json
 COPY packages/protocol/command-schema-main-bootstrap/package.json ./packages/protocol/command-schema-main-bootstrap/package.json
 COPY packages/protocol/util-djs/package.json ./packages/protocol/util-djs/package.json
-COPY packages/presentation/guild-config-adapter/package.json ./packages/presentation/guild-config-adapter/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/main/package.json ./packages/presentation/main/package.json
 COPY packages/languages/command-core/package.json ./packages/languages/command-core/package.json
@@ -88,7 +85,6 @@ COPY packages/languages/command-main/package.json ./packages/languages/command-m
 RUN  lerna bootstrap && apk del .ojt && apk del .gyp
 
 COPY .eslintrc.json ./
-COPY packages/domains/command-data ./packages/domains/command-data
 COPY packages/domains/game-event ./packages/domains/game-event
 COPY packages/domains/guild-configs ./packages/domains/guild-configs
 COPY packages/domains/guild-tts-target-channels ./packages/domains/guild-tts-target-channels
@@ -121,7 +117,6 @@ COPY packages/repository/mongodb-dictionary ./packages/repository/mongodb-dictio
 COPY packages/repository/mongodb-guild-configs ./packages/repository/mongodb-guild-configs
 COPY packages/repository/mongodb-guild-tts-target-channels ./packages/repository/mongodb-guild-tts-target-channels
 COPY packages/repository/mongodb-voice-configs ./packages/repository/mongodb-voice-configs
-COPY packages/protocol/shared-config ./packages/protocol/shared-config
 COPY packages/protocol/configs-klasa ./packages/protocol/configs-klasa
 COPY packages/protocol/protos ./packages/protocol/protos
 COPY packages/protocol/rpc-server ./packages/protocol/rpc-server
@@ -131,7 +126,6 @@ COPY packages/protocol/command-schema-core-bootstrap ./packages/protocol/command
 COPY packages/protocol/command-schema-main ./packages/protocol/command-schema-main
 COPY packages/protocol/command-schema-main-bootstrap ./packages/protocol/command-schema-main-bootstrap
 COPY packages/protocol/util-djs ./packages/protocol/util-djs
-COPY packages/presentation/guild-config-adapter ./packages/presentation/guild-config-adapter
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/main ./packages/presentation/main
 COPY packages/languages/command-core ./packages/languages/command-core

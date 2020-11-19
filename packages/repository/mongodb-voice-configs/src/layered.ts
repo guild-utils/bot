@@ -3,7 +3,7 @@ import {
   LayeredVoiceConfig,
   UpdateResult,
   VoiceKindType,
-  Randomizer,
+  RandomizerTypeLayered,
 } from "domain_voice-configs-write";
 import { Collection } from "mongodb";
 export type MongoCollectionType = {
@@ -15,7 +15,7 @@ export type MongoCollectionType = {
     tone?: number | null;
     volume?: number | null;
     kind?: VoiceKindType | null;
-    randomizer?: keyof typeof Randomizer | null;
+    randomizer?: RandomizerTypeLayered | null;
     readName?: string | null;
   } | null;
 };
@@ -61,6 +61,7 @@ class MongoLayeredVoiceConfigRepositoryInternal
       allpass: rr.allpass ?? undefined,
       intone: rr.intone ?? undefined,
       kind: rr.kind ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       randomizer: rr.randomizer ?? undefined,
       readName: rr.readName ?? undefined,
       speed: rr.speed ?? undefined,
@@ -103,6 +104,7 @@ class MongoLayeredVoiceConfigRepositoryInternal
         allpass: rr?.allpass ?? undefined,
         intone: rr?.intone ?? undefined,
         kind: rr?.kind ?? undefined,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         randomizer: rr?.randomizer ?? undefined,
         readName: rr?.readName ?? undefined,
         speed: rr?.speed ?? undefined,
@@ -190,8 +192,8 @@ class MongoLayeredVoiceConfigRepositoryInternal
 
   setRandomizer(
     layerKey: string,
-    v: keyof typeof Randomizer | undefined
-  ): Promise<UpdateResult<keyof typeof Randomizer | undefined>> {
+    v: RandomizerTypeLayered | undefined
+  ): Promise<UpdateResult<RandomizerTypeLayered | undefined>> {
     return this.setBase(layerKey, "randomizer", v);
   }
   setReadName(

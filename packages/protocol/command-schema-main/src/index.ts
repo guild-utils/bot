@@ -8,3 +8,4 @@ export {
   MainDictionaryEntryType,
 } from "./dictionary";
 export { jumanpp, kuromoji } from "./parsing";
+export { random } from "./random";

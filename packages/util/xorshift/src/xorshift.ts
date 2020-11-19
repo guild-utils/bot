@@ -8,7 +8,7 @@ export class XorShift {
    * @param {array} seed "128-bit" integer, composed of 4x32-bit
    * integers in big endian order.
    */
-  constructor(seed?: [number, number, number, number]) {
+  constructor(seed: [number, number, number, number]) {
     if (!Array.isArray(seed) || seed.length !== 4) {
       throw new TypeError("seed must be an array with 4 numbers");
     }
