@@ -2,12 +2,12 @@ import {
   GuildVoiceConfigRepository,
   GuildVoiceConfig,
   UpdateResult,
-  Randomizer,
+  RandomizerTypeGuild,
 } from "domain_voice-configs-write";
 import { Collection } from "mongodb";
 export type MongoGuildVoiceConfigCollectionType = {
   speech?: {
-    randomizer?: keyof typeof Randomizer | null;
+    randomizer?: RandomizerTypeGuild | null;
     maxReadLimit?: number | null;
     readName?: boolean | null;
     maxVolume?: number | null;
@@ -48,6 +48,7 @@ export class MongoGuildVoiceConfigRepository
       before: {
         maxReadLimit: rr?.maxReadLimit ?? undefined,
         maxVolume: rr?.maxVolume ?? undefined,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         randomizer: rr?.randomizer ?? undefined,
         readName: rr?.readName ?? undefined,
       },
@@ -71,6 +72,7 @@ export class MongoGuildVoiceConfigRepository
     return {
       maxReadLimit: rr?.maxReadLimit ?? undefined,
       maxVolume: rr?.maxVolume ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       randomizer: rr?.randomizer ?? undefined,
       readName: rr?.readName ?? undefined,
     };
@@ -131,8 +133,8 @@ export class MongoGuildVoiceConfigRepository
   }
   setRandomizer(
     guild: string,
-    v: "v1" | "v2" | undefined
-  ): Promise<UpdateResult<"v1" | "v2" | undefined>> {
+    v: RandomizerTypeGuild | undefined
+  ): Promise<UpdateResult<RandomizerTypeGuild | undefined>> {
     return this.setBase(guild, "randomizer", v);
   }
   async setIfNotChanged(

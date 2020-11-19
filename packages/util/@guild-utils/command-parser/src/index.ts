@@ -12,7 +12,6 @@ export interface MainParserContext {
   user: string;
   channelType: "text" | "news" | "dm";
 }
-const aliasSymbol = Symbol("aliasSymbol");
 export function buildYargsParser(
   schema: CommandSchema<unknown[], Record<string, unknown>>[],
   resolverOptional: (
@@ -110,17 +109,21 @@ async function applySchema(
     await Promise.all(
       [...schema.optionArgumentCollection].map(
         async ([s, [t, o]]): Promise<[string, unknown]> => {
-          const x = m[s];
+          let x = m[s];
           delete m[s];
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const alias: unknown = o[aliasSymbol];
+          const alias = o.alias;
           if (alias === undefined) {
             // do nothing
           } else if (Array.isArray(alias)) {
-            alias.forEach((e) =>
-              typeof e === "string" && e in m ? delete m[e] : undefined
-            );
+            alias.forEach((e) => {
+              console.log(e);
+              if (e in m) {
+                x = x ?? m[e];
+                delete m[e];
+              }
+            });
           } else if (typeof alias === "string" && alias in m) {
+            x = x ?? m[alias];
             delete m[alias];
           }
           return [s, (await optionResolver(t, o, x, ctx)) ?? o.defaultValue];

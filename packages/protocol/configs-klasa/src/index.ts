@@ -1,11 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import * as Domain from "domain_voice-configs";
 import {
   GuildVoiceConfigRepository,
   LayeredVoiceConfigRepository,
   LayeredVoiceConfig,
+  RandomizerTypeGuild,
+  RandomizerTypeLayered,
 } from "domain_voice-configs-write";
 import { randomizers, RandomizerReturnType } from "./randomizer";
 const v1v2Boundary = 1598886000000; //2020/09/01 00:00:00 UTC+9
+const v2v3Boundary = 1605711600000; //2020/11/19 00:00:00 UTC+9
+
 function select<
   T extends Record<string, unknown>,
   U extends keyof T,
@@ -117,7 +124,54 @@ export class Usecase implements Domain.Usecase {
     );
     return [value, provider];
   }
-
+  async parseRandomizerString(
+    guild: string,
+    user: string,
+    randomizerString: RandomizerTypeGuild | RandomizerTypeLayered | undefined
+  ): Promise<{
+    version: "v1" | "v2" | "v3";
+    seed: string;
+    overwrite: "member" | "user" | "none";
+  }> {
+    if (!randomizerString) {
+      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
+        guild
+      );
+      return {
+        version:
+          v1v2Boundary < joinedTimestamp
+            ? v2v3Boundary < joinedTimestamp
+              ? "v3"
+              : "v2"
+            : "v1",
+        seed: user,
+        overwrite: "none",
+      };
+    }
+    const version: "v1" | "v2" | "v3" = randomizerString.slice(0, 2) as
+      | "v1"
+      | "v2"
+      | "v3";
+    if (version === "v1" || version === "v2" || randomizerString[2] !== ".") {
+      return {
+        version,
+        seed: user,
+        overwrite: "none",
+      };
+    }
+    const map = {
+      m: "member",
+      u: "user",
+    };
+    const [seed, flags]: (string | undefined)[] = randomizerString
+      .slice(3)
+      .split(".");
+    return {
+      version,
+      seed: seed ?? user,
+      overwrite: flags == null || flags === "" ? "none" : map[flags] ?? "none",
+    };
+  }
   async appliedVoiceConfig(
     guild: string,
     user: string,
@@ -129,17 +183,21 @@ export class Usecase implements Domain.Usecase {
       this.userVoiceConfig.get(user),
       this.guildVoiceConfig.get(guild),
     ]);
-    let randomizerVersion = select([mss, uss, gvc], "randomizer", undefined);
-    if (!randomizerVersion) {
-      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
-        guild
-      );
-      randomizerVersion = v1v2Boundary < joinedTimestamp ? "v2" : "v1";
-    }
+    const randomizerString = select([mss, uss, gvc], "randomizer", undefined);
+    const {
+      version: randomizerVersion,
+      seed,
+      overwrite,
+    } = await this.parseRandomizerString(guild, user, randomizerString);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
-    const randomizer = randomizerSupplier({ user }).get();
-    const allpass = select([mss, uss, randomizer], "allpass", undefined);
-    const gws = [mss, uss, randomizer];
+    const randomizer = randomizerSupplier({ seed }).get();
+    const gwsm = {
+      none: [mss, uss, randomizer],
+      user: [mss, randomizer],
+      member: [randomizer],
+    };
+    const gws = gwsm[overwrite];
+    const allpass = select(gws, "allpass", undefined);
     return {
       dictionary: await this.dictionary(guild),
       kind: select(gws, "kind"),
@@ -169,21 +227,29 @@ export class Usecase implements Domain.Usecase {
       this.memberVoiceConfig.get([guild, user]),
       this.userVoiceConfig.get(user),
     ]);
+    const randomizerString = select([mss, uss, gvc], "randomizer", undefined);
+    const {
+      version: randomizerVersion,
+      seed,
+      overwrite,
+    } = await this.parseRandomizerString(guild, user, randomizerString);
+    const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
+    const randomizer = randomizerSupplier({ seed });
     const ms: [LayeredVoiceConfig | undefined, string] = [mss, "member"];
     const us: [LayeredVoiceConfig | undefined, string] = [uss, "user"];
-    let randomizerVersion = select([mss, uss, gvc], "randomizer", undefined);
-    if (!randomizerVersion) {
-      const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
-        guild
-      );
-      randomizerVersion = v1v2Boundary < joinedTimestamp ? "v2" : "v1";
-    }
-    const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
-    const randomizer = randomizerSupplier({ user });
-    const gws: [
-      RandomizerReturnType | LayeredVoiceConfig | undefined,
-      string
-    ][] = [ms, us, [randomizer.get(), randomizer.name]];
+    const rs: [RandomizerReturnType, string] = [
+      randomizer.get(),
+      randomizer.name,
+    ];
+    const gwsm: Record<
+      "none" | "user" | "member",
+      [LayeredVoiceConfig | RandomizerReturnType | undefined, string][]
+    > = {
+      none: [ms, us, rs],
+      user: [ms, rs],
+      member: [rs],
+    };
+    const gws = gwsm[overwrite];
     const allpass = select2(gws, "allpass", [undefined, "default"]);
     const volumegV = gvc?.maxVolume ?? 0;
     const volumemu = select2<

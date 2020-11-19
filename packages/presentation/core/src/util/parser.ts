@@ -37,13 +37,17 @@ export function buildParser(
       if (argumentTypeExtendedSymbols.has(k.resolverKey)) {
         return (k as ArgumentTypeExtended<symbol, unknown>).yargsOption(o);
       }
-      throw new TypeError();
+      throw new TypeError(
+        "argumentTypeExtendedSymbols does not include the match symbol"
+      );
     },
     (k, o) => {
       if (argumentTypeExtendedSymbols.has(k.resolverKey)) {
         return (k as ArgumentTypeExtended<symbol, unknown>).yargsPosition(o);
       }
-      throw new TypeError();
+      throw new TypeError(
+        "argumentTypeExtendedSymbols does not include the match symbol"
+      );
     }
   );
   const rawParser = buildMainParser(
@@ -52,13 +56,17 @@ export function buildParser(
       if (argumentTypeExtendedSymbols.has(k.resolverKey)) {
         return (k as ArgumentTypeExtended<symbol, unknown>).option(o, v, ctx);
       }
-      throw new TypeError();
+      throw new TypeError(
+        "argumentTypeExtendedSymbols does not include the match symbol"
+      );
     },
     (k, o, v, ctx) => {
       if (argumentTypeExtendedSymbols.has(k.resolverKey)) {
         return (k as ArgumentTypeExtended<symbol, unknown>).position(o, v, ctx);
       }
-      throw new TypeError();
+      throw new TypeError(
+        "argumentTypeExtendedSymbols does not include the match symbol"
+      );
     },
     yargs
   );

@@ -219,6 +219,8 @@ async function main() {
       kuromoji,
       mainGui: mainDictionaryGui,
       getLang,
+      voiceConfigUsecase: appliedVoiceConfigResolver,
+      memberVoiceConfig,
       color: ENV.GUJ_THEME_COLOR,
     },
     {

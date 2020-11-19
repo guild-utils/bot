@@ -24,7 +24,14 @@ import { JumanppCommand } from "../commands-v2/jumanpp";
 import { KuromojiCommand } from "../commands-v2/kuromoji";
 import { IpadicFeatures, Tokenizer } from "kuromoji";
 import { createEmbedWithMetaData } from "protocol_util-djs";
-import { MainCommands } from "protocol_command-schema-main-bootstrap";
+import {
+  MainCommands,
+  DictionaryCommands,
+} from "protocol_command-schema-main-bootstrap";
+import { RandomCommand } from "../commands-v2/random";
+import { LayeredVoiceConfigRepository } from "domain_voice-configs-write";
+import { Usecase as VoiceConfigUsecase } from "domain_voice-configs";
+
 export function categoryWords(
   color: ColorResolvable,
   resolverValue: Map<string, HelpEntry>,
@@ -54,14 +61,16 @@ export type MainCommandOptions = {
   mainGui: PaginationGui<CtxBase<MainPageValue>>;
   kuromoji: Tokenizer<IpadicFeatures>;
   getLang: getLangType;
+  voiceConfigUsecase: VoiceConfigUsecase;
+  memberVoiceConfig: LayeredVoiceConfigRepository<[string, string]>;
   color: ColorResolvable;
 };
 function codeblock(l: string, v: string) {
   return `\`\`\`${l}\n${v}\n\`\`\``;
 }
-export function initMainCommands(
+export function initDictionaryCommands(
   opt: MainCommandOptions
-): Record<MainCommands, CommandBase> {
+): Record<DictionaryCommands, CommandBase> {
   const color = opt.color;
   const abCommonLang = (): SimpleDictionaryCommandResponses => ({
     addSuccess: (exec, cur) =>
@@ -221,5 +230,37 @@ export function initMainCommands(
     ),
     jumanpp: new JumanppCommand(),
     kuromoji: new KuromojiCommand(opt.kuromoji),
+  };
+}
+export function initMainCommands(
+  opt: MainCommandOptions
+): Record<MainCommands, CommandBase> {
+  return {
+    ...initDictionaryCommands(opt),
+    random: RandomCommand.create(
+      opt.memberVoiceConfig,
+      opt.voiceConfigUsecase,
+      () => {
+        return {
+          success: (exec, ctx) =>
+            createEmbedWithMetaData({
+              ...exec,
+              color: opt.color,
+            }).setDescription(
+              [
+                "音声設定を更新しました。",
+                ...(ctx.newRandomizerValue
+                  ? ["新しいrandomizerの値:", ctx.newRandomizerValue]
+                  : []),
+                "",
+                ...(ctx.newRandomizerValue
+                  ? ["古いrandomizerの値:", ctx.oldRandomizerValue]
+                  : []),
+              ].join("\n")
+            ),
+        };
+      },
+      opt.getLang
+    ),
   };
 }

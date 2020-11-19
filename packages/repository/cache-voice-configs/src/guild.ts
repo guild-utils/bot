@@ -2,6 +2,7 @@ import {
   GuildVoiceConfigRepository,
   GuildVoiceConfig,
   UpdateResult,
+  RandomizerTypeGuild,
 } from "domain_voice-configs-write";
 
 export class CacheGuildVoiceConfigRepository
@@ -33,7 +34,7 @@ export class CacheGuildVoiceConfigRepository
   ): Promise<UpdateResult<boolean | undefined>> {
     const r = await this.upstream.setReadName(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
       this.cache.set(guild, Object.assign({}, cv, { readName: r.after }));
     }
     return r;
@@ -44,7 +45,7 @@ export class CacheGuildVoiceConfigRepository
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setMaxReadLimit(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
       this.cache.set(guild, Object.assign({}, cv, { maxReadLimit: r.after }));
     }
     return r;
@@ -55,18 +56,19 @@ export class CacheGuildVoiceConfigRepository
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setMaxVolume(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
       this.cache.set(guild, Object.assign({}, cv, { maxVolume: r.after }));
     }
     return r;
   }
   async setRandomizer(
     guild: string,
-    v: "v1" | "v2" | undefined
-  ): Promise<UpdateResult<"v1" | "v2" | undefined>> {
+    v: RandomizerTypeGuild | undefined
+  ): Promise<UpdateResult<RandomizerTypeGuild | undefined>> {
     const r = await this.upstream.setRandomizer(guild, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(guild);
+      const cv = await this.get(guild);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.cache.set(guild, Object.assign({}, cv, { randomizer: r.after }));
     }
     return r;
