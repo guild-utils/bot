@@ -48,7 +48,8 @@
     "tsyringe": "^4.1.0",
     "usecase_game-event": "^1.0.0",
     "usecase_text2speech": "^1.0.0",
-    "utf-8-validate": "^5.0.3"
+    "utf-8-validate": "^5.0.3",
+    "xorshift": "^1.1.1"
   },
   "devDependencies": {
     "@types/kuromoji": "^0.1.0",

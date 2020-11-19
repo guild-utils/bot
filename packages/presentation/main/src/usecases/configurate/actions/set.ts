@@ -231,7 +231,7 @@ function validateRandomizerStringLayered(
   if (seedInt < 0n || seedInt > BigInt(max64bit)) {
     return false;
   }
-  if (flags == null || /f/.test(flags)) {
+  if (flags == null || /[mu]/.test(flags)) {
     return true;
   }
   return false;

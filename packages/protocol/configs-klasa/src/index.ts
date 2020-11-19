@@ -128,7 +128,11 @@ export class Usecase implements Domain.Usecase {
     guild: string,
     user: string,
     randomizerString: RandomizerTypeGuild | RandomizerTypeLayered | undefined
-  ): Promise<{ version: "v1" | "v2" | "v3"; seed: string; force?: boolean }> {
+  ): Promise<{
+    version: "v1" | "v2" | "v3";
+    seed: string;
+    overwrite: "member" | "user" | "none";
+  }> {
     if (!randomizerString) {
       const joinedTimestamp = await this.contextualDataResolver.getGuildJoinedTimeStamp(
         guild
@@ -141,6 +145,7 @@ export class Usecase implements Domain.Usecase {
               : "v2"
             : "v1",
         seed: user,
+        overwrite: "none",
       };
     }
     const version: "v1" | "v2" | "v3" = randomizerString.slice(0, 2) as
@@ -151,15 +156,20 @@ export class Usecase implements Domain.Usecase {
       return {
         version,
         seed: user,
+        overwrite: "none",
       };
     }
+    const map = {
+      m: "member",
+      u: "user",
+    };
     const [seed, flags]: (string | undefined)[] = randomizerString
       .slice(3)
       .split(".");
     return {
       version,
       seed: seed ?? user,
-      force: flags?.includes("f"),
+      overwrite: flags == null || flags === "" ? "none" : map[flags] ?? "none",
     };
   }
   async appliedVoiceConfig(
@@ -177,11 +187,16 @@ export class Usecase implements Domain.Usecase {
     const {
       version: randomizerVersion,
       seed,
-      force,
+      overwrite,
     } = await this.parseRandomizerString(guild, user, randomizerString);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
     const randomizer = randomizerSupplier({ seed }).get();
-    const gws = force ? [mss, randomizer] : [mss, uss, randomizer];
+    const gwsm = {
+      none: [mss, uss, randomizer],
+      user: [mss, randomizer],
+      member: [randomizer],
+    };
+    const gws = gwsm[overwrite];
     const allpass = select(gws, "allpass", undefined);
     return {
       dictionary: await this.dictionary(guild),
@@ -216,19 +231,25 @@ export class Usecase implements Domain.Usecase {
     const {
       version: randomizerVersion,
       seed,
-      force,
+      overwrite,
     } = await this.parseRandomizerString(guild, user, randomizerString);
     const randomizerSupplier = randomizers[randomizerVersion] ?? randomizers.v1;
     const randomizer = randomizerSupplier({ seed });
     const ms: [LayeredVoiceConfig | undefined, string] = [mss, "member"];
-    const us: [LayeredVoiceConfig | undefined, string] = [
-      force ? undefined : uss,
-      "user",
+    const us: [LayeredVoiceConfig | undefined, string] = [uss, "user"];
+    const rs: [RandomizerReturnType, string] = [
+      randomizer.get(),
+      randomizer.name,
     ];
-    const gws: [
-      RandomizerReturnType | LayeredVoiceConfig | undefined,
-      string
-    ][] = [ms, us, [randomizer.get(), randomizer.name]];
+    const gwsm: Record<
+      "none" | "user" | "member",
+      [LayeredVoiceConfig | RandomizerReturnType | undefined, string][]
+    > = {
+      none: [ms, us, rs],
+      user: [ms, rs],
+      member: [rs],
+    };
+    const gws = gwsm[overwrite];
     const allpass = select2(gws, "allpass", [undefined, "default"]);
     const volumegV = gvc?.maxVolume ?? 0;
     const volumemu = select2<
