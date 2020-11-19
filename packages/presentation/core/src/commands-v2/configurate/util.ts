@@ -225,6 +225,7 @@ export async function handleError(
     await channel.send(responses.invalidValueError(e, target, exec));
     return true;
   }
+
   return false;
 }
 export async function getEnviroment(
