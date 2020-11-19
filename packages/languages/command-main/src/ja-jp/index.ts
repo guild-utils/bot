@@ -5,3 +5,4 @@ export {
   commandMainDictionary,
 } from "./dictionary";
 export { commandJumanpp, commandKuromoji } from "./parsing";
+export { commandRandom } from "./random";

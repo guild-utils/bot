@@ -3,7 +3,7 @@ import {
   LayeredVoiceConfig,
   UpdateResult,
   VoiceKindType,
-  Randomizer,
+  RandomizerTypeLayered,
 } from "domain_voice-configs-write";
 
 class CacheLayeredVoiceConfigRepositoryInternal
@@ -37,7 +37,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setAllpass(layerKey, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { allpass: r.after }));
     }
     return r;
@@ -48,7 +48,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setIntone(layerKey, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { intone: r.after }));
     }
     return r;
@@ -59,7 +59,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setSpeed(layerKey, v);
     if (r.type === "ok") {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { speed: r.after }));
     }
     return r;
@@ -70,7 +70,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setThreshold(layerKey, v);
     if (r.type === "ok") {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { threshold: r.after }));
     }
     return r;
@@ -81,7 +81,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setTone(layerKey, v);
     if (r.type === "ok") {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { tone: r.after }));
     }
     return r;
@@ -92,7 +92,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<number | undefined>> {
     const r = await this.upstream.setVolume(layerKey, v);
     if (r.type === "ok") {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { volume: r.after }));
     }
     return r;
@@ -103,7 +103,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<VoiceKindType | undefined>> {
     const r = await this.upstream.setKind(layerKey, v);
     if (r.type === "ok") {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { kind: r.after }));
     }
     return r;
@@ -111,11 +111,12 @@ class CacheLayeredVoiceConfigRepositoryInternal
 
   async setRandomizer(
     layerKey: string,
-    v: keyof typeof Randomizer | undefined
-  ): Promise<UpdateResult<keyof typeof Randomizer | undefined>> {
+    v: RandomizerTypeLayered | undefined
+  ): Promise<UpdateResult<RandomizerTypeLayered | undefined>> {
     const r = await this.upstream.setRandomizer(layerKey, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.cache.set(layerKey, Object.assign({}, cv, { randomizer: r.after }));
     }
     return r;
@@ -126,7 +127,7 @@ class CacheLayeredVoiceConfigRepositoryInternal
   ): Promise<UpdateResult<string | undefined>> {
     const r = await this.upstream.setReadName(layerKey, v);
     if (r.type === "ok" && r.after) {
-      const cv = this.cache.get(layerKey);
+      const cv = await this.get(layerKey);
       this.cache.set(layerKey, Object.assign({}, cv, { readName: r.after }));
     }
     return r;

@@ -105,13 +105,13 @@ function objectToKVEntryString(
 }
 function speech(repo: Repositorys, unused: string) {
   return async (t: RepresentsTargetType): Promise<GetResponseType> => {
-    const guild = t.member
+    const member = t.member
       ? objectToKVEntryString(await repo.memberVoiceConfig.get(t.member))
       : undefined;
     const user = t.user
       ? objectToKVEntryString(await repo.userVoiceConfig.get(t.user))
       : undefined;
-    const member = t.guild
+    const guild = t.guild
       ? objectToKVEntryString(await repo.guildVoiceConfig.get(t.guild))
       : undefined;
     return {

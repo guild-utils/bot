@@ -10,7 +10,10 @@ if (process.env["GUJ_USE_GOOGLE_STACKDRIVER"] === "true") {
   const loggingBunyan = new LoggingBunyan();
   streams.push(loggingBunyan.stream("info"));
 }
-const addtionalOptions: Partial<Logger.LoggerOptions> = { streams };
+const addtionalOptions: Partial<Logger.LoggerOptions> = {
+  streams,
+  serializers: { err: Logger.stdSerializers.err },
+};
 const node = ENV.KUBE_NODE_NAME;
 const pod = ENV.KUBE_POD_NAME;
 export const CommandLogger = Logger.createLogger({

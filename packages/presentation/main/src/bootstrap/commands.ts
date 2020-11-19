@@ -182,15 +182,23 @@ export function initCommandSystem(
   ];
   configurateCategoryArgs.forEach((e) => e.set("keys", keysDeepEntry));
   const confCat = configurateCategory(ctx.color, ...configurateCategoryArgs);
-  const voiceValue = voiceCategoryValue(coreSchema, ctx);
+  const voiceValue = [
+    ...voiceCategoryValue(coreSchema, ctx),
+    commandFromSchema(mainSchema["random"], "Voice", ctx),
+  ];
   const voiceCat = voiceCategory(
     ctx.color,
     commandsToMapWithNameAndAlias(voiceValue),
     ...commandsToMapWithName(voiceValue)
   );
-  const wordsValue = Object.values(mainSchema).map((e) =>
-    commandFromSchema(e, "Words", ctx)
-  );
+  const wordsValue = [
+    mainSchema["after-dictionary"],
+    mainSchema["before-dictionary"],
+    mainSchema.dictionary,
+    mainSchema.jumanpp,
+    mainSchema.kuromoji,
+    mainSchema["main-dictionary"],
+  ].map((e) => commandFromSchema(e, "Words", ctx));
   const wordsCat = categoryWords(
     ctx.color,
     commandsToMapWithNameAndAlias(wordsValue),
