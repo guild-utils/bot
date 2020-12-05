@@ -64,7 +64,7 @@ async function applySchema(
     v: unknown,
     ctx: MainParserContext
   ) => Promise<unknown> | unknown,
-  arr: (string|number)[],
+  arr: (string | number)[],
   m: Record<string, unknown>,
   ctx: MainParserContext,
   commandString: string[]
