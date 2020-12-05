@@ -3,7 +3,7 @@ import { RequestVoiceMixing, ChunkedData } from "sound-mixing-proto/index_pb";
 import { IMixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { Readable, Transform, TransformCallback } from "stream";
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
 export class OpenJtalkGRPCHandle<VoiceKind extends string>
   implements VoiceHandle {
   constructor(

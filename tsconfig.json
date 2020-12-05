@@ -3,7 +3,6 @@
 	"compilerOptions": {
     "jsx": "react",
 		"allowSyntheticDefaultImports": true,
-		"alwaysStrict": true,
 		"declaration": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
@@ -16,7 +15,6 @@
 			"esnext.symbol"
 		],
 		"module": "commonjs",
-		"moduleResolution": "node",
 		"noUnusedLocals": true,
 		//"outDir": "./dist",
 		"pretty": true,

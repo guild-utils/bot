@@ -5,7 +5,7 @@ import {
   IConfigManagerClient,
   ConfigManagerClient,
 } from "protocol_protos/config_grpc_pb";
-import { credentials } from "grpc";
+import { credentials } from "@grpc/grpc-js";
 import { ClientResponseTransformer } from "protocol_rpc-client";
 import {
   configurateUsecaseCore,
