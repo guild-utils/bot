@@ -35,7 +35,7 @@ type DeepPartial<T> = {
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isReadable(params: any): params is Stream {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
   return params && !!params.readable;
 }
 function streamToString(stream: Stream): Promise<string> {
