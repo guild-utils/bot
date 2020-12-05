@@ -64,7 +64,7 @@ async function applySchema(
     v: unknown,
     ctx: MainParserContext
   ) => Promise<unknown> | unknown,
-  arr: string[],
+  arr: (string|number)[],
   m: Record<string, unknown>,
   ctx: MainParserContext,
   commandString: string[]
@@ -79,7 +79,7 @@ async function applySchema(
       throw new TypeError();
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    commandString.push(ccmdString);
+    commandString.push(String(ccmdString));
     return applySchema(
       x,
       optionResolver,
@@ -165,7 +165,7 @@ export function buildMainParser(
   );
   return async (content: string, ctx: MainParserContext) => {
     const r: {
-      _?: string[];
+      _?: (string | number)[];
       $0: string;
       [k: string]: unknown;
     } = await new Promise<Arguments>((resolve, reject) =>
@@ -178,7 +178,7 @@ export function buildMainParser(
       return;
     }
     const initialCommandString = arr.shift();
-    if (!initialCommandString) {
+    if (!initialCommandString || typeof initialCommandString === "number") {
       return r["default"]
         ? [
             [],

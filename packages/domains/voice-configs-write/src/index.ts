@@ -1,8 +1,11 @@
 import type { UpdateResult, VoiceKindType } from "domain_meta";
 export type { UpdateResult, VoiceKindType };
-type RandomizerTypeLayeredBase<T extends number,T2 extends number> = "v1" | "v2" |`v3.${T}${T2}`;
-export type RandomizerTypeLayered = RandomizerTypeLayeredBase<number,number>;
-export type RandomizerTypeGuild = "v1"|"v2"|"v3";
+type RandomizerTypeLayeredBase<T extends number, T2 extends number> =
+  | "v1"
+  | "v2"
+  | string;
+export type RandomizerTypeLayered = RandomizerTypeLayeredBase<number, number>;
+export type RandomizerTypeGuild = "v1" | "v2" | "v3";
 
 export type LayeredVoiceConfig = {
   allpass: number | undefined;
