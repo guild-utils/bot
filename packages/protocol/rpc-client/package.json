@@ -19,8 +19,8 @@
     "build": "tsc -p ."
   },
   "dependencies": {
-    "domain_voice-configs": "^1.0.0",
     "@grpc/grpc-js": "1.2.2",
+    "domain_voice-configs": "^1.0.0",
     "protocol_protos": "^1.0.0"
   },
   "resolutions": {}

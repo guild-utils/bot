@@ -10,35 +10,35 @@ import {
 } from "domain_game-event";
 
 export abstract class GameEventUseCase {
-  abstract async listCollectionName(
+  abstract listCollectionName(
     collectionGroupId: string
   ): Promise<HKTCollectionNameU<HKTCollectionName>[]>;
-  abstract async collection(
+  abstract collection(
     collectionGroupId: string,
     collectionName: string
   ): Promise<GameEventCollection<HKTCollectionName>>;
-  abstract async put(
+  abstract put(
     collectionGroupId: string,
     collectionName: string,
     src: (string | null)[]
   ): Promise<void>;
-  abstract async allEvents(
+  abstract allEvents(
     collectionGroupId: string
   ): Promise<[GameEventCollection<HKTCollectionName>, GameEvent][]>;
-  abstract async nextEvents(
+  abstract nextEvents(
     collectionGroupId: string,
     now: moment.Moment
   ): Promise<
     [GameEventCollection<HKTCollectionName>, GameEvent, moment.Moment][]
   >;
-  abstract async nextEventsWithName(
+  abstract nextEventsWithName(
     collectionGroupId: string,
     collectionName: string,
     now: moment.Moment
   ): Promise<
     [GameEventCollection<HKTCollectionName>, [GameEvent, moment.Moment][]]
   >;
-  abstract async updateLastNoticeTime(
+  abstract updateLastNoticeTime(
     collectionGroupId: string,
     collectionName: string,
     event: GameEvent,
