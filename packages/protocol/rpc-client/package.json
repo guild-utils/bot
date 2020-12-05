@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "domain_voice-configs": "^1.0.0",
-    "grpc": "^1.24.3",
+    "@grpc/grpc-js": "1.2.2",
     "protocol_protos": "^1.0.0"
   },
   "resolutions": {}

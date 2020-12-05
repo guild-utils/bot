@@ -156,7 +156,7 @@ async function main() {
   container.register("GuiControllers", {
     useValue: guiControllers,
   });
-  initRpcServer(appliedVoiceConfigResolver);
+  await initRpcServer(appliedVoiceConfigResolver);
   const instanceState = initInstanceState(
     container,
     client,

@@ -4,7 +4,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
 import * as config_pb from "./config_pb";
 
 interface IConfigManagerService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
