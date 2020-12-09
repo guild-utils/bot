@@ -5,11 +5,7 @@ import { Executor, executorFromMessage } from "protocol_util-djs";
 import { getLangType } from "presentation_core";
 import { View } from "../gui/pagination/render";
 import { ConnectableObservableRxEnv } from "../gui/pagination/action-pipeline";
-import {
-  createView,
-  CreateViewResponses,
-  viewStart,
-} from "../gui/pagination";
+import { createView, CreateViewResponses, viewStart } from "../gui/pagination";
 type MainDictEntry = {
   to: string;
   p?: string;

@@ -3,11 +3,7 @@ import { CommandBase, CommandContext } from "@guild-utils/command-base";
 import { EmbedFieldData, Message, MessageEmbed } from "discord.js";
 import { Executor, executorFromMessage } from "protocol_util-djs";
 import { getLangType } from "presentation_core";
-import {
-  createView,
-  CreateViewResponses,
-  viewStart,
-} from "../gui/pagination";
+import { createView, CreateViewResponses, viewStart } from "../gui/pagination";
 import { ConnectableObservableRxEnv } from "../gui/pagination/action-pipeline";
 
 export type PageValue = DictionaryEntryB & { index: number };
