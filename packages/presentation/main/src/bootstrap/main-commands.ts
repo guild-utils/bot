@@ -7,14 +7,11 @@ import {
 import { ColorResolvable } from "discord.js";
 import { CommandBase } from "@guild-utils/command-base";
 import {
-  PageValue as SimplePageValue,
   SimpleDictionaryActions,
   SimpleDictionaryCommand,
   SimpleDictionaryCommandResponses,
 } from "../commands-v2/simple-dictionary";
-import { PageValue as MainPageValue } from "../commands-v2/main-dictionary";
 import { MainDictionaryCommand } from "../commands-v2/main-dictionary";
-import { CtxBase, PaginationGui } from "../gui/pagination";
 import { DictionaryRepository } from "domain_voice-configs";
 import {
   DictionaryCommand,
@@ -31,6 +28,7 @@ import {
 import { RandomCommand } from "../commands-v2/random";
 import { LayeredVoiceConfigRepository } from "domain_voice-configs-write";
 import { Usecase as VoiceConfigUsecase } from "domain_voice-configs";
+import { ConnectableObservableRxEnv } from "../gui/pagination/action-pipeline";
 
 export function categoryWords(
   color: ColorResolvable,
@@ -56,9 +54,7 @@ export type MainCommandOptions = {
   after: SimpleDictionaryActions;
   before: SimpleDictionaryActions;
   dictionary: DictionaryRepository;
-  afterGui: PaginationGui<CtxBase<SimplePageValue>>;
-  beforeGui: PaginationGui<CtxBase<SimplePageValue>>;
-  mainGui: PaginationGui<CtxBase<MainPageValue>>;
+  rxEnv: ConnectableObservableRxEnv;
   kuromoji: Tokenizer<IpadicFeatures>;
   getLang: getLangType;
   voiceConfigUsecase: VoiceConfigUsecase;
@@ -68,11 +64,35 @@ export type MainCommandOptions = {
 function codeblock(l: string, v: string) {
   return `\`\`\`${l}\n${v}\n\`\`\``;
 }
+const messageObj = {
+  empty: "現在辞書にはなにも登録されていません。",
+  help: [
+    "リアクションまたは対応したテキストを送信することで操作が可能です。",
+    "何も操作がないまま1分経過すると自動的に終了されます。",
+    "",
+    "\u23ea **<<** **f**",
+    "先頭へ",
+    "\u25c0 **<** **b**",
+    "前へ",
+    "\u23f9 **q**",
+    "閉じる",
+    "\u25b6 **>** **n**",
+    "次へ",
+    "\u23e9 **>>** **l**",
+    "最後へ",
+    "\u2753 **?** **h**",
+    "ヘルプ",
+    "",
+    "もう一度?を押すか、その他の操作をすることでヘルプを閉じることができます。",
+  ].join("\n"),
+};
 export function initDictionaryCommands(
   opt: MainCommandOptions
 ): Record<DictionaryCommands, CommandBase> {
   const color = opt.color;
-  const abCommonLang = (): SimpleDictionaryCommandResponses => ({
+  const abCommonLang = (
+    title: string
+  ): (() => SimpleDictionaryCommandResponses) => () => ({
     addSuccess: (exec, cur) =>
       createEmbedWithMetaData({ ...exec, color })
         .setTitle("成功")
@@ -130,23 +150,35 @@ export function initDictionaryCommands(
           "過去の値",
           ["from", codeblock("", b.from), "to", codeblock("", b.to)].join("\n")
         ),
+    createBaseEmbed: (exec, index, maxIndex) =>
+      createEmbedWithMetaData({ ...exec, color: opt.color }).setTitle(
+        `${title}(${index + 1}/${maxIndex})`
+      ),
+    createEmptyEmbed: (exec) =>
+      createEmbedWithMetaData({ ...exec, color: opt.color })
+        .setTitle(`${title}(0/0)`)
+        .setDescription(messageObj.empty),
+    createHelpEmbed: (exec) =>
+      createEmbedWithMetaData({ ...exec, color: opt.color })
+        .setTitle(`${title}(Help)`)
+        .setDescription(messageObj.help),
   });
   return {
     "after-dictionary": new SimpleDictionaryCommand(
       opt.after,
-      opt.afterGui,
-      abCommonLang,
+      opt.rxEnv,
+      abCommonLang("後辞書"),
       opt.getLang
     ),
     "before-dictionary": new SimpleDictionaryCommand(
       opt.before,
-      opt.beforeGui,
-      abCommonLang,
+      opt.rxEnv,
+      abCommonLang("前辞書"),
       opt.getLang
     ),
     "main-dictionary": new MainDictionaryCommand(
       opt.dictionary,
-      opt.mainGui,
+      opt.rxEnv,
       () => ({
         addWordSuccessWithCreate: (exec, c) =>
           createEmbedWithMetaData({
@@ -200,6 +232,24 @@ export function initDictionaryCommands(
           createEmbedWithMetaData({ ...exec, color })
             .setTitle("入力エラー")
             .setDescription("第一引数は必須です。"),
+        createBaseEmbed: (exec, index, maxIndex) =>
+          createEmbedWithMetaData({ ...exec, color: opt.color }).setTitle(
+            `メイン辞書(${index + 1}/${maxIndex})`
+          ),
+        createEmptyEmbed: (exec) =>
+          createEmbedWithMetaData({
+            ...exec,
+            color: opt.color,
+          })
+            .setDescription(messageObj.empty)
+            .setTitle("メイン辞書(0/0)"),
+        createHelpEmbed: (exec) =>
+          createEmbedWithMetaData({
+            ...exec,
+            color: opt.color,
+          })
+            .setDescription(messageObj.help)
+            .setTitle("メイン辞書(ヘルプ)"),
       }),
       opt.getLang
     ),

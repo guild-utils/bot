@@ -1,9 +1,0 @@
-{
-  "name": "discordjs-gui_plugins_store",
-  "version": "0.0.1",
-  "license": "MIT",
-  "author": "tignear",
-  "main": "../../dist/plugins/store.js",
-  "private": "true",
-  "dependencies": {}
-}
