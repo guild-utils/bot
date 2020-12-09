@@ -9,11 +9,6 @@ import initRpcServer from "./bootstrap/grpc";
 import { initDatabase } from "./bootstrap/mongo";
 import { Client, Permissions } from "discord.js";
 import {
-  initMainDictionaryGui,
-  initBADictionaryGui,
-  GuiTexts,
-} from "./bootstrap/dictionary-gui";
-import {
   initInstanceState,
   initText2Speech,
   MonitorRunnerWithLog,
@@ -46,9 +41,9 @@ import {
   createConfigPermissionChecker,
   initSystemMetrics,
 } from "presentation_core";
-import { Gui } from "./gui/common";
 import { CommandSchema } from "@guild-utils/command-schema";
 import { BotLogger, initProcessErrorHandler } from "presentation_core";
+import { connectRxEnv, createRxEnv } from "./gui/pagination/action-pipeline";
 initProcessErrorHandler();
 initSystemMetrics();
 const permissions = new Permissions()
@@ -120,42 +115,6 @@ async function main() {
     useValue: ttsDataStore,
   });
   const getLang = getLangBase(basicBotConfig, "ja_JP");
-
-  const messageObj = (): GuiTexts => ({
-    empty: "現在辞書にはなにも登録されていません。",
-    help: [
-      "リアクションまたは対応したテキストを送信することで操作が可能です。",
-      "何も操作がないまま1分経過すると自動的に終了されます。",
-      "",
-      "\u23ea **<<** **f**",
-      "先頭へ",
-      "\u25c0 **<** **b**",
-      "前へ",
-      "\u23f9 **q**",
-      "閉じる",
-      "\u25b6 **>** **n**",
-      "次へ",
-      "\u23e9 **>>** **l**",
-      "最後へ",
-      "\u2753 **?** **h**",
-      "ヘルプ",
-      "",
-      "もう一度?を押すか、その他の操作をすることでヘルプを閉じることができます。",
-    ].join("\n"),
-  });
-  const mainDictionaryGui = initMainDictionaryGui(
-    container,
-    messageObj,
-    getLang
-  );
-  const baDictionaryGuis = initBADictionaryGui(container, messageObj, getLang);
-  const guiControllers: Gui[] = [
-    mainDictionaryGui,
-    ...baDictionaryGuis,
-  ] as Gui[];
-  container.register("GuiControllers", {
-    useValue: guiControllers,
-  });
   await initRpcServer(appliedVoiceConfigResolver);
   const instanceState = initInstanceState(
     container,
@@ -189,6 +148,8 @@ async function main() {
   ]);
   const application = await client.fetchApplication();
   const inviteLink = createInviteLink(application, permissions);
+  const rxEnv = createRxEnv(client);
+  connectRxEnv(rxEnv);
   const { parser, resolver } = initCommandSystem(
     container,
     schemas,
@@ -201,8 +162,6 @@ async function main() {
       getLang,
     },
     {
-      afterGui: baDictionaryGuis[1],
-      beforeGui: baDictionaryGuis[0],
       after: {
         append: dict.appendAfter.bind(dict),
         get: dict.getAfter.bind(dict),
@@ -217,7 +176,7 @@ async function main() {
       },
       dictionary: dict,
       kuromoji,
-      mainGui: mainDictionaryGui,
+      rxEnv,
       getLang,
       voiceConfigUsecase: appliedVoiceConfigResolver,
       memberVoiceConfig,
@@ -254,7 +213,6 @@ async function main() {
     instanceState,
     monitorRunner,
     inviteLink,
-    guiControllers,
   });
   await client.login(token);
 }

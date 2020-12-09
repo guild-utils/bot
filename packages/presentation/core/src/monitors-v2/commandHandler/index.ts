@@ -13,8 +13,8 @@ import { CommandLogger } from "../../loggers";
 import { discordContextFromMessage } from "../../util/logging";
 import { CommandDisabledError } from "../../errors/command-disabled-error";
 const Logger = CommandLogger.child({ type: "handler" });
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PromiseReturnType<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   F extends (...args: any[]) => any
 > = ReturnType<F> extends Promise<infer T> ? T : never;
 export type CommandHandlerResponses = {

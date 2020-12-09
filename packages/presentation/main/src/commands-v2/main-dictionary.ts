@@ -1,9 +1,15 @@
 import { DictionaryRepository, DictionaryEntryA } from "domain_voice-configs";
-import { PaginationGui, CtxBase } from "../gui/pagination";
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
 import { Message, MessageEmbed } from "discord.js";
 import { Executor, executorFromMessage } from "protocol_util-djs";
 import { getLangType } from "presentation_core";
+import { View } from "../gui/pagination/render";
+import { ConnectableObservableRxEnv } from "../gui/pagination/action-pipeline";
+import {
+  createView,
+  CreateViewResponses,
+  viewStart,
+} from "../gui/pagination";
 type MainDictEntry = {
   to: string;
   p?: string;
@@ -30,11 +36,28 @@ export type MainDictionaryCommandResponses = {
     exec: Executor,
     current: MainDictEntry & { from: string }
   ) => MessageEmbed;
-};
+} & CreateViewResponses;
+
+function createFields(e: PageValue) {
+  const additionalValue =
+    e.p == null
+      ? ""
+      : "(" +
+        (["p", "p1", "p2", "p3"] as const)
+          .map((k) => e[k])
+          .filter((e): e is string => e != null)
+          .map((e) => `\`\`${e}\`\``)
+          .join(",") +
+        ")";
+  return {
+    name: `🔑 ${e.from}`,
+    value: `\`\`\`\n${e.to}\n\`\`\`${additionalValue}`,
+  };
+}
 export class MainDictionaryCommand implements CommandBase {
   constructor(
     private readonly dictionary: DictionaryRepository,
-    private readonly gui: PaginationGui<CtxBase<PageValue>>,
+    private readonly rxEnv: ConnectableObservableRxEnv,
     private readonly responses: (
       lang: string
     ) => MainDictionaryCommandResponses,
@@ -98,7 +121,6 @@ export class MainDictionaryCommand implements CommandBase {
       arg2 = { to: "" };
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const r = await this.dictionary.updateMain(msg.guild!.id, arg1, arg2);
     if (!r[0]) {
       await msg.channel.send(
@@ -137,17 +159,21 @@ export class MainDictionaryCommand implements CommandBase {
     const u = [...p.entries()].map((e) => {
       return { from: e[0], ...e[1] };
     });
-    this.gui.emit("Init", {
-      message,
-      context: {
-        authorId: message.author.id,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        member: message.member!,
-        currentPage: 0,
-        help: false,
-        pages: split(u, 10),
-        timestamp: Date.now(),
-      },
-    });
+    const splited = split(u, 10);
+    const responses = this.responses(await this.getLang(message.guild?.id));
+    const view: View = createView(
+      splited,
+      responses,
+      createFields,
+      message.author,
+      message.member
+    );
+    await viewStart(
+      view,
+      this.rxEnv,
+      message.channel,
+      message.author,
+      splited.length
+    );
   }
 }
