@@ -1,6 +1,6 @@
 import { ColorResolvable } from "discord.js";
 import { createEmbedWithMetaData } from "protocol_util-djs";
-import { SimpleDictionaryCommandResponses } from "../../commands-v2/simple-dictionary";
+import { SimpleDictionaryCommandResponses } from "../../commands/simple-dictionary";
 import { codeblock, paginationEmbeds } from "./dictionary-common";
 
 export function simpleDictionaryLang(

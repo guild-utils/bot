@@ -1,34 +1,34 @@
 import { CommandBase } from "@guild-utils/command-base";
 import { ConfigurateUsecase } from "protocol_configurate-usecase";
-import { CommandSet } from "../commands-v2/configurate/set";
+import { CommandSet } from "../commands/configurate/set";
 import { CommandSchema, RateLimitEntry } from "@guild-utils/command-schema";
 import { ColorResolvable, Message, MessageEmbed } from "discord.js";
-import { CommandAdd } from "../commands-v2/configurate/add";
-import { CommandGet } from "../commands-v2/configurate/get";
-import { CommandInvite } from "../commands-v2/info/invite";
+import { CommandAdd } from "../commands/configurate/add";
+import { CommandGet } from "../commands/configurate/get";
+import { CommandInvite } from "../commands/info/invite";
 import * as RtlJa from "../languages/ja-jp";
 import { getLang as getLangBase, getLangType } from "../util/get-lang";
 import { BasicBotConfigRepository } from "domain_guild-configs";
-import { CommandPing } from "../commands-v2/info/ping";
-import { CommandRemove } from "../commands-v2/configurate/remove";
-import { CommandReset } from "../commands-v2/configurate/reset";
-import { CommandStats } from "../commands-v2/info/stats";
-import { Category, CommandHelp, HelpEntry } from "../commands-v2/info/help";
-import { CommandAppliedVoiceConfig } from "../commands-v2/voice/applied-voice-config";
-import { CommandInfo } from "../commands-v2/info/info";
+import { CommandPing } from "../commands/info/ping";
+import { CommandRemove } from "../commands/configurate/remove";
+import { CommandReset } from "../commands/configurate/reset";
+import { CommandStats } from "../commands/info/stats";
+import { Category, CommandHelp, HelpEntry } from "../commands/info/help";
+import { CommandAppliedVoiceConfig } from "../commands/voice/applied-voice-config";
+import { CommandInfo } from "../commands/info/info";
 import { Usecase as VoiceConfigUsecase } from "domain_voice-configs";
-import { CommandEnd } from "../commands-v2/voice/end";
+import { CommandEnd } from "../commands/voice/end";
 import TTSEngine from "../text2speech/engine";
 import { TextToSpeechTargetChannelDataStore as TTSDataStore } from "domain_guild-tts-target-channels";
-import { CommandEndChannel } from "../commands-v2/voice/end-channel";
-import { CommandSkip } from "../commands-v2/voice/skip";
-import { CommandStart } from "../commands-v2/voice/start";
+import { CommandEndChannel } from "../commands/voice/end-channel";
+import { CommandSkip } from "../commands/voice/skip";
+import { CommandStart } from "../commands/voice/start";
 import {
   CommandConf,
   CommandMemconf,
   CommandMemconfMember,
   CommandUserconf,
-} from "../commands-v2/configurate/conf";
+} from "../commands/configurate/conf";
 import { createEmbedWithMetaData } from "protocol_util-djs";
 import { createRateLimitEntrys, RateLimitEntrys } from "../util/rate-limit";
 import { CoreCommands } from "protocol_command-schema-core-bootstrap";

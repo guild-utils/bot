@@ -5,8 +5,8 @@ import {
   CreateEmbedWithMetaDataOpt,
   Executor,
 } from "protocol_util-djs";
-import { UpdateResultResponses } from "../../commands-v2/configurate/util";
-import { HelpEntry, HelpCommandCotext } from "../../commands-v2/info/help";
+import { UpdateResultResponses } from "../../commands/configurate/util";
+import { HelpEntry, HelpCommandCotext } from "../../commands/info/help";
 import {
   NotAllowedError,
   SenderPermissionError,

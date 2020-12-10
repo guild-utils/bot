@@ -9,13 +9,13 @@ import {
   User,
   ColorResolvable,
 } from "discord.js";
-import { CommandInviteTexts } from "../../commands-v2/info/invite";
-import { CommandPingTexts } from "../../commands-v2/info/ping";
+import { CommandInviteTexts } from "../../commands/info/invite";
+import { CommandPingTexts } from "../../commands/info/ping";
 import {
   CommandHelpTexts,
   HelpCommandCotext,
   HelpEntry,
-} from "../../commands-v2/info/help";
+} from "../../commands/info/help";
 import { buildCategoryDescription, createCategoryFields } from "../util";
 import { BUILD_DATE, KUBE_NODE_NAME, KUBE_POD_NAME } from "../../bootstrap/env";
 

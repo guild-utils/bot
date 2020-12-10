@@ -11,7 +11,7 @@ import {
   Command,
   HelpCommandCotext,
   HelpEntry,
-} from "../commands-v2/info/help";
+} from "../commands/info/help";
 import * as RtlJa from "../languages/ja-jp";
 import { commandTextSupplier } from "./commands";
 import {

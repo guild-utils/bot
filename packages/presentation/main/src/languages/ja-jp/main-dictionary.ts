@@ -1,6 +1,6 @@
 import { ColorResolvable } from "discord.js";
 import { createEmbedWithMetaData } from "protocol_util-djs";
-import { MainDictionaryCommandResponses } from "../../commands-v2/main-dictionary";
+import { MainDictionaryCommandResponses } from "../../commands/main-dictionary";
 import { codeblock, paginationEmbeds } from "./dictionary-common";
 
 export function mainDictionaryLang(
