@@ -219,7 +219,8 @@ export function commandConfBase(
         .positional("value", new AT_String(), {
           descriptionResolver: computeLanguage(f, "value"),
         })
-    );
+    )
+    .needSubCommand();
 }
 export function commandConf(
   f: (
@@ -371,5 +372,6 @@ export function commandMemconfMember(
         .positional("value", new AT_String(), {
           descriptionResolver: computeLanguage(f, "value"),
         })
-    );
+    )
+    .needSubCommand();
 }
