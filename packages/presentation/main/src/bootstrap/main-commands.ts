@@ -160,7 +160,7 @@ export function initDictionaryCommands(
         .setDescription(messageObj.empty),
     createHelpEmbed: (exec) =>
       createEmbedWithMetaData({ ...exec, color: opt.color })
-        .setTitle(`${title}(Help)`)
+        .setTitle(`${title}(ヘルプ)`)
         .setDescription(messageObj.help),
   });
   return {
@@ -303,7 +303,7 @@ export function initMainCommands(
                   ? ["新しいrandomizerの値:", ctx.newRandomizerValue]
                   : []),
                 "",
-                ...(ctx.newRandomizerValue
+                ...(ctx.oldRandomizerValue
                   ? ["古いrandomizerの値:", ctx.oldRandomizerValue]
                   : []),
               ].join("\n")
