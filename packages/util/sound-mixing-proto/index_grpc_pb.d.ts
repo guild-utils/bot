@@ -4,7 +4,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
 import * as index_pb from "./index_pb";
 
 interface IMixerService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {

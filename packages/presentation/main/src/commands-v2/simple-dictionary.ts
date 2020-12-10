@@ -1,9 +1,10 @@
 import { DictionaryEntryB, DictionaryRepository } from "domain_voice-configs";
-import { PaginationGui, CtxBase } from "../gui/pagination";
 import { CommandBase, CommandContext } from "@guild-utils/command-base";
-import { Message, MessageEmbed } from "discord.js";
+import { EmbedFieldData, Message, MessageEmbed } from "discord.js";
 import { Executor, executorFromMessage } from "protocol_util-djs";
 import { getLangType } from "presentation_core";
+import { createView, CreateViewResponses, viewStart } from "../gui/pagination";
+import { ConnectableObservableRxEnv } from "../gui/pagination/action-pipeline";
 
 export type PageValue = DictionaryEntryB & { index: number };
 export type SimpleDictionaryCommandResponses = {
@@ -18,7 +19,7 @@ export type SimpleDictionaryCommandResponses = {
     after: DictionaryEntryB
   ) => MessageEmbed;
   deleteSuccess: (exec: Executor, deleted: DictionaryEntryB) => MessageEmbed;
-};
+} & CreateViewResponses;
 export type SimpleDictionaryActions = {
   append: (
     guild: string,
@@ -33,10 +34,16 @@ export type SimpleDictionaryActions = {
   ) => Promise<[DictionaryEntryB, DictionaryEntryB] | undefined>;
   get: (guild: string) => Promise<DictionaryEntryB[]>;
 };
+function createFields(e: PageValue): EmbedFieldData {
+  return {
+    name: `[${e.index + 1}] ${e.from}`,
+    value: `\`\`\`\n${e.to}\n\`\`\``,
+  };
+}
 export class SimpleDictionaryCommand implements CommandBase {
   constructor(
     private readonly actions: SimpleDictionaryActions,
-    private readonly gui: PaginationGui<CtxBase<PageValue>>,
+    private readonly rxEnv: ConnectableObservableRxEnv,
     private readonly responses: (
       lang: string
     ) => SimpleDictionaryCommandResponses,
@@ -170,27 +177,32 @@ export class SimpleDictionaryCommand implements CommandBase {
       );
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const p = await this.actions.get(message.guild!.id);
-    this.gui.emit("Init", {
-      message,
-      context: {
-        authorId: message.author.id,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        member: message.member!,
-        currentPage: 0,
-        help: false,
-        pages: split(
-          p.map((e, i) => ({ ...e, index: i })),
-          10
-        ),
-        timestamp: Date.now(),
-      },
-    });
+    const splited = split(
+      p.map((e, i) => ({ ...e, index: i })),
+      10
+    );
+    const responses = this.responses(await this.getLang(message.guild?.id));
+    // eslint-disable-next-line @typescript-eslint/require-await
+    const view = createView(
+      splited,
+      responses,
+      createFields,
+      message.author,
+      message.member
+    );
+    await viewStart(
+      view,
+      this.rxEnv,
+      message.channel,
+      message.author,
+      splited.length
+    );
   }
 }
 
 export function commandBeforeDictionary(
   repo: DictionaryRepository,
-  gui: PaginationGui<CtxBase<PageValue>>,
+  rxEnv: ConnectableObservableRxEnv,
   responses: (lang: string) => SimpleDictionaryCommandResponses,
   getLang: getLangType
 ): SimpleDictionaryCommand {
@@ -201,14 +213,14 @@ export function commandBeforeDictionary(
       remove: repo.removeBefore.bind(repo),
       update: repo.updateBefore.bind(repo),
     },
-    gui,
+    rxEnv,
     responses,
     getLang
   );
 }
 export function commandAfterDictionary(
   repo: DictionaryRepository,
-  gui: PaginationGui<CtxBase<PageValue>>,
+  rxEnv: ConnectableObservableRxEnv,
   responses: (lang: string) => SimpleDictionaryCommandResponses,
   getLang: getLangType
 ): SimpleDictionaryCommand {
@@ -219,7 +231,7 @@ export function commandAfterDictionary(
       remove: repo.removeAfter.bind(repo),
       update: repo.updateAfter.bind(repo),
     },
-    gui,
+    rxEnv,
     responses,
     getLang
   );

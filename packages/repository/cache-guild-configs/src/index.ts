@@ -82,7 +82,7 @@ export class CachedBasicConfigRepository
         this.cache.setPrefix(guild, res.after, (e) =>
           this.load(e).catch((err) => reject(err))
         );
-        resolve();
+        resolve(undefined);
       });
     }
     return res;
@@ -100,7 +100,7 @@ export class CachedBasicConfigRepository
         this.cache.setLanguage(guild, res.after, (e) =>
           this.load(e).catch((err) => reject(err))
         );
-        resolve();
+        resolve(undefined);
       });
     }
     return res;
@@ -118,7 +118,7 @@ export class CachedBasicConfigRepository
         this.cache.setDisabledCommands(guild, res.after, (e) =>
           this.load(e).catch((err) => reject(err))
         );
-        resolve();
+        resolve(undefined);
       });
     }
     return res;
@@ -133,7 +133,7 @@ export class CachedBasicConfigRepository
         this.cache.setDisabledCommands(guild, res.after, (e) =>
           this.load(e).catch((err) => reject(err))
         );
-        resolve();
+        resolve(undefined);
       });
     }
     return res;
@@ -148,7 +148,7 @@ export class CachedBasicConfigRepository
         this.cache.setDisabledCommands(guild, res.after, (e) =>
           this.load(e).catch((err) => reject(err))
         );
-        resolve();
+        resolve(undefined);
       });
     }
     return res;
