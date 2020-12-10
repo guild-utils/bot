@@ -7,11 +7,11 @@ export default function (
   basicBotConfig: BasicBotConfigRepository
 ): void {
   const f = async function (
-    partialnewMember: GuildMember | PartialGuildMember
+    partialNewMember: GuildMember | PartialGuildMember
   ): Promise<void> {
-    const newMember = partialnewMember.partial
-      ? await partialnewMember.fetch()
-      : partialnewMember;
+    const newMember = partialNewMember.partial
+      ? await partialNewMember.fetch()
+      : partialNewMember;
     if (client.user?.id !== newMember.client.user?.id) {
       return;
     }
