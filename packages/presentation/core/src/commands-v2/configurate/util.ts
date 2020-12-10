@@ -76,6 +76,7 @@ export type UpdateResultResponses = {
     nick: string,
     avatar?: string
   ) => MessageEmbed;
+  subCommandNeeded: (exec: Executor) => MessageEmbed;
 } & ErrorHandlerResponses;
 async function buildResponseFromUpdateResultMulti(
   results: ConfigurateUsecaseResultTypeSingle[],

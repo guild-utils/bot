@@ -156,5 +156,13 @@ export function rtlUpdate(color: ColorResolvable): UpdateResultResponses {
         .setTitle("不正な値")
         .setDescription("この値を設定することはできません。");
     },
+    subCommandNeeded: (exec) => {
+      return createEmbedWithMetaData({
+        ...exec,
+        color,
+      })
+        .setTitle("サブコマンドが必要")
+        .setDescription("サブコマンドを指定する必要があります。");
+    },
   };
 }

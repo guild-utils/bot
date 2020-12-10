@@ -61,9 +61,9 @@ export abstract class CommandConfBase implements CommandBase {
       );
       return;
     }
-    const action: Record<
-      Exclude<ActionType, "get">,
-      () => Promise<ConfigurateUsecaseResultType>
+    const actions: Record<
+      string,
+      (() => Promise<ConfigurateUsecaseResultType>) | undefined
     > = {
       add: () =>
         this.usecase.add(
@@ -88,11 +88,19 @@ export abstract class CommandConfBase implements CommandBase {
           executor
         ),
     };
+    const action = actions[actType];
+    if (action == null) {
+      const r = this.responses(
+        await this.getLang(message.guild?.id)
+      ).subCommandNeeded(executorFromMessage(message));
+      await message.channel.send(r);
+      return;
+    }
     await updateConfig(
       message,
       this.responses(await this.getLang(message.guild?.id)),
       key,
-      action[actType]
+      action
     );
   }
 }
