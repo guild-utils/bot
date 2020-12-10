@@ -65,8 +65,8 @@ export class RandomCommand implements CommandBase {
     const embed = this.responses(await this.getLang(message.guild?.id)).success(
       executorFromMessage(message),
       {
-        newRandomizerValue: result.after as string | undefined,
-        oldRandomizerValue: result.before as string | undefined,
+        newRandomizerValue: result.after,
+        oldRandomizerValue: result.before,
       }
     );
     const ret = await this.usecase.appliedVoiceConfigResolvedBy(

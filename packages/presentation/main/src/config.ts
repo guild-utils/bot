@@ -2,7 +2,9 @@
 import { ClientOptions, Intents } from "discord.js";
 export function config(): ClientOptions {
   return {
-    disableMentions: "everyone",
+    allowedMentions: {
+      parse: [],
+    },
     restTimeOffset: 50,
     /**
      * Console Options
