@@ -4,15 +4,15 @@ import { MonitorRunner } from "monitor-discord.js";
 import Engine from "../text2speech/engine";
 import { InstanceState } from "../util/instance-state";
 import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
-import forUpdatePrefix_guildMemberUpdate from "../events-v2/forUpdatePrefix-guildMemberUpdate";
-import forShowInvite_onceReady from "../events-v2/forShowInvite-onceReady";
-import forUpdateInstanceState_onceReady from "../events-v2/forUpdateInstanceState-onceReady";
-import forResumeConnection_ready from "../events-v2/forResumeConnection-ready";
-import forAutoDisconnect_voiceStateUpdate from "../events-v2/forAutoDisconnect-voiceStateUpdate";
-import forMonitor_message from "../events-v2/forMonitor-message";
-import forMonitor_messageUpdate from "../events-v2/forMonitor-messageUpdate";
-import forMonitor_onceReady from "../events-v2/forMonitor-onceReady";
-import forErrorHandling_error from "../events-v2/forErrorHandling-error";
+import forUpdatePrefix_guildMemberUpdate from "../events/forUpdatePrefix-guildMemberUpdate";
+import forShowInvite_onceReady from "../events/forShowInvite-onceReady";
+import forUpdateInstanceState_onceReady from "../events/forUpdateInstanceState-onceReady";
+import forResumeConnection_ready from "../events/forResumeConnection-ready";
+import forAutoDisconnect_voiceStateUpdate from "../events/forAutoDisconnect-voiceStateUpdate";
+import forMonitor_message from "../events/forMonitor-message";
+import forMonitor_messageUpdate from "../events/forMonitor-messageUpdate";
+import forMonitor_onceReady from "../events/forMonitor-onceReady";
+import forErrorHandling_error from "../events/forErrorHandling-error";
 
 export type InitCoreEventsEnv = {
   basicBotConfig: BasicBotConfigRepository;

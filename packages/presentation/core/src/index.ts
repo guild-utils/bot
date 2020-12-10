@@ -1,4 +1,4 @@
-import Text2SpeechMonitor from "./monitors-v2/text2speech";
+import Text2SpeechMonitor from "./monitors/text2speech";
 import * as GUILD_SETTINGS from "./guild_settings_keys";
 import Engine from "./text2speech/engine";
 import { initEngineAndKuromoji } from "./bootstrap/engine";
@@ -47,11 +47,11 @@ export type {
   Documentation,
   HelpCommandCotext,
   HelpEntry,
-} from "./commands-v2/info/help";
+} from "./commands/info/help";
 export {
   CommandConfBase,
   ActionType as CommandConfActionType,
-} from "./commands-v2/configurate/conf";
+} from "./commands/configurate/conf";
 export {
   ConfigPermissionChecker,
   PermissionChecker,
@@ -90,7 +90,7 @@ export {
   SenderPermissionError,
 } from "./errors/permission-error";
 export { UnreachableMemberError } from "./errors/unreachable-error";
-export { CommandResolver } from "./monitors-v2/commandHandler";
+export { CommandResolver } from "./monitors/commandHandler";
 export { RateLimitLangJaJP } from "./bootstrap/rateLimit";
 export { RateLimitEntrys } from "./util/rate-limit";
 export { initText2Speech } from "./bootstrap/text2speech";

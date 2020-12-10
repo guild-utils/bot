@@ -4,7 +4,7 @@ import {
   executorFromMessage,
 } from "protocol_util-djs";
 import { inspect } from "util";
-import { CommandHandlerResponses } from "../../monitors-v2/commandHandler";
+import { CommandHandlerResponses } from "../../monitors/commandHandler";
 
 export function CommandHandlerJaJP(
   color: ColorResolvable

@@ -1,6 +1,6 @@
 import { ColorResolvable, MessageEmbed } from "discord.js";
 import { createEmbedWithMetaData } from "protocol_util-djs";
-import { HelpCommandCotext, HelpEntry } from "../../commands-v2/info/help";
+import { HelpCommandCotext, HelpEntry } from "../../commands/info/help";
 import { buildCategoryDescription, createCategoryFields } from "../util";
 const categoryDesc = "読み上げに関するコマンド";
 export function categoryVoiceEmbed(

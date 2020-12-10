@@ -1,4 +1,4 @@
-import * as RtlJa from "../../languages-v2/ja-jp";
+import * as RtlJa from "../../languages/ja-jp";
 import { commandTextSupplier, getLangType } from "presentation_core";
 import {
   Category,
@@ -9,27 +9,27 @@ import { CommandBase } from "@guild-utils/command-base";
 import {
   SimpleDictionaryActions,
   SimpleDictionaryCommand,
-} from "../../commands-v2/simple-dictionary";
-import { MainDictionaryCommand } from "../../commands-v2/main-dictionary";
+} from "../../commands/simple-dictionary";
+import { MainDictionaryCommand } from "../../commands/main-dictionary";
 import { DictionaryRepository } from "domain_voice-configs";
 import {
   DictionaryCommand,
   DictionaryCommandResponses,
-} from "../../commands-v2/dictionary";
-import { JumanppCommand } from "../../commands-v2/jumanpp";
-import { KuromojiCommand } from "../../commands-v2/kuromoji";
+} from "../../commands/dictionary";
+import { JumanppCommand } from "../../commands/jumanpp";
+import { KuromojiCommand } from "../../commands/kuromoji";
 import { IpadicFeatures, Tokenizer } from "kuromoji";
 import { createEmbedWithMetaData } from "protocol_util-djs";
 import {
   MainCommands,
   DictionaryCommands,
 } from "protocol_command-schema-main-bootstrap";
-import { RandomCommand } from "../../commands-v2/random";
+import { RandomCommand } from "../../commands/random";
 import { LayeredVoiceConfigRepository } from "domain_voice-configs-write";
 import { Usecase as VoiceConfigUsecase } from "domain_voice-configs";
 import { ConnectableObservableRxEnv } from "../../gui/pagination/action-pipeline";
-import { simpleDictionaryLang } from "../../languages-v2/ja-jp/simple-dictionary";
-import { mainDictionaryLang } from "../../languages-v2/ja-jp/main-dictionary";
+import { simpleDictionaryLang } from "../../languages/ja-jp/simple-dictionary";
+import { mainDictionaryLang } from "../../languages/ja-jp/main-dictionary";
 
 export function categoryWords(
   color: ColorResolvable,

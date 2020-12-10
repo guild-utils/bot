@@ -1,7 +1,7 @@
 import { ColorResolvable } from "discord.js";
 import { createEmbedWithMetaData } from "protocol_util-djs";
 import { commandTextSupplier } from "../../bootstrap/commands";
-import { HelpCommandCotext } from "../../commands-v2/info/help";
+import { HelpCommandCotext } from "../../commands/info/help";
 import { KeyInfoRecord } from "./index";
 function prefix(
   color: ColorResolvable,
