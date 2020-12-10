@@ -1,9 +1,6 @@
 import * as RtlJa from "../../languages/ja-jp";
 import { commandTextSupplier, getLangType } from "presentation_core";
-import {
-  Category,
-  HelpEntry,
-} from "presentation_core/dist/commands-v2/info/help";
+import { Category, HelpEntry } from "presentation_core";
 import { ColorResolvable } from "discord.js";
 import { CommandBase } from "@guild-utils/command-base";
 import {
