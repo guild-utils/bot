@@ -54,6 +54,7 @@ export function random(
   return new CommandSchema("random", {
     descriptionResolver: computeLanguage(f, "command"),
     runIn: runInServer,
+    alias: ["rand"],
   }).optional("overwrite", new AT_RandomizerOverwrite(), {
     descriptionResolver: computeLanguage(f, "overwrite"),
     alias: ["ow"],
