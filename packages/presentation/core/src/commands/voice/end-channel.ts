@@ -32,8 +32,8 @@ export class CommandEndChannel implements CommandBase {
     await this.dataStore.removeTextToSpeechTargetChannel(gid, msg.channel.id);
     const tcs = await this.dataStore.getTextToSpeechTargetChannel(gid);
     if (tcs.size === 0) {
-      await this.engine.unregister(guild.voice?.connection);
-      guild.voice?.connection?.disconnect();
+      await this.engine.unregister(guild.me?.voice.connection);
+      guild.me?.voice.connection?.disconnect();
     }
     await msg.channel.send(
       this.responses(await this.getLang(guild.id)).success(
@@ -45,7 +45,7 @@ export class CommandEndChannel implements CommandBase {
         [...tcs].map(
           (e) => guild.channels.resolve(e) as TextChannel | NewsChannel
         ),
-        tcs.size === 0 ? undefined : guild.voice?.channel
+        tcs.size === 0 ? undefined : guild.me?.voice.channel
       )
     );
   }

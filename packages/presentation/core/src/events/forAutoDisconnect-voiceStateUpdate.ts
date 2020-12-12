@@ -21,7 +21,7 @@ export default function (
       return;
     }
 
-    const vc = oldChannel.guild.voice?.channel;
+    const vc = oldChannel.guild.me?.voice.channel;
     if (!vc || vc.id !== oldChannel.id) {
       return;
     }
@@ -30,8 +30,8 @@ export default function (
     if (inHuman) {
       return;
     }
-    await engine.unregister(vc.guild.voice?.connection);
-    vc.guild.voice?.connection?.disconnect();
+    await engine.unregister(vc.guild.me?.voice.connection);
+    vc.guild.me?.voice.connection?.disconnect();
     await dataStore.clearTextToSpeechTargetChannel(oldChannel.guild.id);
     vc.leave();
   }
