@@ -149,9 +149,6 @@ export class MongoGuildVoiceConfigRepository
       },
       {
         $set: $.flatten(newC),
-      },
-      {
-        upsert: true,
       }
     );
     if (!r.matchedCount) {
