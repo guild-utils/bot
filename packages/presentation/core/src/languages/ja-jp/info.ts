@@ -57,9 +57,9 @@ export const rtlInvite: CommandInviteTexts = {
   title: "招待リンク",
   description: [
     "[サポートサーバー](https://discord.gg/xxkzCHU)",
-    "[メインボット](https://discord.com/oauth2/authorize?client_id=708254048981352459&permissions=3271744&scope=bot)",
-    "[サブボット1](https://discord.com/oauth2/authorize?client_id=731698703903227954&permissions=3271744&scope=bot)",
-    "[サブボット2](https://discord.com/oauth2/authorize?client_id=747006457219645440&permissions=3271744&scope=bot)",
+    "[メインボット](https://discord.com/oauth2/authorize?client_id=708254048981352459&permissions=3271744&scope=bot+applications.commands)",
+    "[サブボット1](https://discord.com/oauth2/authorize?client_id=731698703903227954&permissions=3271744&scope=bot+applications.commands)",
+    "[サブボット2](https://discord.com/oauth2/authorize?client_id=747006457219645440&permissions=3271744&scope=bot+applications.commands)",
   ].join("\n"),
 };
 export function rtlPing(color: ColorResolvable): CommandPingTexts {
