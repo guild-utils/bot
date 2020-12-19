@@ -1,18 +1,24 @@
 import { ContextError } from "@guild-utils/command-schema";
-import { ArgumentTypeMismatchError, AT_Bool } from "@guild-utils/command-types";
+import { AT_Bool } from "@guild-utils/command-types";
 import { VoiceKindArray } from "domain_meta";
+import {
+  RandomizerTypeGuild,
+  RandomizerTypeLayered,
+} from "domain_voice-configs-write";
 import {
   CheckFunction,
   SetFunction,
   setWithRecord,
   Pipelines,
   guildOnly,
+  BotLogger,
 } from "presentation_core";
 import {
   ConfigurateUsecase,
   ConfigurateUsecaseResultType,
   ConfigurateUsecaseResultTypeSingle,
   ExecutorType,
+  InvalidValueError,
   TargetType,
 } from "protocol_configurate-usecase";
 import { MainConfigurateKeys } from "../keys";
@@ -38,7 +44,7 @@ function makeFloatLayeredPropSetterProcess(
     } else if (t?.member || t?.user) {
       const vv = v === undefined ? v : Number(v);
       if (vv !== undefined && !Number.isFinite(vv)) {
-        throw new ArgumentTypeMismatchError();
+        throw new InvalidValueError(vv);
       }
       await checkUpdate(t, exec);
       const promises: Promise<ConfigurateUsecaseResultTypeSingle>[] = [];
@@ -58,7 +64,7 @@ function makeFloatLayeredPropSetterProcess(
     } else {
       const vv = v === undefined ? v : Number(v);
       if (vv !== undefined && !Number.isFinite(vv)) {
-        throw new ArgumentTypeMismatchError();
+        throw new InvalidValueError(vv);
       }
       if (exec.guild) {
         const member: [string, string] = [exec.guild, exec.user];
@@ -97,7 +103,7 @@ async function setSpeechReadNameProcess(
       .then(Pipelines.guildSingle(t.guild));
   } else if (t?.member || t?.user) {
     if (typeof v !== "string" && v !== undefined) {
-      throw new ArgumentTypeMismatchError();
+      throw new InvalidValueError(v);
     }
     await checkUpdate(t, exec);
     const promises: Promise<ConfigurateUsecaseResultTypeSingle>[] = [];
@@ -118,7 +124,7 @@ async function setSpeechReadNameProcess(
     return Promise.all(promises);
   } else {
     if (typeof v !== "string" && v !== undefined) {
-      throw new ArgumentTypeMismatchError();
+      throw new InvalidValueError(v);
     }
     if (exec.guild) {
       const member: [string, string] = [exec.guild, exec.user];
@@ -144,7 +150,7 @@ async function setSpeechMaxReadLimitProcess(
   await checkUpdate({ guild }, exec);
   const vv = v === undefined ? v : Number(v);
   if (vv !== undefined && !Number.isInteger(vv)) {
-    throw new ArgumentTypeMismatchError();
+    throw new InvalidValueError(vv);
   }
   return guildVoiceConfig
     .setMaxReadLimit(guild, vv)
@@ -160,12 +166,76 @@ async function setSpeechMaxVolumeProcess(
   await checkUpdate({ guild }, exec);
   const vv = v === undefined ? v : Number(v);
   if (vv !== undefined && !Number.isFinite(vv)) {
-    throw new ArgumentTypeMismatchError();
+    throw new InvalidValueError(vv);
   }
   await checkUpdate({ guild }, exec);
   return guildVoiceConfig
     .setMaxVolume(guild, vv)
     .then(Pipelines.guildSingle(guild));
+}
+function validateRandomizerStringGuild(v: unknown): v is RandomizerTypeGuild {
+  if (v === "v1") {
+    return true;
+  }
+  if (v === "v2") {
+    return true;
+  }
+  if (v === "v3") {
+    return true;
+  }
+  return false;
+}
+function validateRandomizerStringLayered(
+  v: unknown
+): v is RandomizerTypeLayered {
+  //v1
+  //v2
+  if (v === "v1" || v === "v2") {
+    return true;
+  }
+  if (typeof v !== "string") {
+    return false;
+  }
+  if (v.slice(0, 2) !== "v3") {
+    return false;
+  }
+  //v3
+  if (v[2] === undefined) {
+    return true;
+  }
+  //v3.uint64
+  if (v[2] !== ".") {
+    return false;
+  }
+  const max64bit = 1n << 64n;
+  const [seedString, flags]: (string | undefined)[] = v.slice(3).split(".");
+  if (!seedString || seedString.length === 0) {
+    return false;
+  }
+  //Creating a BigInt that is too big will result in an error
+  if (String(max64bit).length < seedString.length) {
+    return false;
+  }
+  let seedInt: BigInt;
+  try {
+    seedInt = BigInt(seedString);
+  } catch (e) {
+    if (e instanceof TypeError) {
+      return false;
+    }
+    BotLogger.error(
+      e,
+      "An unexpected error has occurred at validateRandomizerString."
+    );
+    return false;
+  }
+  if (seedInt < 0n || seedInt > BigInt(max64bit)) {
+    return false;
+  }
+  if (flags == null || /[mu]/.test(flags)) {
+    return true;
+  }
+  return false;
 }
 async function setRandomizerProcess(
   t: TargetType,
@@ -178,35 +248,43 @@ async function setRandomizerProcess(
     userVoiceConfig,
   }: UpdateEnv
 ): Promise<ConfigurateUsecaseResultType> {
-  if (v !== "v1" && v !== "v2" && v !== undefined) {
-    throw new ArgumentTypeMismatchError();
-  }
   const promises: Promise<ConfigurateUsecaseResultTypeSingle>[] = [];
   if (t?.guild || t?.user || t?.member) {
     await checkUpdate(t, exec);
     if (t.guild) {
+      if (!validateRandomizerStringGuild(v)) {
+        throw new InvalidValueError(v);
+      }
       promises.push(
         guildVoiceConfig
           .setRandomizer(t.guild, v)
           .then(Pipelines.guildSingle(t.guild))
       );
     }
-    if (t.user) {
-      promises.push(
-        userVoiceConfig
-          .setRandomizer(t.user, v)
-          .then(Pipelines.userSingle(t.user))
-      );
-    }
-    if (t.member) {
-      promises.push(
-        memberVoiceConfig
-          .setRandomizer(t.member, v)
-          .then(Pipelines.memberSingle(t.member))
-      );
+    if (t.user || t.member) {
+      if (!validateRandomizerStringLayered(v)) {
+        throw new InvalidValueError(v);
+      }
+      if (t.user) {
+        promises.push(
+          userVoiceConfig
+            .setRandomizer(t.user, v)
+            .then(Pipelines.userSingle(t.user))
+        );
+      }
+      if (t.member) {
+        promises.push(
+          memberVoiceConfig
+            .setRandomizer(t.member, v)
+            .then(Pipelines.memberSingle(t.member))
+        );
+      }
     }
     return Promise.all(promises);
   } else {
+    if (!validateRandomizerStringLayered(v)) {
+      throw new InvalidValueError(v);
+    }
     if (exec.guild) {
       const member: [string, string] = [exec.guild, exec.user];
       await checkUpdate({ member }, exec);
@@ -230,7 +308,7 @@ async function setSpeechKindProcess(
   { checkUpdate, memberVoiceConfig, userVoiceConfig }: UpdateEnv
 ): Promise<ConfigurateUsecaseResultType> {
   if (v !== undefined && !VoiceKindArray.includes(v)) {
-    throw new ArgumentTypeMismatchError();
+    throw new InvalidValueError(v);
   }
   if (t?.guild) {
     throw new ContextError();

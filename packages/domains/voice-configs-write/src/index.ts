@@ -1,9 +1,11 @@
 import type { UpdateResult, VoiceKindType } from "domain_meta";
 export type { UpdateResult, VoiceKindType };
-export const Randomizer = {
-  v1: "v1",
-  v2: "v2",
-};
+type RandomizerTypeLayeredBase<T extends number, T2 extends number> =
+  | "v1"
+  | "v2"
+  | string;
+export type RandomizerTypeLayered = RandomizerTypeLayeredBase<number, number>;
+export type RandomizerTypeGuild = "v1" | "v2" | "v3";
 
 export type LayeredVoiceConfig = {
   allpass: number | undefined;
@@ -13,7 +15,7 @@ export type LayeredVoiceConfig = {
   tone: number | undefined;
   volume: number | undefined;
   kind: VoiceKindType | undefined;
-  randomizer: keyof typeof Randomizer | undefined;
+  randomizer: RandomizerTypeLayered | undefined;
   readName: string | undefined;
 };
 
@@ -53,8 +55,8 @@ export interface LayeredVoiceConfigRepository<LayerKeyType> {
   ): Promise<UpdateResult<VoiceKindType | undefined>>;
   setRandomizer(
     layerKey: LayerKeyType,
-    v: keyof typeof Randomizer | undefined
-  ): Promise<UpdateResult<keyof typeof Randomizer | undefined>>;
+    v: RandomizerTypeLayered | undefined
+  ): Promise<UpdateResult<RandomizerTypeLayered | undefined>>;
   setReadName(
     layerKey: LayerKeyType,
     v: string | undefined
@@ -69,7 +71,7 @@ export type GuildVoiceConfig = {
   readName?: boolean;
   maxReadLimit?: number;
   maxVolume?: number;
-  randomizer?: keyof typeof Randomizer;
+  randomizer?: RandomizerTypeGuild;
 };
 export interface GuildVoiceConfigRepository {
   get(guild: string): Promise<GuildVoiceConfig | undefined>;
@@ -91,8 +93,8 @@ export interface GuildVoiceConfigRepository {
   ): Promise<UpdateResult<number | undefined>>;
   setRandomizer(
     guild: string,
-    v: keyof typeof Randomizer | undefined
-  ): Promise<UpdateResult<keyof typeof Randomizer | undefined>>;
+    v: RandomizerTypeGuild | undefined
+  ): Promise<UpdateResult<RandomizerTypeGuild | undefined>>;
   setIfNotChanged(
     guild: string,
     newC: GuildVoiceConfig,

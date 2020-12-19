@@ -12,7 +12,6 @@ export interface MainParserContext {
   user: string;
   channelType: "text" | "news" | "dm";
 }
-const aliasSymbol = Symbol("aliasSymbol");
 export function buildYargsParser(
   schema: CommandSchema<unknown[], Record<string, unknown>>[],
   resolverOptional: (
@@ -65,7 +64,7 @@ async function applySchema(
     v: unknown,
     ctx: MainParserContext
   ) => Promise<unknown> | unknown,
-  arr: string[],
+  arr: (string | number)[],
   m: Record<string, unknown>,
   ctx: MainParserContext,
   commandString: string[]
@@ -80,7 +79,7 @@ async function applySchema(
       throw new TypeError();
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    commandString.push(ccmdString);
+    commandString.push(String(ccmdString));
     return applySchema(
       x,
       optionResolver,
@@ -110,17 +109,21 @@ async function applySchema(
     await Promise.all(
       [...schema.optionArgumentCollection].map(
         async ([s, [t, o]]): Promise<[string, unknown]> => {
-          const x = m[s];
+          let x = m[s];
           delete m[s];
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const alias: unknown = o[aliasSymbol];
+          const alias = o.alias;
           if (alias === undefined) {
             // do nothing
           } else if (Array.isArray(alias)) {
-            alias.forEach((e) =>
-              typeof e === "string" && e in m ? delete m[e] : undefined
-            );
+            alias.forEach((e) => {
+              console.log(e);
+              if (e in m) {
+                x = x ?? m[e];
+                delete m[e];
+              }
+            });
           } else if (typeof alias === "string" && alias in m) {
+            x = x ?? m[alias];
             delete m[alias];
           }
           return [s, (await optionResolver(t, o, x, ctx)) ?? o.defaultValue];
@@ -162,7 +165,7 @@ export function buildMainParser(
   );
   return async (content: string, ctx: MainParserContext) => {
     const r: {
-      _?: string[];
+      _?: (string | number)[];
       $0: string;
       [k: string]: unknown;
     } = await new Promise<Arguments>((resolve, reject) =>
@@ -175,7 +178,7 @@ export function buildMainParser(
       return;
     }
     const initialCommandString = arr.shift();
-    if (!initialCommandString) {
+    if (!initialCommandString || typeof initialCommandString === "number") {
       return r["default"]
         ? [
             [],

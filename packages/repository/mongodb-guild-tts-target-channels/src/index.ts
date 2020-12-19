@@ -9,9 +9,7 @@ export type MongoTextToSpeechTargetChannelDataStoreCollectionType = {
 export class MongoTextToSpeechTargetChannelDataStore
   implements TextToSpeechTargetChannelDataStore {
   constructor(
-    private readonly collection: Collection<
-      MongoTextToSpeechTargetChannelDataStoreCollectionType
-    >
+    private readonly collection: Collection<MongoTextToSpeechTargetChannelDataStoreCollectionType>
   ) {}
   async getTextToSpeechTargetChannel(guild: string): Promise<Set<string>> {
     const r = await this.collection.findOne(

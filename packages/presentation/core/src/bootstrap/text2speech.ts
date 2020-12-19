@@ -1,7 +1,7 @@
 import { DependencyContainer } from "tsyringe";
 import Engine from "../text2speech/engine";
 import { initEngineAndKuromoji } from "./engine";
-import { credentials, VerifyOptions } from "grpc";
+import { credentials } from "@grpc/grpc-js";
 import { MixerClient } from "sound-mixing-proto/index_grpc_pb";
 import { promises as fs } from "fs";
 import { IpadicFeatures, Tokenizer } from "kuromoji";
@@ -17,7 +17,7 @@ export async function initText2Speech(
   return await initEngineAndKuromoji(container, grpcMixerClient);
 }
 async function makeCredentials(keys: string | undefined) {
-  const options: VerifyOptions = {
+  const options = {
     checkServerIdentity: () => undefined,
   };
   return keys

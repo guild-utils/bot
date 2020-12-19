@@ -5,7 +5,7 @@ import {
   IConfigManagerClient,
   ConfigManagerClient,
 } from "protocol_protos/config_grpc_pb";
-import { credentials } from "grpc";
+import { credentials } from "@grpc/grpc-js";
 import { ClientResponseTransformer } from "protocol_rpc-client";
 import {
   configurateUsecaseCore,
@@ -19,6 +19,7 @@ import {
   MonitorRunnerWithLog,
   initProcessErrorHandler,
   initSystemMetrics,
+  BotLogger,
 } from "presentation_core";
 import { config, token } from "./config";
 import { Client, Permissions } from "discord.js";
@@ -142,6 +143,8 @@ async function main() {
   await discordClient.login(token);
 }
 main().catch((e) => {
-  console.error(e);
-  process.exit(-1);
+  BotLogger.error(e, "Launch Failed!");
+  setTimeout(() => {
+    process.exit(1);
+  }, 5);
 });

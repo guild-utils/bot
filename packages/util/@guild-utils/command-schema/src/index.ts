@@ -63,7 +63,8 @@ export class CommandSchema<
       string,
       [ArgumentType<symbol>, OptionalValueArgumentOption<unknown>]
     >(),
-    public readonly subCommands: [CommandSchema, SubCommandOption][] = []
+    public readonly subCommands: [CommandSchema, SubCommandOption][] = [],
+    public readonly needSubCommands = false
   ) {}
   positional<V>(
     name: string,
@@ -89,7 +90,8 @@ export class CommandSchema<
       options.optional,
       options.variable,
       this.optionArgumentCollection,
-      this.subCommands
+      this.subCommands,
+      this.needSubCommands
     );
   }
   optional<K extends string, V>(
@@ -104,7 +106,8 @@ export class CommandSchema<
       this.denyRequiredPosisitonalArgument,
       this.denyAdditionalPositionalArgument,
       new Map([...this.optionArgumentCollection, [k, [type, options ?? {}]]]),
-      this.subCommands
+      this.subCommands,
+      this.needSubCommands
     );
   }
   command(
@@ -119,7 +122,23 @@ export class CommandSchema<
       this.denyRequiredPosisitonalArgument,
       this.denyAdditionalPositionalArgument,
       this.optionArgumentCollection,
-      [...this.subCommands, ne]
+      [...this.subCommands, ne],
+      this.needSubCommands
+    );
+  }
+  needSubCommand(): CommandSchema<
+    PositionResultTypeReversed,
+    OptionResultType
+  > {
+    return new CommandSchema(
+      this.name,
+      this.options,
+      this.positionalArgumentCollection,
+      this.denyRequiredPosisitonalArgument,
+      this.denyAdditionalPositionalArgument,
+      this.optionArgumentCollection,
+      this.subCommands,
+      true
     );
   }
 }

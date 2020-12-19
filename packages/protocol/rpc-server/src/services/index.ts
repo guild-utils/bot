@@ -1,4 +1,4 @@
-import { ServerUnaryCall, sendUnaryData, ServiceError } from "grpc";
+import { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
 import {
   VoiceConfigRequest,
   AppliedVoiceConfig,
@@ -7,14 +7,14 @@ import {
 } from "protocol_protos/config_pb";
 import { Usecase } from "domain_voice-configs";
 import { ResponseTransformer } from "../transformers/grpc-domain-server";
-export class ServiceErrorImpl extends Error implements ServiceError {}
+
 export class Service {
   constructor(
     private readonly repo: Usecase,
     private readonly trans: ResponseTransformer
   ) {}
   async appliedVoiceConfig(
-    call: ServerUnaryCall<VoiceConfigRequest>,
+    call: ServerUnaryCall<VoiceConfigRequest, AppliedVoiceConfig>,
     callback: sendUnaryData<AppliedVoiceConfig>
   ): Promise<void> {
     try {
@@ -36,7 +36,7 @@ export class Service {
     }
   }
   async readName(
-    call: ServerUnaryCall<ReadNameRequest>,
+    call: ServerUnaryCall<ReadNameRequest, ReadName>,
     callback: sendUnaryData<ReadName>
   ): Promise<void> {
     try {

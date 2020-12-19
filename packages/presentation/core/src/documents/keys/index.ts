@@ -3,7 +3,7 @@ import {
   Documentation,
   DeepEntry,
   HelpCommandCotext,
-} from "../../commands-v2/info/help";
+} from "../../commands/info/help";
 class KeysDocumentionRoot implements Documentation {
   type: "documentation" = "documentation";
   constructor(
