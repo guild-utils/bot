@@ -12,6 +12,8 @@ import {
   runInServer,
   DescriptionData,
 } from "protocol_command-schema-core";
+import { AT_Member } from "@guild-utils/command-types-discord.js";
+import type { Client } from "discord.js";
 const randomizerOverwriteSymbol = Symbol("randomizerOverwrite");
 argumentTypeExtendedSymbols.add(randomizerOverwriteSymbol);
 class AT_RandomizerOverwrite extends Base<
@@ -49,13 +51,20 @@ export function random(
   f: (
     lang: string,
     ctx: Context
-  ) => Record<"command" | "overwrite", DescriptionData>
+  ) => Record<"command" | "overwrite" | "member", DescriptionData>,
+  client: () => Client
 ) {
   return new CommandSchema("random", {
     descriptionResolver: computeLanguage(f, "command"),
     runIn: runInServer,
-  }).optional("overwrite", new AT_RandomizerOverwrite(), {
-    descriptionResolver: computeLanguage(f, "overwrite"),
-    alias: ["ow"],
-  });
+    alias: ["rand"],
+  })
+    .positional("member", new AT_Member(client), {
+      optional: true,
+      descriptionResolver: computeLanguage(f, "member"),
+    })
+    .optional("overwrite", new AT_RandomizerOverwrite(), {
+      descriptionResolver: computeLanguage(f, "overwrite"),
+      alias: ["ow"],
+    });
 }

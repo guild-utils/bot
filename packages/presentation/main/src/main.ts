@@ -179,7 +179,7 @@ async function main() {
       rxEnv,
       getLang,
       voiceConfigUsecase: appliedVoiceConfigResolver,
-      memberVoiceConfig,
+      configurateUsecase: usecase,
       color: ENV.GUJ_THEME_COLOR,
     },
     {
