@@ -3,7 +3,7 @@ import {
   CommandSchema,
   OptionalValueArgumentOption,
 } from "@guild-utils/command-schema";
-import { ColorResolvable } from "discord.js";
+import { ColorResolvable, MessageEmbed } from "discord.js";
 import { Context, DescriptionData } from "protocol_command-schema-core";
 import { createEmbedWithMetaData } from "protocol_util-djs";
 import {
@@ -11,7 +11,7 @@ import {
   Command,
   HelpCommandCotext,
   HelpEntry,
-} from "../commands-v2/info/help";
+} from "../commands/info/help";
 import * as RtlJa from "../languages/ja-jp";
 import { commandTextSupplier } from "./commands";
 import {
@@ -29,6 +29,61 @@ export function aliasString(schema: CommandSchema): string {
     return "";
   }
   return `(${alias.join(",")})`;
+}
+function argumentFields(schema: CommandSchema, lang: string, ggctx: Context) {
+  return [
+    ...schema.positionalArgumentCollection,
+    ...[...schema.optionArgumentCollection].map(([k, e]): [
+      string,
+      ArgumentType<symbol>,
+      OptionalValueArgumentOption<unknown>
+    ] => [k, e[0], e[1]]),
+  ]
+    .map((e): [string, DescriptionData] => [
+      e[0],
+      e[2].descriptionResolver(lang, ggctx),
+    ])
+    .filter(([, e]) => !e.undocumented)
+    .map(([k, e]) => ({
+      name: k,
+      value: e.summary,
+    }));
+}
+function embedBuilder(
+  schema: CommandSchema,
+  category: string,
+  gctx: CommandFromSchemaCtx,
+  desc: (lang: string) => (ctx: HelpCommandCotext) => DescriptionData
+): (lang: string) => (ctx: HelpCommandCotext) => MessageEmbed {
+  return (lang) => (ctx) => {
+    const ggctx: Context = {
+      defaultPrefix: gctx.defaultPrefix,
+      environment: "discord",
+      prefix: ctx.prefix,
+      runningCommand: ctx.runningCommand,
+    };
+    const dr = desc(lang)(ctx);
+    return createEmbedWithMetaData({
+      color: gctx.color,
+      ...ctx.executor,
+    })
+      .setTitle(schema.name + aliasString(schema))
+      .setDescription(dr.description ?? dr.summary)
+      .addField(
+        "Usage",
+        usageFromSchema(schema, ctx.prefix ?? gctx.defaultPrefix)
+      )
+      .addFields(
+        schema.subCommands.map(([s]) => {
+          return {
+            name: s.name,
+            value: s.options.descriptionResolver(lang, ggctx).summary,
+          };
+        })
+      )
+      .addFields(argumentFields(schema, lang, ggctx))
+      .addField("Category", category, true);
+  };
 }
 export function commandFromSchema(
   schema: CommandSchema,
@@ -59,53 +114,7 @@ export function commandFromSchema(
     type: "command",
     value: schema,
     summary: (lang) => (ctx) => desc(lang)(ctx).summary ?? "",
-    embed: (lang) => (ctx) => {
-      const ggctx: Context = {
-        defaultPrefix: gctx.defaultPrefix,
-        environment: "discord",
-        prefix: ctx.prefix,
-        runningCommand: ctx.runningCommand,
-      };
-      const dr = desc(lang)(ctx);
-      return createEmbedWithMetaData({
-        color: gctx.color,
-        ...ctx.executor,
-      })
-        .setTitle(schema.name + aliasString(schema))
-        .setDescription(dr.description ?? dr.summary)
-        .addField(
-          "Usage",
-          usageFromSchema(schema, ctx.prefix ?? gctx.defaultPrefix)
-        )
-        .addFields(
-          schema.subCommands.map(([s]) => {
-            return {
-              name: s.name,
-              value: s.options.descriptionResolver(lang, ggctx).summary,
-            };
-          })
-        )
-        .addFields(
-          [
-            ...schema.positionalArgumentCollection,
-            ...[...schema.optionArgumentCollection].map(([k, e]): [
-              string,
-              ArgumentType<symbol>,
-              OptionalValueArgumentOption<unknown>
-            ] => [k, e[0], e[1]]),
-          ]
-            .map((e): [string, DescriptionData] => [
-              e[0],
-              e[2].descriptionResolver(lang, ggctx),
-            ])
-            .filter(([, e]) => !e.undocumented)
-            .map(([k, e]) => ({
-              name: k,
-              value: e.summary,
-            }))
-        )
-        .addField("Category", category, true);
-    },
+    embed: embedBuilder(schema, category, gctx, desc),
     resolveSubCommand: (key) => subCommands.get(key),
   };
 }

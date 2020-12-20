@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guj-db
+spec:
+  selector:
+    matchLabels:
+      app: guj-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: guj-db
+    spec:
+      containers:
+      - image: mongo
+        args: [--noauth]
+        name: guj-db
+        ports:
+        - containerPort: 27017
+          name: mongo
+        volumeMounts:
+        - name: mongo-persistent-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongo-persistent-storage
+        persistentVolumeClaim:
+          claimName: mongo-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: guj-db
+spec:
+  selector:
+    app: guj-db
+  type: NodePort
+  ports:
+  - name: guj-db
+    protocol: TCP
+    port: 27017
+    nodePort: 30017
+    targetPort: 27017

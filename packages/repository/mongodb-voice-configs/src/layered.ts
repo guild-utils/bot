@@ -214,9 +214,6 @@ class MongoLayeredVoiceConfigRepositoryInternal
       },
       {
         $set: $.flatten(newC),
-      },
-      {
-        upsert: true,
       }
     );
 
