@@ -1,7 +1,7 @@
 import { ColorResolvable, MessageEmbed } from "discord.js";
 import { createEmbedWithMetaData } from "protocol_util-djs";
 import { createCategoryFields } from "../util";
-import { HelpCommandCotext, HelpEntry } from "../../commands-v2/info/help";
+import { HelpCommandCotext, HelpEntry } from "../../commands/info/help";
 export {
   rtlInvite,
   rtlPing,

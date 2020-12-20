@@ -10,6 +10,9 @@ export function usageEntrysFromSchema(
   const subcommandsUsage = schema.subCommands.map(([s]) =>
     usageEntryFromSchema2(schema, s, prefix)
   );
+  if (schema.needSubCommands) {
+    return [...subcommandsUsage];
+  }
   const args = usageBodyFromSchema(schema);
   const entire = `${prefix}${args}`;
   return [entire, ...subcommandsUsage];

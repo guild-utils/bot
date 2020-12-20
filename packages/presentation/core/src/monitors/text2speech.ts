@@ -35,7 +35,7 @@ export default class extends MonitorBase {
     if (!targets.has(message.channel.id)) {
       return;
     }
-    const connection = guild.voice?.connection;
+    const connection = guild.me?.voice.connection;
     if (!connection) {
       await this.dataStore.clearTextToSpeechTargetChannel(guild.id);
       return;

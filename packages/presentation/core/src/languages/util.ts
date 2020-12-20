@@ -1,9 +1,5 @@
 import { EmbedFieldData } from "discord.js";
-import {
-  DeepEntry,
-  HelpCommandCotext,
-  HelpEntry,
-} from "../commands-v2/info/help";
+import { DeepEntry, HelpCommandCotext, HelpEntry } from "../commands/info/help";
 
 export function buildBadge(
   name: string,

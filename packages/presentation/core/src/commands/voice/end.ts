@@ -19,7 +19,7 @@ export class CommandEnd implements CommandBase {
     private readonly getLang: getLangType
   ) {}
   public async run(msg: Message): Promise<void> {
-    const connection = msg.guild!.voice?.connection;
+    const connection = msg.guild?.me?.voice.connection;
     await this.engine.unregister(connection);
     connection?.disconnect();
     await this.dataStore.clearTextToSpeechTargetChannel(msg.guild!.id);

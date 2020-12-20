@@ -11,7 +11,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"
+    path: "/run/desktop/mnt/host/d/develop/pwrd/mongodata"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

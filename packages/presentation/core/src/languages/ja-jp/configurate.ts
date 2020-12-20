@@ -5,8 +5,8 @@ import {
   CreateEmbedWithMetaDataOpt,
   Executor,
 } from "protocol_util-djs";
-import { UpdateResultResponses } from "../../commands-v2/configurate/util";
-import { HelpEntry, HelpCommandCotext } from "../../commands-v2/info/help";
+import { UpdateResultResponses } from "../../commands/configurate/util";
+import { HelpEntry, HelpCommandCotext } from "../../commands/info/help";
 import {
   NotAllowedError,
   SenderPermissionError,
@@ -155,6 +155,14 @@ export function rtlUpdate(color: ColorResolvable): UpdateResultResponses {
       })
         .setTitle("不正な値")
         .setDescription("この値を設定することはできません。");
+    },
+    subCommandNeeded: (exec) => {
+      return createEmbedWithMetaData({
+        ...exec,
+        color,
+      })
+        .setTitle("サブコマンドが必要")
+        .setDescription("サブコマンドを指定する必要があります。");
     },
   };
 }

@@ -1,6 +1,7 @@
 import { ContextError, PermissionError } from "@guild-utils/command-schema";
 import {
   DMChannel,
+  GuildMember,
   Message,
   MessageEmbed,
   NewsChannel,
@@ -22,6 +23,27 @@ export type ConfigCommandCommonOption = {
   user: boolean;
   server: boolean;
 };
+function getMemberTarget(
+  message: Message,
+  option: string | boolean | GuildMember
+): [string, string] | undefined {
+  const gid = message.guild?.id;
+  if (!gid) {
+    return;
+  }
+  switch (typeof option) {
+    case "boolean":
+      return [gid, message.author.id];
+    case "string":
+      return [gid, option];
+    case "object":
+      return option instanceof GuildMember
+        ? [option.guild.id, option.id]
+        : undefined;
+    default:
+      return;
+  }
+}
 export function buildTargetAndExecutor(
   message: Message,
   option: ConfigCommandCommonOption
@@ -31,14 +53,9 @@ export function buildTargetAndExecutor(
       !option.server && !option.member && !option.user
         ? undefined
         : {
-            guild:
-              typeof option.member === "string" ? undefined : message.guild?.id,
-            member:
-              typeof option.member === "string" && message.guild?.id
-                ? ([message.guild.id, option.member] as [string, string])
-                : undefined,
-            user:
-              typeof option.member === "string" ? undefined : message.author.id,
+            guild: option.server ? message.guild?.id : undefined,
+            member: getMemberTarget(message, option.member),
+            user: option.user ? message.author.id : undefined,
           },
     executor: {
       guild: message.guild?.id,
@@ -76,6 +93,7 @@ export type UpdateResultResponses = {
     nick: string,
     avatar?: string
   ) => MessageEmbed;
+  subCommandNeeded: (exec: Executor) => MessageEmbed;
 } & ErrorHandlerResponses;
 async function buildResponseFromUpdateResultMulti(
   results: ConfigurateUsecaseResultTypeSingle[],
