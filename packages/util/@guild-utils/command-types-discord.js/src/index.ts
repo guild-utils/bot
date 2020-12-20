@@ -2,6 +2,7 @@ import type { Options, PositionalOptions } from "yargs";
 import type { MainParserContext } from "@guild-utils/command-parser";
 import type { Client, User, GuildMember, Channel } from "discord.js";
 import {
+  argumentTypeExtendedSymbols,
   ArgumentTypeMismatchError,
   Base,
   NotResolvableError,
@@ -106,3 +107,6 @@ export const argumentTypeSymbolsWithDiscordJs = [
   userSymbol,
   channelSymbol,
 ];
+argumentTypeSymbolsWithDiscordJs.forEach((e) =>
+  argumentTypeExtendedSymbols.add(e)
+);
