@@ -22,7 +22,14 @@ export function buildYargsParser(
     k: ArgumentType<symbol>,
     o: PostionalArgumentOption
   ) => PositionalOptions,
-  instance = yargs().help(false)
+  instance = yargs()
+    .help(false)
+    .parserConfiguration({
+      "dot-notation": false,
+      "parse-numbers": false,
+      "parse-positional-numbers": false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
 ): Argv {
   return schema
     .reduce((a, e) => {

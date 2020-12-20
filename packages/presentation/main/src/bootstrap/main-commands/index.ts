@@ -22,11 +22,11 @@ import {
   DictionaryCommands,
 } from "protocol_command-schema-main-bootstrap";
 import { RandomCommand } from "../../commands/random";
-import { LayeredVoiceConfigRepository } from "domain_voice-configs-write";
 import { Usecase as VoiceConfigUsecase } from "domain_voice-configs";
 import { ConnectableObservableRxEnv } from "../../gui/pagination/action-pipeline";
 import { simpleDictionaryLang } from "../../languages/ja-jp/simple-dictionary";
 import { mainDictionaryLang } from "../../languages/ja-jp/main-dictionary";
+import { ConfigurateUsecase } from "protocol_configurate-usecase";
 
 export function categoryWords(
   color: ColorResolvable,
@@ -56,7 +56,7 @@ export type MainCommandOptions = {
   kuromoji: Tokenizer<IpadicFeatures>;
   getLang: getLangType;
   voiceConfigUsecase: VoiceConfigUsecase;
-  memberVoiceConfig: LayeredVoiceConfigRepository<[string, string]>;
+  configurateUsecase: ConfigurateUsecase;
   color: ColorResolvable;
 };
 
@@ -118,26 +118,28 @@ export function initMainCommands(
   return {
     ...initDictionaryCommands(opt),
     random: RandomCommand.create(
-      opt.memberVoiceConfig,
+      opt.configurateUsecase,
       opt.voiceConfigUsecase,
       () => {
         return {
-          success: (exec, ctx) =>
+          success: (exec, target, ctx) =>
             createEmbedWithMetaData({
               ...exec,
               color: opt.color,
-            }).setDescription(
-              [
-                "音声設定を更新しました。",
-                ...(ctx.newRandomizerValue
-                  ? ["新しいrandomizerの値:", ctx.newRandomizerValue]
-                  : []),
-                "",
-                ...(ctx.oldRandomizerValue
-                  ? ["古いrandomizerの値:", ctx.oldRandomizerValue]
-                  : []),
-              ].join("\n")
-            ),
+            })
+              .setDescription(
+                [
+                  "音声設定を更新しました。",
+                  ...(ctx.newRandomizerValue
+                    ? ["新しいrandomizerの値:", ctx.newRandomizerValue]
+                    : []),
+                  "",
+                  ...(ctx.oldRandomizerValue
+                    ? ["古いrandomizerの値:", ctx.oldRandomizerValue]
+                    : []),
+                ].join("\n")
+              )
+              .setAuthor(target.displayName, target.user.displayAvatarURL()),
         };
       },
       opt.getLang
