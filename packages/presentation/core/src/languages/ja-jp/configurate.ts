@@ -116,7 +116,7 @@ export function rtlUpdate(color: ColorResolvable): UpdateResultResponses {
           .setDescription("実行者の権限が不足しています。")
           .addField(
             "不足している権限",
-            error.required.toArray(false).map((e) => `\`\`${e}\`\``)
+            error.required.toArray(false).map((e) => `\`${e}\``)
           )
           .addField(
             "場所",

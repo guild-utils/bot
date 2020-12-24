@@ -42,7 +42,7 @@ function createFields(e: PageValue) {
         (["p", "p1", "p2", "p3"] as const)
           .map((k) => e[k])
           .filter((e): e is string => e != null)
-          .map((e) => `\`\`${e}\`\``)
+          .map((e) => `\`${e}\``)
           .join(",") +
         ")";
   return {
