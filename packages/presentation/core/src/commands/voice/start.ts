@@ -10,6 +10,7 @@ import {
 } from "discord.js";
 import { getLangType } from "../../util/get-lang";
 import { Executor } from "protocol_util-djs";
+import { Controller as BellbotController } from "protocol_bell";
 export type CommandStartResponses = {
   userNotInVc(exec: Executor): MessageEmbed;
   notJoinable(exec: Executor, vc: VoiceChannel): MessageEmbed;
@@ -23,6 +24,7 @@ export class CommandStart implements CommandBase {
   constructor(
     private readonly engine: Engine,
     private readonly dataStore: TextToSpeechTargetChannelDataStore,
+    private readonly controller: BellbotController,
     private readonly responses: (lang: string) => CommandStartResponses,
     private readonly getLang: getLangType
   ) {}
@@ -48,6 +50,7 @@ export class CommandStart implements CommandBase {
       return;
     }
     const conn = await vc.join();
+    await this.controller.start(vc.id);
     await this.engine.register(conn);
 
     await this.dataStore.addTextToSpeechTargetChannel(gid, msg.channel.id);

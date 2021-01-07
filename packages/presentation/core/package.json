@@ -6,15 +6,18 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/logging-bunyan": "^3.0.1",
+    "@types/stream-buffers": "^3.0.3",
     "bunyan": "^1.8.14",
     "domain_meta": "^1.0.0",
     "languages_command-core": "^1.0.0",
     "monitor-discord.js": "^0.0.1",
+    "protocol_bell": "^1.0.0",
     "protocol_command-schema-core": "^1.0.0",
     "protocol_command-schema-core-bootstrap": "^1.0.0",
     "protocol_configurate-usecase": "^1.0.0",
     "protocol_util-djs": "^1.0.0",
     "rate-limit": "^1.0.0",
+    "stream-buffers": "^3.0.2",
     "string-replace-async": "^2.0.0",
     "usecase_text2speech": "^1.0.0",
     "usecase_text2speech-grpc": "^1.0.0"

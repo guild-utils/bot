@@ -21,7 +21,8 @@ import {
   initSystemMetrics,
   BotLogger,
 } from "presentation_core";
-import { config, token } from "./config";
+import * as TTSConfig from "./config";
+import * as BellConfig from "./bell-config";
 import { Client, Permissions } from "discord.js";
 import { initDatabase } from "./bootstrap/mongo";
 import * as ENV from "./bootstrap/env";
@@ -31,7 +32,7 @@ import { defineSchema, initCommandSystem } from "./bootstrap/commands";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
 import { MongoBasicBotConfigRepository } from "repository_mongo-guild-configs";
 import { CommandSchema } from "@guild-utils/command-schema";
-
+import { bellBotClient } from "protocol_bell";
 initProcessErrorHandler();
 initSystemMetrics();
 
@@ -78,8 +79,8 @@ async function main() {
   const ttsDataStore = new CacheTextToSpeechTargetChannelDataStore(
     new MongoTextToSpeechTargetChannelDataStore(db.collection("guilds"))
   );
-  const discordClient = new Client(config());
-  discordClient.token = token;
+  const discordClient = new Client(TTSConfig.config());
+  discordClient.token = TTSConfig.token;
   const application = await discordClient.fetchApplication();
   const instanceState = initInstanceState(
     container,
@@ -92,6 +93,9 @@ async function main() {
     Object.values(schema)
       .filter((e): e is CommandSchema => !!e)
       .map((e) => e.name)
+  );
+  const bellbotContext = bellBotClient(BellConfig.config(), (error) =>
+    BotLogger.error("bell bot error", error)
   );
   const { parser, resolver } = initCommandSystem(
     container,
@@ -113,6 +117,7 @@ async function main() {
       ttsEngine,
       voiceConfig: voiceConfig,
       botConfig: basicBotConfig,
+      bellController: bellbotContext.controller,
     },
     {
       color: ENV.GUJ_THEME_COLOR,
@@ -130,6 +135,7 @@ async function main() {
     prefix,
     repo: basicBotConfig,
     usecase: voiceConfig,
+    bellController: bellbotContext.controller,
   });
   initCoreEvents(discordClient, {
     basicBotConfig,
@@ -140,7 +146,8 @@ async function main() {
     inviteLink: createInviteLink(application, permissions),
     monitorRunner: new MonitorRunnerWithLog(monitors),
   });
-  await discordClient.login(token);
+  await discordClient.login(TTSConfig.token);
+  await bellbotContext.client.login(BellConfig.token);
 }
 main().catch((e) => {
   BotLogger.error(e, "Launch Failed!");

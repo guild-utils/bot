@@ -5,6 +5,9 @@ import { Usecase as ConfigUsecase } from "domain_voice-configs";
 import { TextToSpeechTargetChannelDataStore } from "domain_guild-tts-target-channels";
 import { VoiceKindArray, VoiceKindType } from "domain_meta";
 import { Message } from "discord.js";
+import { Controller as BellbotController } from "protocol_bell";
+import { Readable } from "stream";
+
 const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&/=]*)/;
 // eslint-disable-next-line no-useless-escape
 const markRegex = /^[!"#$%&'()\*\+\-\.,\/:;<=>?\[\\\]^_`{|}~].*/;
@@ -12,7 +15,9 @@ export default class extends MonitorBase {
   constructor(
     private readonly engine: Engine,
     private readonly repo: ConfigUsecase,
-    private readonly dataStore: TextToSpeechTargetChannelDataStore
+    private readonly dataStore: TextToSpeechTargetChannelDataStore,
+    private readonly controller: BellbotController,
+    private readonly sound: (guildId: string) => Readable
   ) {
     super({
       ignoreBots: true,
@@ -29,8 +34,7 @@ export default class extends MonitorBase {
       return;
     }
     const targets: Set<string> = await this.dataStore.getTextToSpeechTargetChannel(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      message.guild!.id
+      guild.id
     );
     if (!targets.has(message.channel.id)) {
       return;
@@ -89,5 +93,6 @@ export default class extends MonitorBase {
       intone: config.intone,
       threshold: config.threshold,
     });
+    this.controller.play(connection.channel.id, this.sound(guild.id));
   }
 }
