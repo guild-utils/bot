@@ -20,7 +20,7 @@
     "xorshift"
   ],
   "devDependencies": {
-    "tap": "14.10.x"
+    "tap": "14.11.0"
   },
   "license": "MIT"
 }
