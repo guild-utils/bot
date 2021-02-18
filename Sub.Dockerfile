@@ -62,6 +62,7 @@ COPY packages/protocol/rpc-client/package.json ./packages/protocol/rpc-client/pa
 COPY packages/protocol/command-schema-core/package.json ./packages/protocol/command-schema-core/package.json
 COPY packages/protocol/command-schema-core-bootstrap/package.json ./packages/protocol/command-schema-core-bootstrap/package.json
 COPY packages/protocol/util-djs/package.json ./packages/protocol/util-djs/package.json
+COPY packages/protocol/bell/package.json ./packages/protocol/bell/package.json
 COPY packages/presentation/core/package.json ./packages/presentation/core/package.json
 COPY packages/presentation/sub/package.json ./packages/presentation/sub/package.json
 COPY packages/languages/command-core/package.json ./packages/languages/command-core/package.json
@@ -95,13 +96,14 @@ COPY packages/protocol/rpc-client ./packages/protocol/rpc-client
 COPY packages/protocol/command-schema-core ./packages/protocol/command-schema-core
 COPY packages/protocol/command-schema-core-bootstrap ./packages/protocol/command-schema-core-bootstrap
 COPY packages/protocol/util-djs ./packages/protocol/util-djs
+COPY packages/protocol/bell ./packages/protocol/bell
 COPY packages/presentation/core ./packages/presentation/core
 COPY packages/presentation/sub ./packages/presentation/sub
 COPY packages/languages/command-core ./packages/languages/command-core
 
 
-RUN lerna run build \
-    && lerna run test:lint \
+RUN yarn build \
+    && yarn test:lint \
     && yarn global remove lerna \
     && yarn cache clean 
 COPY docker-entrypoint.sh ./entrypoint.sh

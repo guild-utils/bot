@@ -13,6 +13,18 @@ import { MainParserContext, SpecialInfo } from "@guild-utils/command-parser";
 import { getLangType } from "../util/get-lang";
 import { commandTextSupplier } from "./commands";
 import { CommandHandlerJaJP } from "../languages/ja-jp/commandHandler";
+import { Controller as BellbotController } from "protocol_bell";
+import { readFileSync } from "fs";
+import StreamBuffers = require("stream-buffers");
+import * as path from "path";
+const bellSoundBuffer = readFileSync(
+  path.resolve(__dirname, "../../bell.ogg"),
+  {
+    encoding: null,
+    flag: "r",
+  }
+);
+
 export type CreateCoreMonitorEnv = {
   engine: Engine;
   usecase: ConfigUsecase;
@@ -30,11 +42,22 @@ export type CreateCoreMonitorEnv = {
   repo: BasicBotConfigRepository;
   prefix: string;
   getLang: getLangType;
+  bellController: BellbotController;
 };
 export function createCoreMonitor(env: CreateCoreMonitorEnv): Set<Monitor> {
   return new Set([
     new handleStartupMessage(env.instanceState, env.color),
-    new text2speech(env.engine, env.usecase, env.dataStore),
+    new text2speech(
+      env.engine,
+      env.usecase,
+      env.dataStore,
+      env.bellController,
+      () => {
+        const bellStream = new StreamBuffers.ReadableStreamBuffer();
+        bellStream.put(bellSoundBuffer);
+        return bellStream;
+      }
+    ),
     new commandHandler(
       env.parser,
       env.commandResolver,
