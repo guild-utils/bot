@@ -209,6 +209,6 @@ export default class {
   }
   // eslint-disable-next-line @typescript-eslint/require-await
   async skip(conn: VoiceConnection): Promise<void> {
-    conn.dispatcher.end();
+    conn.dispatcher?.end();
   }
 }
