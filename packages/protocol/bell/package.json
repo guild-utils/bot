@@ -5,7 +5,7 @@
   "types": "./dist/index.d.ts",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^12.5.1"
+    "discord.js": "discordjs/discord.js#master"
   },
   "devDependencies": {
     "@types/node": "^14.0.26",

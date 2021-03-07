@@ -13,9 +13,11 @@
     "graph": "lerna-dependency-graph -o graph.svg -f svg",
     "lint": "lerna run lint  --no-sort",
     "test:lint": "lerna run test:lint --no-sort",
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "bootstrap": "lerna bootstrap"
   },
   "devDependencies": {
-    "lerna-dependency-graph": "^1.0.2"
+    "lerna-dependency-graph": "^1.0.2",
+    "typescript" : "^4.1.3"
   }
 }

@@ -88,7 +88,7 @@ export class DictionaryCommand implements CommandBase {
         [
           MANAGEMENT,
           (msg: Message) => {
-            if (!msg.member?.hasPermission("MANAGE_GUILD")) {
+            if (!msg.member?.permissions.has("MANAGE_GUILD")) {
               const perms = new Permissions(["MANAGE_GUILD"]);
               return Promise.reject(
                 new SenderPermissionError(
