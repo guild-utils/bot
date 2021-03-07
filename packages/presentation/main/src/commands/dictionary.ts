@@ -88,9 +88,6 @@ export class DictionaryCommand implements CommandBase {
         [
           MANAGEMENT,
           (msg: Message) => {
-            if (msg.guild?.ownerID === msg.author.id) {
-              return Promise.resolve();
-            }
             if (!msg.member?.permissions.has("MANAGE_GUILD")) {
               const perms = new Permissions(["MANAGE_GUILD"]);
               return Promise.reject(
