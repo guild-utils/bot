@@ -20,6 +20,7 @@ import {
   initProcessErrorHandler,
   initSystemMetrics,
   BotLogger,
+  scheduleExitGuilds,
 } from "presentation_core";
 import { config, token } from "./config";
 import { Client, Permissions } from "discord.js";
@@ -141,6 +142,12 @@ async function main() {
     monitorRunner: new MonitorRunnerWithLog(monitors),
   });
   await discordClient.login(token);
+  await Promise.resolve(
+    discordClient.user?.setActivity("4/1(木)運用終了", {
+      type: "PLAYING",
+    })
+  );
+  scheduleExitGuilds(discordClient, 1617202800000);
 }
 main().catch((e) => {
   BotLogger.error(e, "Launch Failed!");
