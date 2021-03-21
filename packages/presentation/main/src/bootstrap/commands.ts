@@ -110,7 +110,7 @@ export type Schemas = {
 };
 export function defineSchemas(client: () => Client): Schemas {
   const coreSchema = defineCoreCommandSchema(client);
-  const mainSchema = defineMainCommandSchema();
+  const mainSchema = defineMainCommandSchema(client);
   const confSchema = defineConfCommandSchema(
     {
       guild: true,

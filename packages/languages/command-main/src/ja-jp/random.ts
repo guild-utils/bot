@@ -1,6 +1,9 @@
 import { DescriptionData } from "protocol_command-schema-core";
 
-export const commandRandom: Record<"command" | "overwrite", DescriptionData> = {
+export const commandRandom: Record<
+  "command" | "overwrite" | "member",
+  DescriptionData
+> = {
   command: {
     summary: "メンバーの音声をランダムに設定します。",
     description: [
@@ -16,6 +19,10 @@ export const commandRandom: Record<"command" | "overwrite", DescriptionData> = {
   },
   overwrite: {
     summary:
-      "メンバーのランダム化された音声がどのレイヤーで適用されるのか指定します。",
+      "メンバーのランダムな音声設定がどのレイヤーで適用されるのか指定します。",
+  },
+  member: {
+    summary:
+      "ランダムな音声設定をするメンバーを指定することができます。\n省略すると実行者の設定が変更されます。",
   },
 };

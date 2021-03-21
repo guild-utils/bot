@@ -8,15 +8,15 @@ export function buildBadge(
 ): string {
   switch (type) {
     case "category":
-      return `__\`\`${name}\`\`__`;
+      return `__\`${name}\`__`;
     case "command":
-      return `\`\`${name}\`\``;
+      return `\`${name}\``;
     case "deep": {
       const de = entry as DeepEntry;
       return buildBadge(name, de.visual, de.more(undefined));
     }
     case "documentation":
-      return `_\`\`${name}\`\`_`;
+      return `_\`${name}\`_`;
   }
 }
 export function createFieldValueEntry(name: string, entry: HelpEntry): string {

@@ -30,7 +30,7 @@ export default function (
         guild:
           "[" +
           [...(await basicBotConfig.getDisabledCommands(guild))]
-            .map((e) => "``" + e + "``")
+            .map((e) => "`" + e + "`")
             .join(",") +
           "]",
       };
