@@ -13,7 +13,7 @@
     "abort-controller": "^3.0.0",
     "bufferutil": "^4.0.2",
     "bunyan": "^1.8.14",
-    "discord.js": "discordjs/discord.js#master",
+    "discord.js": "^12.2.0",
     "domain_game-event": "^1.0.0",
     "domain_guild-configs": "^1.0.0",
     "domain_meta": "^1.0.0",
