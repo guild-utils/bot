@@ -193,7 +193,7 @@ export default class extends MonitorBase {
           content: message.content,
           args: {
             positional: pos,
-            optinal: opt,
+            optional: opt,
             context: ctx,
           },
         },
@@ -207,7 +207,7 @@ export default class extends MonitorBase {
           content: message.content,
           args: {
             positional: pos,
-            optinal: opt,
+            optional: opt,
             context: ctx,
           },
         },
