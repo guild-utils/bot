@@ -77,6 +77,7 @@ export default class extends MonitorBase {
     );
   }
   private mentionPrefix?: RegExp;
+  private warningPublished: Set<string> = new Set();
   async run(message: Message): Promise<void> {
     const res = async () =>
       this.responses(await this.getLang(message.guild?.id));
@@ -187,13 +188,29 @@ export default class extends MonitorBase {
     }
     try {
       await impl.run(message, pos, opt, ctx);
+      if (message.guild && !this.warningPublished.has(message.guild.id)) {
+        await message.channel.send(
+          new MessageEmbed()
+            .setTitle("運用の停止に関する警告")
+            .setColor(0xfff33f)
+            .setDescription(
+              "\
+              このbotは4/1(木)より段階的に運用を縮小し、4/8(木)に完全に運用を終了します。\n\
+              [公式サーバーのお知らせ](https://discord.com/channels/536826188077727744/735768804058988544/823182738911658044)\n\
+              [サポートサーバの招待](https://discord.gg/xxkzCHU)\n\
+              今までご利用いただきありがとうございました。\
+              "
+            )
+        );
+        this.warningPublished.add(message.guild.id);
+      }
       Logger.info(
         {
           ctx: discordContextFromMessage(message),
           content: message.content,
           args: {
             positional: pos,
-            optinal: opt,
+            optional: opt,
             context: ctx,
           },
         },
@@ -207,7 +224,7 @@ export default class extends MonitorBase {
           content: message.content,
           args: {
             positional: pos,
-            optinal: opt,
+            optional: opt,
             context: ctx,
           },
         },

@@ -1,10 +1,10 @@
 import { CommandBase } from "@guild-utils/command-base";
-import { Message, MessageEmbed } from "discord.js";
-import { LayeredVoiceConfigRepository } from "domain_voice-configs-write";
+import { GuildMember, Message, MessageEmbed } from "discord.js";
 import { getLangType } from "presentation_core";
 import { Executor, executorFromMessage } from "protocol_util-djs";
 import { XorShift } from "xorshift";
 import { Usecase as VoiceConfigUsecase } from "domain_voice-configs";
+import { ConfigurateUsecase } from "protocol_configurate-usecase";
 
 export type CommandRandomResponseSuccessCtx = {
   newRandomizerValue: string | undefined;
@@ -13,12 +13,13 @@ export type CommandRandomResponseSuccessCtx = {
 export type CommandRandomResponses = {
   success: (
     exec: Executor,
+    target: GuildMember,
     ctx: CommandRandomResponseSuccessCtx
   ) => MessageEmbed;
 };
 export class RandomCommand implements CommandBase {
   static create(
-    repo: LayeredVoiceConfigRepository<[string, string]>,
+    repo: ConfigurateUsecase,
     usecase: VoiceConfigUsecase,
     responses: (lang: string) => CommandRandomResponses,
     getLang: getLangType
@@ -32,7 +33,7 @@ export class RandomCommand implements CommandBase {
   }
   private constructor(
     private readonly random: XorShift,
-    private readonly repo: LayeredVoiceConfigRepository<[string, string]>,
+    private readonly repo: ConfigurateUsecase,
     private readonly usecase: VoiceConfigUsecase,
     private readonly responses: (lang: string) => CommandRandomResponses,
     private readonly getLang: getLangType
@@ -40,33 +41,45 @@ export class RandomCommand implements CommandBase {
 
   async run(
     message: Message,
-    positional: never,
+    [argMember]: [GuildMember?],
     { overwrite }: Record<"overwrite", "member" | "none" | "user" | undefined>
   ): Promise<void> {
     const [h, l] = this.random.randomint();
     const v = (BigInt(h) << 32n) | BigInt(l);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const member = message.member!;
     const map: Record<"member" | "none" | "user", string | undefined> = {
       member: "m",
       user: "u",
       none: undefined,
     };
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const member = argMember ?? message.member!;
     const flags = overwrite == null ? undefined : map[overwrite] ?? undefined;
     const flagsWithDot = flags == null ? "" : `.${flags}`;
     const nv = `v3.${v}${flagsWithDot}`;
-    const result = await this.repo.setRandomizer(
-      [member.guild.id, member.id],
-      nv
+    const resultRaw = await this.repo.set(
+      {
+        member: [member.guild.id, member.id],
+      },
+      "randomizer",
+      nv,
+      {
+        guild: message.guild?.id,
+        user: message.author.id,
+      }
     );
+    if (Array.isArray(resultRaw) && resultRaw.length !== 1) {
+      throw new Error("Invalid result");
+    }
+    const result = Array.isArray(resultRaw) ? resultRaw[0] : resultRaw;
     if (!(result.type === "ok" || result.type === "same")) {
       throw new TypeError("setRandomizer Failed");
     }
     const embed = this.responses(await this.getLang(message.guild?.id)).success(
       executorFromMessage(message),
+      member,
       {
-        newRandomizerValue: result.after,
-        oldRandomizerValue: result.before,
+        newRandomizerValue: result.vafter,
+        oldRandomizerValue: result.vbefore,
       }
     );
     const ret = await this.usecase.appliedVoiceConfigResolvedBy(

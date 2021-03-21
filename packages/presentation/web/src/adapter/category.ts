@@ -28,7 +28,7 @@ export const BotInfo = {
 };
 export const Words = {
   summary: "辞書に関するコマンド",
-  value: Main.defineMainCommandSchema(),
+  value: Main.defineMainCommandSchema(dummyClient),
 };
 export const categorys = {
   Configurate,
