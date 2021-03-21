@@ -4,8 +4,7 @@ import "abort-controller/polyfill";
 import { Usecase as AppliedVoiceConfigResolver } from "protocol_configs-klasa";
 import { MongoDictionaryRepository } from "repository_mongodb-dictionary";
 import { container } from "tsyringe";
-import * as TTSConfig from "./config";
-import * as BellConfig from "./bell-config";
+import { config, token } from "./config";
 import initRpcServer from "./bootstrap/grpc";
 import { initDatabase } from "./bootstrap/mongo";
 import { Client, Permissions } from "discord.js";
@@ -45,7 +44,6 @@ import {
 import { CommandSchema } from "@guild-utils/command-schema";
 import { BotLogger, initProcessErrorHandler } from "presentation_core";
 import { connectRxEnv, createRxEnv } from "./gui/pagination/action-pipeline";
-import { bellBotClient } from "protocol_bell";
 initProcessErrorHandler();
 initSystemMetrics();
 const permissions = new Permissions()
@@ -81,8 +79,8 @@ async function main() {
     })
   );
   container.register("BasicBotConfigRepository", { useValue: basicBotConfig });
-  const client = new Client(TTSConfig.config());
-  client.token = TTSConfig.token;
+  const client = new Client(config());
+  client.token = token;
   const dict = new MongoDictionaryRepository(db.collection("guilds"));
   const memberVoiceConfig = new CacheMemberLayeredVoiceConfigRepository(
     new MongoSimpleLayeredVoiceConfigRepository(db.collection("members"))
@@ -152,9 +150,6 @@ async function main() {
   const inviteLink = createInviteLink(application, permissions);
   const rxEnv = createRxEnv(client);
   connectRxEnv(rxEnv);
-  const bellbotContext = bellBotClient(BellConfig.config(), (error) =>
-    BotLogger.error("bell bot error", error)
-  );
   const { parser, resolver } = initCommandSystem(
     container,
     schemas,
@@ -165,7 +160,6 @@ async function main() {
       ttsDataStore: ttsDataStore,
       voiceConfig: appliedVoiceConfigResolver,
       getLang,
-      bellController: bellbotContext.controller,
     },
     {
       after: {
@@ -209,7 +203,6 @@ async function main() {
     instanceState,
     parser,
     getLang,
-    bellController: bellbotContext.controller,
   });
   const monitorRunner = new MonitorRunnerWithLog(monitors);
   initEvents(client, {
@@ -221,8 +214,7 @@ async function main() {
     monitorRunner,
     inviteLink,
   });
-  await client.login(TTSConfig.token);
-  await bellbotContext.client.login(BellConfig.token);
+  await client.login(token);
 }
 main().catch((e) => {
   BotLogger.fatal(e);

@@ -128,9 +128,5 @@ export function rtlInfo(color: ColorResolvable): EmbedWithExecutorType {
         ].join("\n")
       )
       .addField("制作", "tig#2552", true)
-      .addField("アイコン", "???", true)
-      .addField(
-        "ベルのサウンドのライセンス",
-        "https://www.zapsplat.com/license-type/standard-license/"
-      );
+      .addField("アイコン", "???", true);
 }
