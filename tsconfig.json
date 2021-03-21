@@ -1,7 +1,7 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
-		"jsx": "react",
+    "jsx": "react",
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,
 		"experimentalDecorators": true,
@@ -24,8 +24,6 @@
 		"strict": true,
 		"noImplicitAny": false,
 		"target": "esnext",
-		"types": [
-			"node"
-		]
+		"types": ["node"]
 	}
 }

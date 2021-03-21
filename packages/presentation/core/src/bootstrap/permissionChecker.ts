@@ -17,7 +17,7 @@ export function createConfigPermissionChecker(
     if (!memberObj) {
       throw new UnreachableMemberError(user, guildObj);
     }
-    if (!memberObj.permissions.has("MANAGE_GUILD")) {
+    if (!memberObj.hasPermission("MANAGE_GUILD")) {
       throw new SenderPermissionError(
         new Permissions("MANAGE_GUILD"),
         memberObj.permissions,
