@@ -1,9 +1,0 @@
-{
-    "extends": "../../../tsconfig.json",
-    "compilerOptions": {
-        "types": ["node","discord.js"],
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "allowJs": true
-    }
-}

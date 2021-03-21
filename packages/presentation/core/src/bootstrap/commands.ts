@@ -32,15 +32,12 @@ import {
 import { createEmbedWithMetaData } from "protocol_util-djs";
 import { createRateLimitEntrys, RateLimitEntrys } from "../util/rate-limit";
 import { CoreCommands } from "protocol_command-schema-core-bootstrap";
-import { Controller as BellbotController } from "protocol_bell";
-
 export function commandTextSupplier<T>(
   obj: Record<string, T>
 ): (lang: string) => T {
   return (lang) => obj[lang];
 }
 export type CoreCommandOptions = {
-  bellController: BellbotController;
   configurate: ConfigurateUsecase;
   color: ColorResolvable;
   rootCategory: Category;
@@ -54,14 +51,7 @@ export type CoreCommandOptions = {
 export function initCoreCommands(
   injection: CoreCommandOptions
 ): Record<CoreCommands, CommandBase> {
-  const {
-    configurate,
-    color,
-    ttsEngine,
-    ttsDataStore,
-    getLang,
-    bellController,
-  } = injection;
+  const { configurate, color, ttsEngine, ttsDataStore, getLang } = injection;
   const u = commandTextSupplier({
     ja_JP: RtlJa.rtlUpdate(injection.color),
   });
@@ -159,7 +149,6 @@ export function initCoreCommands(
     end: new CommandEnd(
       ttsEngine,
       ttsDataStore,
-      bellController,
       commandTextSupplier({
         ja_JP: {
           success: (exec, vc) => {
@@ -181,7 +170,6 @@ export function initCoreCommands(
     start: new CommandStart(
       ttsEngine,
       ttsDataStore,
-      bellController,
       commandTextSupplier({
         ja_JP: {
           notJoinable: (exec, vc) => {

@@ -44,11 +44,6 @@ spec:
             secretKeyRef:
               name: discord-token
               key: main
-        - name: GUILD_UTILS_J_BELL_DISCORD_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: discord-token
-              key: bell-main
         - name: MONGO_DB
           value: main
         - name: MONGO_CONNECTION
@@ -132,11 +127,6 @@ spec:
             secretKeyRef:
               name: discord-token
               key: sub-1
-        - name: GUILD_UTILS_J_BELL_DISCORD_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: discord-token
-              key: bell-sub-1
         - name: MONGO_CONNECTION
           valueFrom:
             secretKeyRef:
@@ -206,11 +196,6 @@ spec:
             secretKeyRef:
               name: discord-token
               key: sub-2
-        - name: GUILD_UTILS_J_BELL_DISCORD_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: discord-token
-              key: bell-sub-2
         - name: MONGO_CONNECTION
           valueFrom:
             secretKeyRef:

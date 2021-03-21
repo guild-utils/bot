@@ -16,7 +16,6 @@
     "libsodium-wrappers": "^0.7.8",
     "mongodb": "^3.6.0",
     "presentation_core": "^1.0.0",
-    "protocol_bell": "^1.0.0",
     "protocol_command-schema-core-bootstrap": "^1.0.0",
     "protocol_rpc-client": "^1.0.0",
     "reflect-metadata": "^0.1.13",
