@@ -22,7 +22,7 @@ export function wrapVisual<T extends UpdateResult<AB>, AB>(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const _wrapVisualIdnInstance = wrapVisual<any, unknown>((e) =>
   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  e == null ? "-" : `\`\`${e}\`\``
+  e == null ? "-" : `\`${e}\``
 );
 export function wrapVisualIdn<T extends UpdateResult<unknown>>(): (
   v: T
@@ -38,7 +38,7 @@ export function wrapVisualArr<T extends UpdateResult<unknown[]>>(): (
       : e.length === 0
       ? "[]"
       : "[" +
-        e.map((k) => (k == null ? "-" : `\`\`${String(k)}\`\``)).join(",") +
+        e.map((k) => (k == null ? "-" : `\`${String(k)}\``)).join(",") +
         "]"
   );
 }
@@ -51,9 +51,7 @@ export function wrapVisualSet<T extends UpdateResult<Set<unknown>>>(): (
       : e.size === 0
       ? "[]"
       : "[" +
-        [...e]
-          .map((k) => (k == null ? "-" : `\`\`${String(k)}\`\``))
-          .join(",") +
+        [...e].map((k) => (k == null ? "-" : `\`${String(k)}\``)).join(",") +
         "]"
   );
 }
