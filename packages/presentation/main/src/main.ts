@@ -12,6 +12,7 @@ import {
   initInstanceState,
   initText2Speech,
   MonitorRunnerWithLog,
+  scheduleExitGuilds,
 } from "presentation_core";
 import * as ENV from "./bootstrap/env";
 import { CachedBasicConfigRepository } from "repository_cache-guild-configs";
@@ -215,6 +216,12 @@ async function main() {
     inviteLink,
   });
   await client.login(token);
+  await Promise.resolve(
+    client.user?.setActivity("4/8(木)運用終了", {
+      type: "PLAYING",
+    })
+  );
+  scheduleExitGuilds(client, 1617807600000);
 }
 main().catch((e) => {
   BotLogger.fatal(e);
